@@ -3,116 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Big Together - Hub</title>
+    <title>Get Big Together</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { margin: 0; color: #1877f2; font-size: 2.2rem; }
-        .header p { color: #606770; margin-top: 5px; }
-
-        .container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
+        body { font-family: Arial, sans-serif; background: #e9ecef; margin: 0; padding: 20px; color: #212529; }
+        .top-bar { text-align: center; margin-bottom: 25px; }
+        .top-bar h1 { color: #0d6efd; font-size: 2.2rem; margin: 0; }
+        .top-bar p { font-size: 1.1rem; color: #6c757d; margin-top: 5px; }
         
-        .form-card { background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); height: fit-content; }
-        .form-card h2 { margin-top: 0; font-size: 1.2rem; color: #333; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 5px; color: #4b4f56; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #dddfe2; border-radius: 6px; font-size: 0.95rem; }
-        .submit-btn { width: 100%; background-color: #1877f2; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .main-layout { max-width: 1000px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 20px; }
+        
+        .box { background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .left-panel { flex: 1; min-width: 300px; }
+        .right-panel { flex: 2; min-width: 300px; }
 
-        .board-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .board-header h2 { margin: 0; font-size: 1.3rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; }
+        label { display: block; font-weight: bold; margin-top: 12px; font-size: 1rem; }
+        input, select { width: 100%; padding: 12px; margin-top: 6px; border: 2px solid #ced4da; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
+        
+        .btn-post { width: 100%; background: #0d6efd; color: white; border: none; padding: 14px; margin-top: 18px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+        .btn-post:hover { background: #0b5ed7; }
 
-        .sticky-card { background: #fffbe6; border: 1px solid #ffe58f; border-radius: 10px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        .sticky-card.system { background: #e6f7ff; border-color: #91d5ff; }
-        .card-type { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
-        .type-reach { background: #fff1f0; color: #cf1322; }
-        .type-system { background: #e6f7ff; color: #096dd9; }
-
-        .card-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; color: #262626; }
-        .card-meta { font-size: 0.85rem; color: #595959; margin-bottom: 12px; }
-        .card-reach { font-weight: 800; font-size: 1rem; color: #389e0d; margin-bottom: 15px; }
-
-        .link-btn { width: 100%; background: #52c41a; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-
-        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+        .cards-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; }
+        .card { background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 10px; padding: 15px; text-align: center; }
+        .card.provider { background: #e7f1ff; border-color: #9ec5fe; }
+        .card-type { font-weight: bold; font-size: 0.85rem; color: #0d6efd; text-transform: uppercase; }
+        .card-name { font-size: 1.2rem; font-weight: bold; margin: 8px 0; }
+        .card-reach { color: #198754; font-weight: bold; margin-bottom: 12px; }
+        
+        .btn-link { display: inline-block; width: 100%; background: #198754; color: white; text-decoration: none; padding: 10px 0; border-radius: 6px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="header">
+<div class="top-bar">
     <h1>Get Big Together</h1>
-    <p>Decentralized Handshake Hub & Micro-Reach Network</p>
+    <p>Simple Handshake Hub — Share Links & Grow Reach</p>
 </div>
 
-<div class="container">
-    <div class="form-card">
-        <h2>Drop Your Card</h2>
+<div class="main-layout">
+    <!-- LEFT FORM -->
+    <div class="box left-panel">
+        <h2>Post Your Offer</h2>
         <form action="/add-card" method="POST">
-            <div class="form-group">
-                <label>Card Type</label>
-                <select name="type">
-                    <option value="reach">Promoter (I have Followers/Friends)</option>
-                    <option value="system">Provider (I have Link/YouTube/ID)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Name / Handle</label>
-                <input type="text" name="name" placeholder="e.g. Cenk or Local Community" required>
-            </div>
-            <div class="form-group">
-                <label>Reach / Goal</label>
-                <input type="text" name="reach" placeholder="e.g. 500 FB Friends or 1k YT Views" required>
-            </div>
-            <div class="form-group">
-                <label>Link / ID</label>
-                <input type="text" name="link" placeholder="e.g. YouTube Link or Amazon Tag" required>
-            </div>
-            <button type="submit" class="submit-btn">Post to Whiteboard</button>
+            <label>1. What are you sharing?</label>
+            <select name="type">
+                <option value="reach">Promoter (I have Social Media/Friends)</option>
+                <option value="system">Provider (I have YouTube/Links/Offers)</option>
+            </select>
+
+            <label>2. Your Name or Handle</label>
+            <input type="text" name="name" placeholder="e.g. Cenk or Facebook Community" required>
+
+            <label>3. Your Reach or Target</label>
+            <input type="text" name="reach" placeholder="e.g. 500 FB Friends or 1k Views" required>
+
+            <label>4. Web Link</label>
+            <input type="text" name="link" placeholder="e.g. https://youtube.com" required>
+
+            <button type="submit" class="btn-post">Post to Board</button>
         </form>
     </div>
 
-    <div>
-        <div class="board-header">
-            <h2>Active Board Cards</h2>
-            <span style="color: #8c8c8c; font-size: 0.9rem;">Live Network</span>
-        </div>
-
-        <div class="grid" id="cardGrid">
-            <!-- Cards load dynamically here -->
+    <!-- RIGHT BOARD -->
+    <div class="box right-panel">
+        <h2>Live Whiteboard</h2>
+        <div class="cards-list" id="cardGrid">
+            <!-- Cards render here -->
         </div>
     </div>
 </div>
 
 <script>
-    async function loadBoardCards() {
+    async function loadCards() {
         try {
-            const response = await fetch('/api/cards');
-            const cards = await response.json();
+            const res = await fetch('/api/cards');
+            const data = await res.json();
             const grid = document.getElementById('cardGrid');
             
-            if (cards && cards.length > 0) {
-                grid.innerHTML = cards.map(card => `
-                    <div class="sticky-card ${card.type === 'system' ? 'system' : ''}">
-                        <span class="card-type ${card.type === 'system' ? 'type-system' : 'type-reach'}">
-                            ${card.type === 'system' ? 'System Provider' : 'Social Reach'}
-                        </span>
-                        <div class="card-title">${card.name}</div>
-                        <div class="card-meta">${card.meta}</div>
-                        <div class="card-reach">${card.reach}</div>
-                        <a href="${card.link}" target="_blank" style="text-decoration: none;">
-                            <button class="link-btn">Link Up</button>
-                        </a>
+            if (data && data.length > 0) {
+                grid.innerHTML = data.map(c => `
+                    <div class="card ${c.type === 'system' ? 'provider' : ''}">
+                        <div class="card-type">${c.type === 'system' ? 'Provider' : 'Promoter'}</div>
+                        <div class="card-name">${c.name}</div>
+                        <div class="card-reach">${c.reach}</div>
+                        <a href="${c.link}" target="_blank" class="btn-link">Open Link</a>
                     </div>
                 `).join('');
             }
-        } catch (err) {
-            console.error('Error loading cards:', err);
+        } catch (e) {
+            console.log('Error:', e);
         }
     }
-
-    loadBoardCards();
+    loadCards();
 </script>
 
 </body>
