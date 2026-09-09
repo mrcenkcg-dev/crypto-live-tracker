@@ -3,14 +3,14 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Middleware to parse form data and JSON
+// Middleware for parsing form data and JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve static assets from public folder
+// Serve static assets from the public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// In-memory cards storage
+// In-memory cards array
 let boardCards = [
     {
         type: 'system',
@@ -28,12 +28,12 @@ let boardCards = [
     }
 ];
 
-// API endpoint to return active cards
+// API endpoint for cards
 app.get('/api/cards', (req, res) => {
     res.json(boardCards);
 });
 
-// Post card endpoint
+// Handle card submissions
 app.post('/add-card', (req, res) => {
     const { type, name, reach, link } = req.body;
 
@@ -49,7 +49,7 @@ app.post('/add-card', (req, res) => {
     res.redirect('/');
 });
 
-// Explicitly serve index.html for root route
+// Explicit root route serving index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
