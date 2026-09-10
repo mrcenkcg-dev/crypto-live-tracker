@@ -1,35 +1,7 @@
 const express = require('express');
 const path = require('path');
-const app = express();// --- CLICK TRACKING LEDGER (Step 2) ---
-let clickLedger = [];
-
-app.post('/log_click', (req, res) => {
-    const { user_name, task_id } = req.body;
-
-    if (!user_name || !task_id) {
-        return res.status(400).json({ error: "Missing data" });
-    }
-
-    const newClick = {
-        id: clickLedger.length + 1,
-        user_name,
-        task_id,
-        timestamp: new Date()
-    };
-
-    clickLedger.push(newClick);
-
-    res.status(200).json({ 
-        status: "Success", 
-        message: `Click logged securely for ${user_name}!` 
-    });
-});
-
-// Endpoint to view the ledger (so we can count every click)
-app.get('/api/ledger', (req, res) => {
-    res.json(clickLedger);
-});
-// ---------------------------------------const PORT = process.env.PORT || 10000;
+const app = express();
+const PORT = process.env.PORT || 10000;
 
 // Middleware for parsing form data and JSON
 app.use(express.urlencoded({ extended: true }));
@@ -55,6 +27,36 @@ let boardCards = [
         meta: 'Ready to promote video links and offers on WhatsApp and social groups.'
     }
 ];
+
+// --- CLICK TRACKING LEDGER (Step 2) ---
+let clickLedger = [];
+
+app.post('/log_click', (req, res) => {
+    const { user_name, task_id } = req.body;
+
+    if (!user_name || !task_id) {
+        return res.status(400).json({ error: "Missing data" });
+    }
+
+    const newClick = {
+        id: clickLedger.length + 1,
+        user_name,
+        task_id,
+        timestamp: new Date()
+    };
+
+    clickLedger.push(newClick);
+
+    res.status(200).json({ 
+        status: "Success", 
+        message: `Click logged securely for ${user_name}!` 
+    });
+});
+
+app.get('/api/ledger', (req, res) => {
+    res.json(clickLedger);
+});
+// ---------------------------------------
 
 // API endpoint for cards
 app.get('/api/cards', (req, res) => {
