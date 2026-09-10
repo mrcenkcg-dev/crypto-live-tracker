@@ -13,8 +13,8 @@
         .card h3 { margin-top: 0; color: #38bdf8; }
         .card a { color: #f43f5e; text-decoration: none; font-weight: bold; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
-        .modal-content { background: #334155; padding: 30px; border-radius: 12px; display: flex; flex-direction: column; width: 320px; }
-        .modal-content button { background: #0ea5e9; margin: 8px 0; }
+        .modal-content { background: #334155; padding: 30px; border-radius: 12px; display: flex; flex-direction: column; width: 340px; }
+        .modal-content button { background: #0ea5e9; margin: 8px 0; font-size: 14px; }
         .modal-content button:hover { background: #0284c7; }
         .actions-bar { margin-top: 25px; padding-top: 20px; border-top: 1px solid #475569; }
     </style>
@@ -36,7 +36,7 @@
         <div class="modal-content">
             <h3>Select Your Payout Path</h3>
             <button onclick="submitPayout(1)">1. Digital Gift Card</button>
-            <button onclick="submitPayout(2)">2. John's Community Fund</button>
+            <button onclick="submitPayout(2)">2. Get Big Community Fund</button>
             <button onclick="submitPayout(3)">3. Direct Bank / Monzo</button>
             <button onclick="submitPayout(4)">4. Charity Donation</button>
             <button style="background: #ef4444;" onclick="closePayoutModal()">Cancel</button>
