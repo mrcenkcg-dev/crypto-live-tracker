@@ -1,116 +1,63 @@
 const express = require('express');
-const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 3000;
 
-// Middleware for parsing form data and JSON
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static('public'));
 
-// Serve static assets from the public folder
-app.use(express.static(path.join(__dirname, 'public')));
-
-// In-memory cards array
 let boardCards = [
-    {
-        type: 'system',
-        name: "Cenk's YouTube & Amazon Hub",
-        reach: 'Goal: 1,000 Views / Shares',
-        link: 'https://youtube.com',
-        meta: 'Sharing automated deal engines and YouTube video links.'
-    },
-    {
-        type: 'reach',
-        name: 'Social Reach Promoter',
-        reach: 'Reach: 500 Real Friends',
-        link: 'https://facebook.com',
-        meta: 'Ready to promote video links and offers on WhatsApp and social groups.'
-    }
+    { type: 'system', name: 'Nazmiye', reach: '100 views', link: 'https://facebook.com', meta: 'Initial feed' }
 ];
 
-// --- CLICK TRACKING LEDGER ---
-let clickLedger = [];
+let clickLedger = {};
 
-app.post('/log_click', (req, res) => {
-    const { user_name, task_id } = req.body;
-
-    if (!user_name || !task_id) {
-        return res.status(400).json({ error: "Missing data" });
-    }
-
-    const newClick = {
-        id: clickLedger.length + 1,
-        user_name,
-        task_id,
-        timestamp: new Date()
-    };
-
-    clickLedger.push(newClick);
-
-    res.status(200).json({ 
-        status: "Success", 
-        message: `Click logged securely for ${user_name}!` 
-    });
-});
-
-app.get('/api/ledger', (req, res) => {
-    res.json(clickLedger);
-});
-// ---------------------------------------
-
-// --- 4-OPTION PAYOUT CHOICE ROUTE ---
-app.post('/api/ledger/payout', (req, res) => {
-    const { user_name, payout_choice } = req.body;
-
-    const validChoices = {
-        1: "Digital Gift Card",
-        2: "Get Big Community Fund",
-        3: "Direct Bank / Monzo Transfer",
-        4: "Charity Donation"
-    };
-
-    const selectedPath = validChoices[payout_choice] || "Digital Gift Card";
-
-    console.log(`Payout Choice Recorded -> User: ${user_name || 'anonymous'} | Path: ${selectedPath}`);
-
-    res.status(200).json({
-        status: "Success",
-        message: `Payout preference saved as ${selectedPath}!`
-    });
-});
-// ---------------------------------------
-
-// API endpoint for cards
-app.get('/api/cards', (req, res) => {
+app.get('/api/board', (req, res) => {
     res.json(boardCards);
 });
 
-// Handle card submissions
-app.post('/add-card', (req, res) => {
-    const { type, name, reach, link } = req.body;
-
-    if (name && reach && link) {
-        boardCards.unshift({
-            type: type || 'reach',
-            name: name,
-            reach: `Reach: ${reach}`,
-            link: link,
-            meta: type === 'system' ? 'System Provider Offer' : 'Social Reach Partner'
-        });
+app.post('/api/submit', (req, res) => {
+    const { name, reach, link, meta } = req.body;
+    if (!name || !link) {
+        return res.status(400).json({ error: 'Name and link are required' });
     }
-    res.redirect('/');
+    boardCards.unshift({ type: 'user', name, reach: reach || '0 views', link, meta: meta || 'Community share' });
+    res.status(200).json({ status: 'Success', message: 'Resource added successfully' });
 });
 
-// Explicit root route serving index.html
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.post('/api/click', (req, res) => {
+    const { name, link } = req.body;
+    if (!name) {
+        return res.status(400).json({ error: 'Name required for click tracking' });
+    }
+    clickLedger[name] = (clickLedger[name] || 0) + 1;
+    res.status(200).json({ status: 'Click logged', total_clicks: clickLedger[name] });
 });
 
-// Catch-all route
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.post('/api/auto-post', (req, res) => {
+    const { secret_key, name, reach, link, meta } = req.body;
+
+    if (secret_key !== "get_big_automation_secret") {
+        return res.status(403).json({ error: "Unauthorized automated access" });
+    }
+
+    if (!name || !link) {
+        return res.status(400).json({ error: "Missing required content fields" });
+    }
+
+    boardCards.unshift({
+        type: 'system',
+        name: name,
+        reach: reach || 'Goal: Automated Traffic Burst',
+        link: link,
+        meta: meta || 'Auto-generated feed'
+    });
+
+    res.status(200).json({
+        status: "Success",
+        message: `Card '${name}' successfully published!`
+    });
 });
 
 app.listen(PORT, () => {
-    console.log(`Get Big Together Hub running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
