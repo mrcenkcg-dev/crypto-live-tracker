@@ -28,7 +28,7 @@ let boardCards = [
     }
 ];
 
-// --- CLICK TRACKING LEDGER (Step 2) ---
+// --- CLICK TRACKING LEDGER ---
 let clickLedger = [];
 
 app.post('/log_click', (req, res) => {
@@ -55,6 +55,28 @@ app.post('/log_click', (req, res) => {
 
 app.get('/api/ledger', (req, res) => {
     res.json(clickLedger);
+});
+// ---------------------------------------
+
+// --- 4-OPTION PAYOUT CHOICE ROUTE ---
+app.post('/api/ledger/payout', (req, res) => {
+    const { user_name, payout_choice } = req.body;
+
+    const validChoices = {
+        1: "Digital Gift Card",
+        2: "John's Community Support Fund",
+        3: "Direct Bank / Monzo Transfer",
+        4: "Charity Donation"
+    };
+
+    const selectedPath = validChoices[payout_choice] || "Digital Gift Card";
+
+    console.log(`Payout Choice Recorded -> User: ${user_name || 'anonymous'} | Path: ${selectedPath}`);
+
+    res.status(200).json({
+        status: "Success",
+        message: `Payout preference saved as ${selectedPath}!`
+    });
 });
 // ---------------------------------------
 
