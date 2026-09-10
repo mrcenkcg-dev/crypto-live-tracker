@@ -12,6 +12,7 @@
         button:hover { background: #0056b3; }
         .error { color: red; font-weight: bold; }
         .section-box { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stats { font-size: 0.9em; color: #555; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -22,12 +23,13 @@
     <!-- Payout Option Section -->
     <div class="section-box">
         <h3>Choose Payout Option</h3>
-        <select id="payoutOption">
+        <select id="payoutOption" onchange="togglePayoutInput()">
             <option value="gift_card">Gift Cards</option>
             <option value="bank">Bank / Monzo</option>
             <option value="charity">Charity Donation</option>
             <option value="community_fund">Community Fund</option>
         </select>
+        <input type="text" id="payoutDetails" placeholder="Enter your email or account details..." style="display:none;">
         <button type="button" onclick="savePayoutChoice()">Save Payout Preference</button>
     </div>
 
@@ -51,6 +53,17 @@
     <div id="boardContainer">Loading boards...</div>
 
     <script>
+        function togglePayoutInput() {
+            const option = document.getElementById('payoutOption').value;
+            const detailsInput = document.getElementById('payoutDetails');
+            if (option === 'bank' || option === 'gift_card') {
+                detailsInput.style.display = 'block';
+                detailsInput.placeholder = option === 'bank' ? 'Enter Sort Code & Account / Monzo tag' : 'Enter Gift Card email address';
+            } else {
+                detailsInput.style.display = 'none';
+            }
+        }
+
         async function loadBoards() {
             try {
                 const response = await fetch('/api/board');
@@ -70,8 +83,10 @@
                     div.className = 'card';
                     div.innerHTML = `
                         <strong>${board.name}</strong> (${board.type})<br>
-                        <span>Reach: ${board.reach}</span><br>
-                        <small>${board.meta || ''}</small><br>
+                        <span>Reach Target: ${board.reach || 'N/A'}</span><br>
+                        <div class="stats">
+                            🔥 Clicks: <strong>${board.clicks || 0}</strong> | 👥 Joined / Interactions: <strong>${board.joined || 0}</strong>
+                        </div>
                         <a href="${board.link}" target="_blank" onclick="logClick('${board.name}', '${board.link}')">Visit Link</a>
                     `;
                     container.appendChild(div);
@@ -87,17 +102,19 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, link })
             });
+            setTimeout(loadBoards, 500); // Refresh counts dynamically
         }
 
         function savePayoutChoice() {
             const choice = document.getElementById('payoutOption').value;
-            alert(`Payout preference saved: ${choice}`);
+            const details = document.getElementById('payoutDetails').value;
+            alert(`Payout preference saved for ${choice}!\nDetails: ${details || 'None provided'}`);
         }
 
         document.getElementById('submitForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const type = document.getElementById('boardType').value;
-            const name = document.getElementById('name').value;
+            const name = document.getElementById('name',).value;
             const reach = document.getElementById('reach').value;
             const link = document.getElementById('link').value;
 
@@ -115,6 +132,8 @@
             }
         });
 
+        // Initialize view
+        togglePayoutInput();
         loadBoards();
     </script>
 </body>
