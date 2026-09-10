@@ -1,23 +1,40 @@
-Get Big Together
-Complete tasks, track your activity, and choose your preferred reward path.
+const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-Choose Payout Option
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-Gift Cards
-Enter Gift Card email address
-Save Payout Preference
-Add Your Resource / Board
+// In-memory boards storage
+let boards = [
+    { type: 'System Provider Offer', name: 'Nazmiye (system)', reach: '100 views', link: 'https://facebook.com', clicks: 0, joined: 0 }
+];
 
-Social Reach Partner
- 
-Name / Title
- 
-Reach / Goal (e.g. 500 views)
- 
-Link URL (https://...)
- Add to Board
-Community & System Boards
-Nazmiye (system)
-Reach Target: 100 views
-🔥 Clicks: 0 | 👥 Joined / Interactions: 0
-Visit Link
+app.get('/api/board', (req, res) => {
+    res.json(boards);
+});
+
+app.post('/api/submit', (req, res) => {
+    const { type, name, reach, link } = req.body;
+    if (!name || !link) {
+        return res.status(400).json({ error: 'Name and link are required' });
+    }
+    boards.push({ type, name, reach, link, clicks: 0, joined: 0 });
+    res.json({ success: true });
+});
+
+app.post('/api/click', (req, res) => {
+    const { link } = req.body;
+    const board = boards.find(b => b.link === link);
+    if (board) {
+        board.clicks = (board.clicks || 0) + 1;
+        res.json({ success: true, clicks: board.clicks });
+    } else {
+        res.status(404).json({ error: 'Not found' });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
