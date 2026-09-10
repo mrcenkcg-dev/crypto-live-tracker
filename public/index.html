@@ -13,6 +13,8 @@
         .error { color: red; font-weight: bold; }
         .section-box { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .stats { font-size: 0.9em; color: #555; margin-top: 5px; }
+        .share-btn { background: #28a745; margin-top: 5px; }
+        .fb-btn { background: #1877f2; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -79,6 +81,10 @@
                 }
 
                 boards.forEach(board => {
+                    const encodedLink = encodeURIComponent(board.link);
+                    const encodedText = encodeURIComponent(`Check out this offer: ${board.name}`);
+                    const fbShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedLink}`;
+
                     const div = document.createElement('div');
                     div.className = 'card';
                     div.innerHTML = `
@@ -88,13 +94,21 @@
                             🔥 Clicks: <strong>${board.clicks || 0}</strong> | 👥 Joined / Interactions: <strong>${board.joined || 0}</strong>
                         </div>
                         <a href="${board.link}" target="_blank" onclick="logClick('${board.name}', '${board.link}')">Visit Link</a>
-                        <button onclick="navigator.clipboard.writeText('${board.link}'); alert('Link copied to clipboard! Ready to share.');" style="background: #28a745; margin-top: 5px;">Copy Link to Share</button>
+                        <button class="share-btn" onclick="copyLink('${board.link}')">Copy Link to Share</button>
+                        <a href="${fbShareUrl}" target="_blank" style="text-decoration: none;">
+                            <button class="fb-btn" type="button">Share Directly to Facebook</button>
+                        </a>
                     `;
                     container.appendChild(div);
                 });
             } catch (err) {
                 document.getElementById('boardContainer').innerHTML = '<p class="error">Failed to load boards.</p>';
             }
+        }
+
+        function copyLink(link) {
+            navigator.clipboard.writeText(link);
+            alert('Link copied to clipboard! Ready to share.');
         }
 
         async function logClick(name, link) {
