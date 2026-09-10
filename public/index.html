@@ -1,14 +1,33 @@
-boards.forEach(board => {
-    const div = document.createElement('div');
-    div.className = 'card';
-    div.innerHTML = `
-        <strong>${board.name}</strong> (${board.type})<br>
-        <span>Reach Target: ${board.reach || 'N/A'}</span><br>
-        <div class="stats">
-            🔥 Clicks: <strong>${board.clicks || 0}</strong> | 👥 Joined / Interactions: <strong>${board.joined || 0}</strong>
-        </div>
-        <a href="${board.link}" target="_blank" onclick="logClick('${board.name}', '${board.link}')">Visit Link</a>
-        <button onclick="navigator.clipboard.writeText('${board.link}'); alert('Link copied to clipboard! Ready to share.');" style="background: #28a745; margin-top: 5px;">Copy Link to Share</button>
-    `;
-    container.appendChild(div);
-});
+async function loadBoards() {
+            try {
+                const response = await fetch('/api/board');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const boards = await response.json();
+                
+                const container = document.getElementById('boardContainer');
+                container.innerHTML = '';
+                
+                if (boards.length === 0) {
+                    container.innerHTML = '<p>No boards available right now.</p>';
+                    return;
+                }
+
+                // PASTE THE LOOP RIGHT HERE:
+                boards.forEach(board => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.innerHTML = `
+                        <strong>${board.name}</strong> (${board.type})<br>
+                        <span>Reach Target: ${board.reach || 'N/A'}</span><br>
+                        <div class="stats">
+                            🔥 Clicks: <strong>${board.clicks || 0}</strong> | 👥 Joined / Interactions: <strong>${board.joined || 0}</strong>
+                        </div>
+                        <a href="${board.link}" target="_blank" onclick="logClick('${board.name}', '${board.link}')">Visit Link</a>
+                        <button onclick="navigator.clipboard.writeText('${board.link}'); alert('Link copied to clipboard! Ready to share.');" style="background: #28a745; margin-top: 5px;">Copy Link to Share</button>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (err) {
+                document.getElementById('boardContainer').innerHTML = '<p class="error">Failed to load boards.</p>';
+            }
+        }
