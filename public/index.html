@@ -6,20 +6,30 @@
     <title>Get Big Together Hub</title>
     <style>
         body { font-family: Arial, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; text-align: center; }
-        .container { max-width: 600px; margin: 0 auto; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .container { max-width: 700px; margin: 0 auto; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         button { background: #3b82f6; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; margin: 10px; }
         button:hover { background: #2563eb; }
+        .card { background: #334155; padding: 20px; border-radius: 8px; margin: 15px 0; text-align: left; border-left: 5px solid #3b82f6; }
+        .card h3 { margin-top: 0; color: #38bdf8; }
+        .card a { color: #f43f5e; text-decoration: none; font-weight: bold; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
         .modal-content { background: #334155; padding: 30px; border-radius: 12px; display: flex; flex-direction: column; width: 320px; }
         .modal-content button { background: #0ea5e9; margin: 8px 0; }
         .modal-content button:hover { background: #0284c7; }
+        .actions-bar { margin-top: 25px; padding-top: 20px; border-top: 1px solid #475569; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Get Big Together</h1>
         <p>Complete tasks, track your activity, and choose your preferred reward path.</p>
-        <button onclick="openPayoutModal()">Choose Payout Option</button>
+        
+        <div class="actions-bar">
+            <button onclick="openPayoutModal()">Choose Payout Option</button>
+        </div>
+
+        <h2>Community & System Boards</h2>
+        <div id="cards-container">Loading active boards...</div>
     </div>
 
     <div id="payout-modal" class="modal">
@@ -34,6 +44,30 @@
     </div>
 
     <script>
+        function fetchCards() {
+            fetch('/api/cards')
+                .then(res => res.json())
+                .then(cards => {
+                    const container = document.getElementById('cards-container');
+                    container.innerHTML = '';
+                    cards.forEach(card => {
+                        const cardDiv = document.createElement('div');
+                        cardDiv.className = 'card';
+                        cardDiv.innerHTML = `
+                            <h3>${card.name}</h3>
+                            <p><strong>${card.reach}</strong></p>
+                            <p>${card.meta}</p>
+                            <a href="${card.link}" target="_blank">Visit Resource &rarr;</a>
+                        `;
+                        container.appendChild(cardDiv);
+                    });
+                })
+                .catch(err => {
+                    console.error('Error loading cards:', err);
+                    document.getElementById('cards-container').innerHTML = '<p>Failed to load boards.</p>';
+                });
+        }
+
         function openPayoutModal() {
             document.getElementById('payout-modal').style.display = 'flex';
         }
@@ -60,6 +94,9 @@
                 alert('Failed to save choice. Please try again.');
             });
         }
+
+        // Load cards on page start
+        fetchCards();
     </script>
 </body>
 </html>
