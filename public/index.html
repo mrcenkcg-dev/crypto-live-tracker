@@ -3,144 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Big Together Hub</title>
+    <title>Get Big Together</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; text-align: center; }
-        .container { max-width: 700px; margin: 0 auto; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        button { background: #3b82f6; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 8px; cursor: pointer; margin: 10px; }
-        button:hover { background: #2563eb; }
-        .card { background: #334155; padding: 20px; border-radius: 8px; margin: 15px 0; text-align: left; border-left: 5px solid #3b82f6; }
-        .card h3 { margin-top: 0; color: #38bdf8; }
-        .card a { color: #f43f5e; text-decoration: none; font-weight: bold; cursor: pointer; }
-        .form-section { background: #334155; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left; }
-        .form-section input, .form-section select { width: 100%; padding: 10px; margin: 8px 0 15px 0; border-radius: 6px; border: 1px solid #475569; background: #1e293b; color: white; box-sizing: border-box; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
-        .modal-content { background: #334155; padding: 30px; border-radius: 12px; display: flex; flex-direction: column; width: 340px; }
-        .modal-content button { background: #0ea5e9; margin: 8px 0; font-size: 14px; }
-        .modal-content button:hover { background: #0284c7; }
-        .actions-bar { margin-top: 25px; padding-top: 20px; border-top: 1px solid #475569; }
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f4f4f9; color: #333; }
+        .card { background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        input, select, button { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        button { background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .error { color: red; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Get Big Together</h1>
-        <p>Complete tasks, track your activity, and choose your preferred reward path.</p>
-        
-        <div class="actions-bar">
-            <button onclick="openPayoutModal()">Choose Payout Option</button>
-        </div>
 
-        <!-- Add Card Form Section -->
-        <div class="form-section">
-            <h3>Add Your Resource / Board</h3>
-            <form action="/add-card" method="POST">
-                <label>Type:</label>
-                <select name="type">
-                    <option value="reach">Social Reach Partner</option>
-                    <option value="system">System Provider Offer</option>
-                </select>
+    <h1>Get Big Together</h1>
+    <p>Complete tasks, track your activity, and choose your preferred reward path.</p>
 
-                <label>Name / Title:</label>
-                <input type="text" name="name" placeholder="e.g. My TikTok Hub" required>
-
-                <label>Reach / Goal:</label>
-                <input type="text" name="reach" placeholder="e.g. 300 Shares" required>
-
-                <label>Link URL:</label>
-                <input type="url" name="link" placeholder="https://example.com" required>
-
-                <button type="submit" style="width: 100%; margin: 0;">Add to Board</button>
-            </form>
-        </div>
-
-        <h2>Community & System Boards</h2>
-        <div id="cards-container">Loading active boards...</div>
+    <div class="card">
+        <h3>Add Your Resource / Board</h3>
+        <form id="submitForm">
+            <input type="text" id="name" placeholder="Name / Title" required>
+            <input type="text" id="reach" placeholder="Reach / Goal (e.g. 500 views)">
+            <input type="url" id="link" placeholder="Link URL (https://...)" required>
+            <button type="submit">Add to Board</button>
+        </form>
     </div>
 
-    <!-- Payout Modal -->
-    <div id="payout-modal" class="modal">
-        <div class="modal-content">
-            <h3>Select Your Payout Path</h3>
-            <button onclick="submitPayout(1)">1. Digital Gift Card</button>
-            <button onclick="submitPayout(2)">2. Get Big Community Fund</button>
-            <button onclick="submitPayout(3)">3. Direct Bank / Monzo</button>
-            <button onclick="submitPayout(4)">4. Charity Donation</button>
-            <button style="background: #ef4444;" onclick="closePayoutModal()">Cancel</button>
-        </div>
-    </div>
+    <h3>Community & System Boards</h3>
+    <div id="boardContainer">Loading boards...</div>
 
     <script>
-        function fetchCards() {
-            fetch('/api/cards')
-                .then(res => res.json())
-                .then(cards => {
-                    const container = document.getElementById('cards-container');
-                    container.innerHTML = '';
-                    cards.forEach((card, index) => {
-                        const cardDiv = document.createElement('div');
-                        cardDiv.className = 'card';
-                        cardDiv.innerHTML = `
-                            <h3>${card.name}</h3>
-                            <p><strong>${card.reach}</strong></p>
-                            <p>${card.meta}</p>
-                            <a onclick="handleCardClick('${card.name}', '${card.link}')">Visit Resource &rarr;</a>
-                        `;
-                        container.appendChild(cardDiv);
-                    });
-                })
-                .catch(err => {
-                    console.error('Error loading cards:', err);
-                    document.getElementById('cards-container').innerHTML = '<p>Failed to load boards.</p>';
+        async function loadBoards() {
+            try {
+                const response = await fetch('/api/board');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const boards = await response.json();
+                
+                const container = document.getElementById('boardContainer');
+                container.innerHTML = '';
+                
+                if (boards.length === 0) {
+                    container.innerHTML = '<p>No boards available right now.</p>';
+                    return;
+                }
+
+                boards.forEach(board => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.innerHTML = `
+                        <strong>${board.name}</strong> (${board.type})<br>
+                        <span>Reach: ${board.reach}</span><br>
+                        <small>${board.meta || ''}</small><br>
+                        <a href="${board.link}" target="_blank" onclick="logClick('${board.name}', '${board.link}')">Visit Link</a>
+                    `;
+                    container.appendChild(div);
                 });
+            } catch (err) {
+                document.getElementById('boardContainer').innerHTML = '<p class="error">Failed to load boards.</p>';
+            }
         }
 
-        function handleCardClick(cardName, cardLink) {
-            const userName = prompt("Enter your name to track this click:") || "anonymous";
-
-            fetch('/log_click', {
+        async function logClick(name, link) {
+            await fetch('/api/click', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_name: userName, task_id: cardName })
-            })
-            .then(res => res.json())
-            .then(data => {
-                console.log(data.message);
-                window.open(cardLink, '_blank');
-            })
-            .catch(err => {
-                console.error('Click logging error:', err);
-                window.open(cardLink, '_blank');
+                body: JSON.stringify({ name, link })
             });
         }
 
-        function openPayoutModal() {
-            document.getElementById('payout-modal').style.display = 'flex';
-        }
+        document.getElementById('submitForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const reach = document.getElementById('reach').value;
+            const link = document.getElementById('link').value;
 
-        function closePayoutModal() {
-            document.getElementById('payout-modal').style.display = 'none';
-        }
-
-        function submitPayout(choiceId) {
-            const userName = prompt("Enter your name or ID:") || "anonymous";
-
-            fetch('/api/ledger/payout', {
+            const res = await fetch('/api/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_name: userName, payout_choice: choiceId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert(data.message);
-                closePayoutModal();
-            })
-            .catch(err => {
-                console.error('Error:', err);
-                alert('Failed to save choice. Please try again.');
+                body: JSON.stringify({ name, reach, link })
             });
-        }
 
-        fetchCards();
+            if (res.ok) {
+                document.getElementById('submitForm').reset();
+                loadBoards();
+            } else {
+                alert('Error submitting resource.');
+            }
+        });
+
+        loadBoards();
     </script>
 </body>
 </html>
