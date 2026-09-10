@@ -64,7 +64,7 @@ app.post('/api/ledger/payout', (req, res) => {
 
     const validChoices = {
         1: "Digital Gift Card",
-        2: "John's Community Support Fund",
+        2: "Get Big Community Fund",
         3: "Direct Bank / Monzo Transfer",
         4: "Charity Donation"
     };
