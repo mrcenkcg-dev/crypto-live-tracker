@@ -3,98 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Big Together</title>
+    <title>Get Big Together Hub</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #e9ecef; margin: 0; padding: 20px; color: #212529; }
-        .top-bar { text-align: center; margin-bottom: 25px; }
-        .top-bar h1 { color: #0d6efd; font-size: 2.2rem; margin: 0; }
-        .top-bar p { font-size: 1.1rem; color: #6c757d; margin-top: 5px; }
-        
-        .main-layout { max-width: 1000px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 20px; }
-        
-        .box { background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-        .left-panel { flex: 1; min-width: 300px; }
-        .right-panel { flex: 2; min-width: 300px; }
-
-        label { display: block; font-weight: bold; margin-top: 12px; font-size: 1rem; }
-        input, select { width: 100%; padding: 12px; margin-top: 6px; border: 2px solid #ced4da; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
-        
-        .btn-post { width: 100%; background: #0d6efd; color: white; border: none; padding: 14px; margin-top: 18px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
-        .btn-post:hover { background: #0b5ed7; }
-
-        .cards-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; }
-        .card { background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 10px; padding: 15px; text-align: center; }
-        .card.provider { background: #e7f1ff; border-color: #9ec5fe; }
-        .card-type { font-weight: bold; font-size: 0.85rem; color: #0d6efd; text-transform: uppercase; }
-        .card-name { font-size: 1.2rem; font-weight: bold; margin: 8px 0; }
-        .card-reach { color: #198754; font-weight: bold; margin-bottom: 12px; }
-        
-        .btn-link { display: inline-block; width: 100%; background: #198754; color: white; text-decoration: none; padding: 10px 0; border-radius: 6px; font-weight: bold; }
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background: #f4f4f9; color: #333; }
+        .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button { background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0056b3; }
+        input, select { width: 100%; padding: 8px; margin: 5px 0 15px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
     </style>
 </head>
 <body>
+    <h1>Get Big Together Hub</h1>
+    <p>Simple Handshake Hub — Share Links & Grow Reach with Absolute Trust.</p>
 
-<div class="top-bar">
-    <h1>Get Big Together</h1>
-    <p>Simple Handshake Hub — Share Links & Grow Reach</p>
-</div>
-
-<div class="main-layout">
-    <!-- LEFT FORM -->
-    <div class="box left-panel">
-        <h2>Post Your Offer</h2>
+    <div class="card">
+        <h3>Post Your Offer</h3>
         <form action="/add-card" method="POST">
-            <label>1. What are you sharing?</label>
+            <label>What are you sharing?</label>
             <select name="type">
                 <option value="reach">Promoter (I have Social Media/Friends)</option>
                 <option value="system">Provider (I have YouTube/Links/Offers)</option>
             </select>
 
-            <label>2. Your Name or Handle</label>
-            <input type="text" name="name" placeholder="e.g. Cenk or Facebook Community" required>
+            <label>Your Name or Handle:</label>
+            <input type="text" name="name" required placeholder="e.g. Nazmiye or Cenk">
 
-            <label>3. Your Reach or Target</label>
-            <input type="text" name="reach" placeholder="e.g. 500 FB Friends or 1k Views" required>
+            <label>Your Reach or Target:</label>
+            <input type="text" name="reach" required placeholder="e.g. 500 Real Friends or 1,000 Views">
 
-            <label>4. Web Link</label>
-            <input type="text" name="link" placeholder="e.g. https://youtube.com" required>
+            <label>Web Link:</label>
+            <input type="url" name="link" required placeholder="https://...">
 
-            <button type="submit" class="btn-post">Post to Board</button>
+            <button type="submit">Post to Board</button>
         </form>
     </div>
 
-    <!-- RIGHT BOARD -->
-    <div class="box right-panel">
-        <h2>Live Whiteboard</h2>
-        <div class="cards-list" id="cardGrid">
-            <!-- Cards render here -->
-        </div>
-    </div>
-</div>
+    <h2>Live Whiteboard</h2>
+    <div id="board-container">Loading live board...</div>
 
-<script>
-    async function loadCards() {
-        try {
-            const res = await fetch('/api/cards');
-            const data = await res.json();
-            const grid = document.getElementById('cardGrid');
-            
-            if (data && data.length > 0) {
-                grid.innerHTML = data.map(c => `
-                    <div class="card ${c.type === 'system' ? 'provider' : ''}">
-                        <div class="card-type">${c.type === 'system' ? 'Provider' : 'Promoter'}</div>
-                        <div class="card-name">${c.name}</div>
-                        <div class="card-reach">${c.reach}</div>
-                        <a href="${c.link}" target="_blank" class="btn-link">Open Link</a>
-                    </div>
-                `).join('');
+    <script>
+        async function loadBoard() {
+            try {
+                const res = await fetch('/api/cards');
+                const cards = await res.json();
+                const container = document.getElementById('board-container');
+                container.innerHTML = '';
+                
+                cards.forEach(card => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.innerHTML = `
+                        <strong>${card.type.toUpperCase()}</strong>
+                        <h3>${card.name}</h3>
+                        <p>${card.reach}</p>
+                        <p><em>${card.meta || ''}</em></p>
+                        <button onclick="trackAndOpen('${card.name.replace(/'/g, "\\'")}', '${card.link}')">Open Link & Verify</button>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (err) {
+                console.error("Error loading cards:", err);
             }
-        } catch (e) {
-            console.log('Error:', e);
         }
-    }
-    loadCards();
-</script>
 
+        async function trackAndOpen(taskName, targetUrl) {
+            try {
+                await fetch('/log_click', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        user_name: "Community Visitor", 
+                        task_id: taskName 
+                    })
+                });
+            } catch (err) {
+                console.log("Ledger network note:", err);
+            }
+            window.open(targetUrl, '_blank');
+        }
+
+        loadBoard();
+    </script>
 </body>
 </html>
