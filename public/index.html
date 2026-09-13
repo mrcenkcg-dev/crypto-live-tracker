@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoulder to Shoulder // Economy Engine</title>
+    <title>Shoulder to Shoulder // Community Engine</title>
     <style>
         :root {
             --bg-deep: #0a0a0c;
@@ -99,6 +99,20 @@
             font-size: 12px;
         }
 
+        .checkbox-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 6px;
+            font-size: 11px;
+            color: var(--text-main);
+        }
+
+        .checkbox-group label {
+            display: inline;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
         .btn {
             background: var(--accent-gold);
             color: var(--bg-deep);
@@ -131,12 +145,21 @@
         .slot-item {
             display: flex;
             justify-content: space-between;
-            padding: 4px 0;
+            padding: 6px 0;
             border-bottom: 1px dashed var(--border);
+            align-items: center;
         }
 
         .slot-item:last-child {
             border-bottom: none;
+        }
+
+        .badge-tags {
+            font-size: 9px;
+            color: var(--accent-green);
+            background: rgba(0, 255, 102, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
         }
 
         .telemetry {
@@ -167,18 +190,18 @@
     <div class="container">
         <!-- Header -->
         <header>
-            <h1>SHOULDER TO SHOULDER // ECONOMY ENGINE</h1>
+            <h1>SHOULDER TO SHOULDER // COMMUNITY ENGINE</h1>
         </header>
 
         <div class="grid-layout">
-            <!-- Left Panel: Business, Payout Tags & Worker Registration -->
+            <!-- Left Panel: Business & Resident Registration -->
             <div>
-                <!-- Business & Affiliate Portal -->
+                <!-- Business Portal -->
                 <div class="panel" style="margin-bottom: 20px;">
                     <h2>1. Business Portal & Vault Payouts</h2>
                     <div class="form-group">
-                        <label>Business / Job Search Name</label>
-                        <input type="text" id="bizName" class="form-control" placeholder="e.g. Local Pub / Shop">
+                        <label>Business / Location Name</label>
+                        <input type="text" id="bizName" class="form-control" placeholder="e.g. Local Shop / Pub">
                     </div>
                     <div class="form-group">
                         <label>Target Unique URL</label>
@@ -195,18 +218,26 @@
                     <button class="btn" onclick="registerBusiness()">+ Register Unique Link & Payout</button>
                 </div>
 
-                <!-- Everyday Worker Registration -->
+                <!-- Community Resident Registration with Personal Channel Boosting -->
                 <div class="panel">
-                    <h2>Everyday Worker Registration</h2>
+                    <h2>Community Resident Registration</h2>
                     <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="workerNameInput" class="form-control" placeholder="e.g. John Worker">
+                        <label>Resident Name (e.g. John)</label>
+                        <input type="text" id="residentNameInput" class="form-control" placeholder="e.g. John">
                     </div>
                     <div class="form-group">
                         <label>Contact / Mobile</label>
-                        <input type="text" id="workerContactInput" class="form-control" placeholder="e.g. 07123 456789">
+                        <input type="text" id="residentContactInput" class="form-control" placeholder="e.g. 07123 456789">
                     </div>
-                    <button class="btn" style="background: var(--accent-green);" onclick="registerNewWorker()">+ Register Worker & Unlock Key</button>
+                    <div class="form-group">
+                        <label>Connect Channels to Boost Revenue Multiplier:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" id="chkFb"> Facebook</label>
+                            <label><input type="checkbox" id="chkTk"> TikTok</label>
+                            <label><input type="checkbox" id="chkWa"> WhatsApp</label>
+                        </div>
+                    </div>
+                    <button class="btn" style="background: var(--accent-green);" onclick="registerResident()">+ Register Resident & Unlock Key</button>
                 </div>
             </div>
 
@@ -222,7 +253,7 @@
 
                 <!-- Gold Key Extra 10 Slots -->
                 <div class="panel">
-                    <h2>3. Gold Key Extra 10 Slots (<span id="goldCount">0</span>/10)</h2>
+                    <h2>3. Gold Key Resident Slots (<span id="goldCount">0</span>/10)</h2>
                     <div class="slot-list" id="goldSlots">
                         <!-- Populated dynamically -->
                     </div>
@@ -234,7 +265,7 @@
         <!-- Telemetry & Stats -->
         <div class="telemetry">
             <h2>Live System Telemetry & Vault Counter</h2>
-            <div id="logBox">> Shoulder to shoulder engine active. Amazon tag [mrcenk20-21] and Monzo vaults calibrated...</div>
+            <div id="logBox">> Community engine active. Resident multi-channel share boosters ready...</div>
         </div>
     </div>
 
@@ -267,7 +298,7 @@
                         <span>${(index + 11).toString().padStart(2, '0')}: ${slot.name}</span>
                         <span>${slot.value}</span>
                     </div>
-                `;
+                    `;
             });
             document.getElementById('goldCount').innerText = activeGold;
         }
@@ -280,7 +311,6 @@
             const name = document.getElementById('bizName').value.trim();
             const url = document.getElementById('bizUrl').value.trim();
             const amazon = document.getElementById('amazonTag').value.trim();
-            const monzo = document.getElementById('monzoTag').value.trim();
 
             if (!name || !url) {
                 logAction("Error: Please provide Business Name and Target URL.");
@@ -289,21 +319,24 @@
 
             const emptyIndex = coreSlotsData.findIndex(s => s.status === "Open" || s.name === "Empty");
             if (emptyIndex === -1) {
-                logAction("Error: Core 10-Slot Matrix is completely full.");
+                logAction("Error: Core 10-Slot Matrix is full.");
                 return;
             }
 
             coreSlotsData[emptyIndex] = { name: `${name} [AMZ: ${amazon}]`, status: "Active", value: "£0.10" };
             renderSlots();
-            logAction(`Business registered: ${name} linked with Amazon (${amazon}) & Monzo payout.`);
+            logAction(`Business registered: ${name} linked with Amazon (${amazon}).`);
 
             document.getElementById('bizName').value = '';
             document.getElementById('bizUrl').value = '';
         }
 
-        function registerNewWorker() {
-            const nameInput = document.getElementById('workerNameInput');
-            const contactInput = document.getElementById('workerContactInput');
+        function registerResident() {
+            const nameInput = document.getElementById('residentNameInput');
+            const contactInput = document.getElementById('residentContactInput');
+            const chkFb = document.getElementById('chkFb').checked;
+            const chkTk = document.getElementById('chkTk').checked;
+            const chkWa = document.getElementById('chkWa').checked;
             
             const name = nameInput ? nameInput.value.trim() : '';
             const contact = contactInput ? contactInput.value.trim() : '';
@@ -313,22 +346,38 @@
                 return;
             }
 
+            // Calculate active channels for John to boost his revenue potential
+            let channels = [];
+            if (chkFb) channels.push("FB");
+            if (chkTk) channels.push("TikTok");
+            if (chkWa) channels.push("WA");
+            
+            let channelString = channels.length > 0 ? ` [Channels: ${channels.join(', ')}]` : " [No Channels Linked]";
+
             const lockedIndex = goldSlotsData.findIndex(s => s.status === "Locked");
             if (lockedIndex === -1) {
-                logAction("Error: All Gold Key slots are currently claimed.");
+                logAction("Error: All Gold Key resident slots are currently claimed.");
                 return;
             }
 
-            goldSlotsData[lockedIndex] = { name: `${name} (${contact})`, status: "Active", value: "£0.10" };
+            goldSlotsData[lockedIndex] = { 
+                name: `${name} (${contact})${channelString}`, 
+                status: "Active", 
+                value: channels.length > 0 ? `£0.${channels.length}0` : "£0.10" 
+            };
+            
             renderSlots();
-            logAction(`Worker profile registered: ${name} -> Golden Key slot ${lockedIndex + 11} unlocked!`);
+            logAction(`Resident registered: ${name} unlocked slot ${lockedIndex + 11} with ${channels.length} active share channels!`);
 
             nameInput.value = '';
             contactInput.value = '';
+            document.getElementById('chkFb').checked = false;
+            document.getElementById('chkTk').checked = false;
+            document.getElementById('chkWa').checked = false;
         }
 
         function deployShare() {
-            logAction("Daily sticker share deployed. Amazon Associate tags and Monzo vaults active...");
+            logAction("Daily community network share deployed across resident channels. Multipliers applied.");
         }
 
         renderSlots();
