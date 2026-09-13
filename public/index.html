@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRCENK // Enterprise Billboard Marketplace</title>
+    <title>SHOULDER TO SHOULDER // Enterprise Economy Engine</title>
     <style>
         :root {
             --bg-deep: #0a0b0e;
@@ -30,7 +30,7 @@
 
         .platform-container {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1150px;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 12px;
@@ -77,6 +77,17 @@
             background: rgba(0, 86, 179, 0.15);
             color: #4da6ff;
             border: 1px solid rgba(0, 86, 179, 0.4);
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-architect {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--accent-gold);
+            border: 1px solid rgba(212, 175, 55, 0.4);
             padding: 6px 12px;
             font-size: 11px;
             font-weight: 700;
@@ -144,7 +155,7 @@
             border-color: var(--accent-green);
         }
 
-        .slots-container {
+        .slots-container, .gold-slots-container {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 8px;
@@ -181,14 +192,6 @@
             border: 1px solid rgba(204, 0, 0, 0.3);
             background: rgba(204, 0, 0, 0.03);
             color: #ff4d4d;
-        }
-
-        /* Gold Key Extra 10 Slots Styling */
-        .gold-slots-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin: 15px 0;
         }
 
         .slot-box.gold-filled {
@@ -246,13 +249,42 @@
             padding: 12px;
         }
 
-        .btn-gold {
-            background: var(--accent-gold);
-            color: var(--bg-deep);
-            width: 100%;
-            padding: 12px;
-            margin-top: 8px;
+        /* Drop-Off Keys / Vault Control Section */
+        .vault-control-panel {
+            background: var(--bg-deep);
+            border: 1px solid var(--accent-gold);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .vault-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .vault-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .vault-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .vault-val {
+            font-size: 12px;
             font-weight: 800;
+            color: var(--accent-gold);
         }
 
         .ticker-box {
@@ -321,17 +353,18 @@
     <div class="modal-overlay" id="goldModal">
         <div class="modal">
             <h2 style="color: var(--accent-gold); border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-top:0;">GOLD KEY: JOB CENTRE ACTIVATION</h2>
-            <p style="font-size: 13px; line-height: 1.5; color: var(--text-muted);">You have reached your core 10-slot capacity (£1.00 base). To unlock the <strong>Extra 10 Gold Key Job Search Slots</strong> and scale toward £2.00–£4.00 daily breathing space, verify with the Job Centre task engine.</p>
-            <button class="btn btn-gold" style="margin-top: 15px;" onclick="unlockGoldSlots()">ACTIVATE JOB CENTRE GOLD KEY</button>
+            <p style="font-size: 13px; line-height: 1.5; color: var(--text-muted);">You have reached your core 10-slot capacity (£1.00 base). To unlock the <strong>Extra 10 Gold Key Job Search Slots</strong> and scale toward breathing space, verify with the Job Centre task engine.</p>
+            <button class="btn" style="background: var(--accent-gold); color: var(--bg-deep); width: 100%; padding: 12px; margin-top: 15px; font-weight: 800;" onclick="unlockGoldSlots()">ACTIVATE JOB CENTRE GOLD KEY</button>
         </div>
     </div>
 
     <div class="platform-container">
         <header>
-            <h1>MRCENK <span style="color: var(--accent-red);">//</span> ENTERPRISE BILLBOARD</h1>
+            <h1>SHOULDER TO SHOULDER <span style="color: var(--accent-gold);">//</span> ECONOMY ENGINE</h1>
             <div class="header-badges">
-                <div class="badge-secure">SALVATION ARMY 20% SECURED</div>
-                <div class="badge-jobcentre">UNIVERSAL CREDIT JOB SEARCH ACTIVE</div>
+                <div class="badge-secure">SALVATION ARMY 20%</div>
+                <div class="badge-jobcentre">JOB CENTRE 20%</div>
+                <div class="badge-architect">ARCHITECT 60%</div>
             </div>
         </header>
 
@@ -360,6 +393,26 @@
                     <div class="campaign-item"><span>Tesco Local</span> <button class="btn" onclick="addSlot('Tesco', 'https://tesco.com')">Add</button></div>
                     <div class="campaign-item"><span>Local Hostel Network</span> <button class="btn" onclick="addSlot('HostelNet', 'https://hostelnet.com')">Add</button></div>
                 </div>
+
+                <!-- Drop-Off Keys / Vault Control Panel -->
+                <div class="vault-control-panel">
+                    <h2 style="font-size: 12px; color: var(--accent-gold); border: none; margin-bottom: 8px; padding: 0;">Drop-Off Keys // Vault Payout Split</h2>
+                    <div class="vault-stats">
+                        <div class="vault-box">
+                            <span class="vault-label">Worker / Family</span>
+                            <span class="vault-val" id="workerShare">£0.00</span>
+                        </div>
+                        <div class="vault-box">
+                            <span class="vault-label">Anchors (40%)</span>
+                            <span class="vault-val" id="anchorShare">£0.00</span>
+                        </div>
+                        <div class="vault-box">
+                            <span class="vault-label">Architect (60%)</span>
+                            <span class="vault-val" id="architectShare">£0.00</span>
+                        </div>
+                    </div>
+                    <button class="btn" style="background: var(--accent-gold); color: var(--bg-deep); width: 100%; font-weight: 800;" onclick="executeDropOffKey()">EXECUTE DROP-OFF VAULT DISBURSEMENT</button>
+                </div>
             </div>
 
             <!-- Right Panel: Core Matrix & Gold Key Extra 10 Slots -->
@@ -381,8 +434,8 @@
                     <div class="slot-box locked" id="s10"><span>10: Locked</span><span>£0.00</span></div>
                 </div>
 
-                <h2 style="margin-top: 20px;">3. Gold Key Extra 10 Slots (<span id="goldSlotCount">0</span>/10)</h2>
-                <p style="font-size: 11px; color: var(--text-muted);">Job Centre Task slots: £0.10 each (Scaling to £2.00+ total daily).</p>
+                <h2 style="margin-top: 15px;">3. Gold Key Extra 10 Slots (<span id="goldSlotCount">0</span>/10)</h2>
+                <p style="font-size: 11px; color: var(--text-muted);">Job Centre Task slots: £0.10 each (Scaling total pool).</p>
 
                 <!-- Gold Key Extra Slots Grid 11-20 -->
                 <div class="gold-slots-container" id="goldSlotsGrid">
@@ -404,13 +457,13 @@
 
         <!-- Live Activity Ticker -->
         <div class="panel" style="margin: 0 25px 25px 25px;">
-            <h2>Live System Telemetry & Earnings Counter</h2>
+            <h2>Live System Telemetry & Vault Counter</h2>
             <div class="ticker-box" id="ticker">
-                > Enterprise matrix initialized. 20-slot multi-tier structure ready. Zero duplicates enforced...
+                > Shoulder to shoulder engine active. Drop-off vaults calibrated. Zero duplicates enforced...
             </div>
             <div class="metrics-bar">
                 <span>Total Active Links: <span class="metric-val" id="linkCountDisplay">0</span> / 20</span>
-                <span>Total Daily Earning: <span class="metric-val">£<span id="payoutTotal">0.00</span></span></span>
+                <span>Total Daily Pool: <span class="metric-val">£<span id="payoutTotal">0.00</span></span></span>
             </div>
         </div>
     </div>
@@ -455,7 +508,6 @@
                 return;
             }
 
-            // Check if filling core slots (1-10)
             if (filledSlots < 10) {
                 if (filledSlots === 5 && !charityUnlocked) {
                     document.getElementById('charityModal').style.display = 'flex';
@@ -468,7 +520,6 @@
                 return;
             }
 
-            // Check if filling Gold Key extra slots (11-20)
             if (filledSlots === 10) {
                 if (!goldUnlocked) {
                     document.getElementById('goldModal').style.display = 'flex';
@@ -549,14 +600,32 @@
             logAction(`Facebook wall sticker deployed! Active unique links processing: ${totalActive}.`);
         }
 
+        function executeDropOffKey() {
+            let totalActive = filledSlots + goldFilledSlots;
+            if (totalActive === 0) {
+                logAction("Vault empty: No active slots to disburse.");
+                return;
+            }
+            logAction("Drop-off keys executed! Daily pool successfully routed to vaults.");
+        }
+
         function updateMetrics() {
             let totalActive = filledSlots + goldFilledSlots;
             document.getElementById('slotCount').textContent = filledSlots;
             document.getElementById('goldSlotCount').textContent = goldFilledSlots;
             document.getElementById('linkCountDisplay').textContent = totalActive;
             
-            let totalPayout = (totalActive * 0.10).toFixed(2);
-            document.getElementById('payoutTotal').textContent = totalPayout;
+            let totalPool = totalActive * 0.10;
+            document.getElementById('payoutTotal').textContent = totalPool.toFixed(2);
+
+            // Vault Breakdown: Worker keeps core breathing room, 40% to anchors, 60% architect
+            let workerPortion = totalPool * 0.40; // Remaining worker share after splits
+            let anchorPortion = totalPool * 0.40; // 20% Salvation Army + 20% Job Centre
+            let architectPortion = totalPool * 0.60; // Architect / Platform Master share
+
+            document.getElementById('workerShare').textContent = `£${workerPortion.toFixed(2)}`;
+            document.getElementById('anchorShare').textContent = `£${anchorPortion.toFixed(2)}`;
+            document.getElementById('architectShare').textContent = `£${architectPortion.toFixed(2)}`;
         }
 
         function logAction(text) {
