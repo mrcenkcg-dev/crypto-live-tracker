@@ -9,8 +9,10 @@
             --bg-deep: #0a0b0e;
             --surface: #14171f;
             --surface-card: #1c212c;
-            --accent-red: #ff334b;
+            --accent-red: #cc0000;
+            --accent-blue: #0056b3;
             --accent-green: #00ff88;
+            --accent-gold: #d4af37;
             --text-main: #f0f2f5;
             --text-muted: #8b949e;
             --border: #2d3748;
@@ -28,7 +30,7 @@
 
         .platform-container {
             width: 100%;
-            max-width: 1050px;
+            max-width: 1100px;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 12px;
@@ -43,6 +45,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         h1 {
@@ -52,10 +56,27 @@
             font-weight: 800;
         }
 
+        .header-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .badge-secure {
-            background: rgba(255, 51, 75, 0.15);
-            color: var(--accent-red);
-            border: 1px solid rgba(255, 51, 75, 0.4);
+            background: rgba(204, 0, 0, 0.15);
+            color: #ff4d4d;
+            border: 1px solid rgba(204, 0, 0, 0.4);
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-jobcentre {
+            background: rgba(0, 86, 179, 0.15);
+            color: #4da6ff;
+            border: 1px solid rgba(0, 86, 179, 0.4);
             padding: 6px 12px;
             font-size: 11px;
             font-weight: 700;
@@ -65,12 +86,12 @@
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1.2fr;
+            grid-template-columns: 1fr 1.3fr;
             gap: 20px;
             padding: 25px;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
@@ -126,7 +147,7 @@
         .slots-container {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            gap: 8px;
             margin: 15px 0;
         }
 
@@ -134,7 +155,7 @@
             background: var(--bg-deep);
             border: 1px dashed var(--border);
             border-radius: 6px;
-            height: 65px;
+            height: 60px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -157,9 +178,29 @@
         }
 
         .slot-box.locked {
-            border: 1px solid rgba(255, 51, 75, 0.3);
-            background: rgba(255, 51, 75, 0.03);
-            color: var(--accent-red);
+            border: 1px solid rgba(204, 0, 0, 0.3);
+            background: rgba(204, 0, 0, 0.03);
+            color: #ff4d4d;
+        }
+
+        /* Gold Key Extra 10 Slots Styling */
+        .gold-slots-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .slot-box.gold-filled {
+            border: 1px solid var(--accent-gold);
+            background: rgba(212, 175, 55, 0.08);
+            color: var(--text-main);
+        }
+
+        .slot-box.gold-locked {
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: rgba(212, 175, 55, 0.03);
+            color: var(--accent-gold);
         }
 
         .campaign-list {
@@ -203,6 +244,15 @@
             color: white;
             width: 100%;
             padding: 12px;
+        }
+
+        .btn-gold {
+            background: var(--accent-gold);
+            color: var(--bg-deep);
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            font-weight: 800;
         }
 
         .ticker-box {
@@ -262,15 +312,27 @@
     <div class="modal-overlay" id="charityModal">
         <div class="modal">
             <h2 style="color: var(--accent-red); border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-top:0;">CHARITY GATE: 2ND CHANCE</h2>
-            <p style="font-size: 13px; line-height: 1.5; color: var(--text-muted);">First 5 slots active (£0.50). To unlock slots 6–10, double your share capability, and target the full <strong>£1.00 daily board value</strong>, connect with our Salvation Army trust anchor.</p>
+            <p style="font-size: 13px; line-height: 1.5; color: var(--text-muted);">First 5 slots active (£0.50). To unlock slots 6–10, double your share capability, and anchor your community trust, connect with our Salvation Army partner.</p>
             <button class="btn btn-red" style="margin-top: 15px;" onclick="unlockSecondHalf()">SUPPORT SALVATION ARMY & UNLOCK</button>
+        </div>
+    </div>
+
+    <!-- Gold Key Modal -->
+    <div class="modal-overlay" id="goldModal">
+        <div class="modal">
+            <h2 style="color: var(--accent-gold); border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-top:0;">GOLD KEY: JOB CENTRE ACTIVATION</h2>
+            <p style="font-size: 13px; line-height: 1.5; color: var(--text-muted);">You have reached your core 10-slot capacity (£1.00 base). To unlock the <strong>Extra 10 Gold Key Job Search Slots</strong> and scale toward £2.00–£4.00 daily breathing space, verify with the Job Centre task engine.</p>
+            <button class="btn btn-gold" style="margin-top: 15px;" onclick="unlockGoldSlots()">ACTIVATE JOB CENTRE GOLD KEY</button>
         </div>
     </div>
 
     <div class="platform-container">
         <header>
             <h1>MRCENK <span style="color: var(--accent-red);">//</span> ENTERPRISE BILLBOARD</h1>
-            <div class="badge-secure">SALVATION ARMY 20% SECURED</div>
+            <div class="header-badges">
+                <div class="badge-secure">SALVATION ARMY 20% SECURED</div>
+                <div class="badge-jobcentre">UNIVERSAL CREDIT JOB SEARCH ACTIVE</div>
+            </div>
         </header>
 
         <div class="dashboard-grid">
@@ -282,8 +344,8 @@
                 <!-- Business Self-Service Input Form -->
                 <div style="background: var(--bg-deep); padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px;">
                     <div class="form-group">
-                        <label>Business / Storefront Name</label>
-                        <input type="text" id="bizName" class="form-control" placeholder="e.g. Visionary Partner">
+                        <label>Business / Job Search Name</label>
+                        <input type="text" id="bizName" class="form-control" placeholder="e.g. Visionary Partner or Job Task">
                     </div>
                     <div class="form-group">
                         <label>Target Unique URL</label>
@@ -300,23 +362,40 @@
                 </div>
             </div>
 
-            <!-- Right Panel: Your 10-Slot Billboard Matrix -->
+            <!-- Right Panel: Core Matrix & Gold Key Extra 10 Slots -->
             <div class="panel">
-                <h2>2. 10-Slot Matrix (<span id="slotCount">0</span>/10)</h2>
-                <p style="font-size: 11px; color: var(--text-muted);">Unique links only. Each active slot adds £0.10 daily.</p>
+                <h2>2. Core 10-Slot Matrix (<span id="slotCount">0</span>/10)</h2>
+                <p style="font-size: 11px; color: var(--text-muted);">Standard slots: £0.10 each (Max £1.00 base).</p>
 
-                <!-- Slots Grid 1-10 -->
+                <!-- Core Slots Grid 1-10 -->
                 <div class="slots-container" id="slotsGrid">
-                    <div class="slot-box locked" id="s1"><span>01: Empty</span><span style="color:var(--text-muted);">£0.00</span></div>
-                    <div class="slot-box locked" id="s2"><span>02: Empty</span><span style="color:var(--text-muted);">£0.00</span></div>
-                    <div class="slot-box locked" id="s3"><span>03: Empty</span><span style="color:var(--text-muted);">£0.00</span></div>
-                    <div class="slot-box locked" id="s4"><span>04: Empty</span><span style="color:var(--text-muted);">£0.00</span></div>
-                    <div class="slot-box locked" id="s5"><span>05: Empty</span><span style="color:var(--text-muted);">£0.00</span></div>
-                    <div class="slot-box locked" id="s6"><span>06: Locked</span><span style="color:var(--text-muted);">£0.00</span></div>
-                    <div class="slot-box locked" id="s7"><span>07: Locked</span><span style="color:var(--text-muted);">£0.00</span></div>
-                    <div class="slot-box locked" id="s8"><span>08: Locked</span><span style="color:var(--text-muted);">£0.00</span></div>
-                    <div class="slot-box locked" id="s9"><span>09: Locked</span><span style="color:var(--text-muted);">£0.00</span></div>
-                    <div class="slot-box locked" id="s10"><span>10: Locked</span><span style="color:var(--text-muted);">£0.00</span></div>
+                    <div class="slot-box locked" id="s1"><span>01: Empty</span><span>£0.00</span></div>
+                    <div class="slot-box locked" id="s2"><span>02: Empty</span><span>£0.00</span></div>
+                    <div class="slot-box locked" id="s3"><span>03: Empty</span><span>£0.00</span></div>
+                    <div class="slot-box locked" id="s4"><span>04: Empty</span><span>£0.00</span></div>
+                    <div class="slot-box locked" id="s5"><span>05: Empty</span><span>£0.00</span></div>
+                    <div class="slot-box locked" id="s6"><span>06: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box locked" id="s7"><span>07: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box locked" id="s8"><span>08: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box locked" id="s9"><span>09: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box locked" id="s10"><span>10: Locked</span><span>£0.00</span></div>
+                </div>
+
+                <h2 style="margin-top: 20px;">3. Gold Key Extra 10 Slots (<span id="goldSlotCount">0</span>/10)</h2>
+                <p style="font-size: 11px; color: var(--text-muted);">Job Centre Task slots: £0.10 each (Scaling to £2.00+ total daily).</p>
+
+                <!-- Gold Key Extra Slots Grid 11-20 -->
+                <div class="gold-slots-container" id="goldSlotsGrid">
+                    <div class="slot-box gold-locked" id="s11"><span>11: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box gold-locked" id="s12"><span>12: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box gold-locked" id="s13"><span>13: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box gold-locked" id="s14"><span>14: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box gold-locked" id="s15"><span>15: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box gold-locked" id="s16"><span>16: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box gold-locked" id="s17"><span>17: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box gold-locked" id="s18"><span>18: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box gold-locked" id="s19"><span>19: Locked</span><span>£0.00</span></div>
+                    <div class="slot-box gold-locked" id="s20"><span>20: Locked</span><span>£0.00</span></div>
                 </div>
 
                 <button class="btn btn-red" onclick="deployShare()">DEPLOY DAILY FACEBOOK STICKER SHARE</button>
@@ -325,20 +404,22 @@
 
         <!-- Live Activity Ticker -->
         <div class="panel" style="margin: 0 25px 25px 25px;">
-            <h2>Live System Telemetry & Link Counter</h2>
+            <h2>Live System Telemetry & Earnings Counter</h2>
             <div class="ticker-box" id="ticker">
-                > Enterprise matrix initialized. Zero duplicates enforced. Ready for deployment...
+                > Enterprise matrix initialized. 20-slot multi-tier structure ready. Zero duplicates enforced...
             </div>
             <div class="metrics-bar">
-                <span>Active Unique Links: <span class="metric-val" id="linkCountDisplay">0</span> / 10</span>
-                <span>Daily Board Total: <span class="metric-val">£<span id="payoutTotal">0.00</span></span></span>
+                <span>Total Active Links: <span class="metric-val" id="linkCountDisplay">0</span> / 20</span>
+                <span>Total Daily Earning: <span class="metric-val">£<span id="payoutTotal">0.00</span></span></span>
             </div>
         </div>
     </div>
 
     <script>
         let filledSlots = 0;
+        let goldFilledSlots = 0;
         let charityUnlocked = false;
+        let goldUnlocked = false;
         let activeShares = 0;
         let activeLinksSet = new Set();
 
@@ -369,34 +450,57 @@
         }
 
         function addSlot(brandName, url) {
-            if (filledSlots >= 10) {
-                logAction("Matrix capacity reached (10/10 slots).");
-                return;
-            }
-
             if (activeLinksSet.has(url)) {
                 logAction(`Duplicate prevented: "${url}" is already active.`);
                 return;
             }
 
-            if (filledSlots === 5 && !charityUnlocked) {
-                document.getElementById('charityModal').style.display = 'flex';
+            // Check if filling core slots (1-10)
+            if (filledSlots < 10) {
+                if (filledSlots === 5 && !charityUnlocked) {
+                    document.getElementById('charityModal').style.display = 'flex';
+                    return;
+                }
+                activeLinksSet.add(url);
+                filledSlots++;
+                updateSlotUI(filledSlots, brandName);
+                updateMetrics();
                 return;
             }
 
-            activeLinksSet.add(url);
-            filledSlots++;
-            
-            let slotValue = (filledSlots * 0.10).toFixed(2);
-            updateSlotUI(filledSlots, brandName, slotValue);
-            updateMetrics();
+            // Check if filling Gold Key extra slots (11-20)
+            if (filledSlots === 10) {
+                if (!goldUnlocked) {
+                    document.getElementById('goldModal').style.display = 'flex';
+                    return;
+                }
+                if (goldFilledSlots < 10) {
+                    activeLinksSet.add(url);
+                    goldFilledSlots++;
+                    updateGoldSlotUI(goldFilledSlots + 10, brandName);
+                    updateMetrics();
+                    return;
+                }
+            }
+
+            logAction("Total capacity reached (20/20 slots across core and gold matrix).");
         }
 
-        function updateSlotUI(slotNum, name, val) {
+        function updateSlotUI(slotNum, name) {
             const slotEl = document.getElementById('s' + slotNum);
-            slotEl.innerHTML = `<span style="font-size:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%; color:var(--text-main);">${slotNum < 10 ? '0'+slotNum : slotNum}: ${name}</span><span style="color:var(--accent-green); font-size:11px; margin-top:2px;">£${val}</span>`;
+            let slotValue = (slotNum * 0.10).toFixed(2);
+            slotEl.innerHTML = `<span style="font-size:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%; color:var(--text-main);">${slotNum < 10 ? '0'+slotNum : slotNum}: ${name}</span><span style="color:var(--accent-green); font-size:11px; margin-top:2px;">£${slotValue}</span>`;
             slotEl.className = "slot-box filled";
-            logAction(`Slot #${slotNum} activated (${name}) -> Total: £${val}`);
+            logAction(`Core Slot #${slotNum} activated (${name})`);
+        }
+
+        function updateGoldSlotUI(slotNum, name) {
+            const slotEl = document.getElementById('s' + slotNum);
+            let totalActive = filledSlots + goldFilledSlots;
+            let slotValue = (totalActive * 0.10).toFixed(2);
+            slotEl.innerHTML = `<span style="font-size:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%; color:var(--text-main);">${slotNum}: ${name}</span><span style="color:var(--accent-gold); font-size:11px; margin-top:2px;">£${slotValue}</span>`;
+            slotEl.className = "slot-box gold-filled";
+            logAction(`Gold Key Slot #${slotNum} activated (${name})`);
         }
 
         function unlockSecondHalf() {
@@ -407,33 +511,52 @@
             for(let i = 6; i <= 10; i++) {
                 const el = document.getElementById('s' + i);
                 if(el.classList.contains('locked')) {
-                    el.innerHTML = `<span>${i < 10 ? '0'+i : i}: Ready</span><span style="color:var(--text-muted);">£0.00</span>`;
+                    el.innerHTML = `<span>0${i}: Ready</span><span>£0.00</span>`;
                     el.style.borderColor = "var(--border)";
                     el.style.background = "var(--bg-deep)";
                 }
             }
         }
 
+        function unlockGoldSlots() {
+            goldUnlocked = true;
+            document.getElementById('goldModal').style.display = 'none';
+            logAction("Gold Key Job Centre engine unlocked! Extra 10 task slots ready.");
+            
+            for(let i = 11; i <= 20; i++) {
+                const el = document.getElementById('s' + i);
+                if(el.classList.contains('gold-locked')) {
+                    el.innerHTML = `<span>${i}: Task Ready</span><span style="color:var(--accent-gold);">£0.00</span>`;
+                    el.style.borderColor = "rgba(212, 175, 55, 0.4)";
+                    el.style.background = "var(--bg-deep)";
+                }
+            }
+        }
+
         function deployShare() {
-            if (filledSlots === 0) {
+            let totalActive = filledSlots + goldFilledSlots;
+            if (totalActive === 0) {
                 logAction("Error: Add active unique links before deploying share.");
                 return;
             }
-            let allowedShares = charityUnlocked ? 2 : 1;
+            let allowedShares = charityUnlocked ? (goldUnlocked ? 3 : 2) : 1;
             if (activeShares >= allowedShares) {
-                logAction("Daily share ceiling reached for current tier.");
+                logAction("Daily share ceiling reached for current active tier.");
                 return;
             }
 
             activeShares++;
-            logAction(`Facebook wall sticker deployed! Active unique links processing: ${filledSlots}.`);
+            logAction(`Facebook wall sticker deployed! Active unique links processing: ${totalActive}.`);
         }
 
         function updateMetrics() {
+            let totalActive = filledSlots + goldFilledSlots;
             document.getElementById('slotCount').textContent = filledSlots;
-            document.getElementById('linkCountDisplay').textContent = filledSlots;
-            let payout = (filledSlots * 0.10).toFixed(2);
-            document.getElementById('payoutTotal').textContent = payout;
+            document.getElementById('goldSlotCount').textContent = goldFilledSlots;
+            document.getElementById('linkCountDisplay').textContent = totalActive;
+            
+            let totalPayout = (totalActive * 0.10).toFixed(2);
+            document.getElementById('payoutTotal').textContent = totalPayout;
         }
 
         function logAction(text) {
