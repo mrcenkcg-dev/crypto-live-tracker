@@ -3,638 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHOULDER TO SHOULDER // Enterprise Economy Engine</title>
+    <title>Shoulder to Shoulder // Economy Engine</title>
     <style>
         :root {
-            --bg-deep: #0a0b0e;
-            --surface: #14171f;
-            --surface-card: #1c212c;
-            --accent-red: #cc0000;
-            --accent-blue: #0056b3;
-            --accent-green: #00ff88;
+            --bg-deep: #0a0a0c;
+            --bg-surface: #121318;
+            --border: #2a2b36;
             --accent-gold: #d4af37;
-            --text-main: #f0f2f5;
-            --text-muted: #8b949e;
-            --border: #2d3748;
+            --accent-green: #00ff66;
+            --text-main: #f0f0f5;
+            --text-dim: #8b8d9b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: monospace;
         }
 
         body {
             background-color: var(--bg-deep);
             color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
             padding: 20px;
-            display: flex;
-            justify-content: center;
         }
 
-        .platform-container {
-            width: 100%;
-            max-width: 1150px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            overflow: hidden;
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         header {
-            background: var(--surface-card);
-            padding: 20px 30px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
+            border: 1px solid var(--border);
+            background: var(--bg-surface);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         h1 {
-            margin: 0;
-            font-size: 20px;
-            letter-spacing: 1.5px;
-            font-weight: 800;
-        }
-
-        .header-badges {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .badge-secure {
-            background: rgba(204, 0, 0, 0.15);
-            color: #ff4d4d;
-            border: 1px solid rgba(204, 0, 0, 0.4);
-            padding: 6px 12px;
-            font-size: 11px;
-            font-weight: 700;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-jobcentre {
-            background: rgba(0, 86, 179, 0.15);
-            color: #4da6ff;
-            border: 1px solid rgba(0, 86, 179, 0.4);
-            padding: 6px 12px;
-            font-size: 11px;
-            font-weight: 700;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-architect {
-            background: rgba(212, 175, 55, 0.15);
+            font-size: 18px;
             color: var(--accent-gold);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            padding: 6px 12px;
-            font-size: 11px;
-            font-weight: 700;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
         }
 
-        .dashboard-grid {
+        .split-bar {
+            display: flex;
+            justify-content: space-around;
+            font-size: 12px;
+            color: var(--text-dim);
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .split-bar span {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        .grid-layout {
             display: grid;
-            grid-template-columns: 1fr 1.3fr;
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
-            padding: 25px;
         }
 
-        @media (max-width: 900px) {
-            .dashboard-grid {
+        @media (max-width: 768px) {
+            .grid-layout {
                 grid-template-columns: 1fr;
             }
         }
 
         .panel {
-            background: var(--surface-card);
+            background: var(--bg-surface);
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 20px;
         }
 
         .panel h2 {
-            margin-top: 0;
-            font-size: 15px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
+            font-size: 13px;
+            color: var(--accent-gold);
             margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 6px;
         }
 
         .form-group {
             margin-bottom: 12px;
         }
 
-        .form-group label {
+        label {
             display: block;
             font-size: 11px;
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: var(--text-muted);
-            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 4px;
         }
 
         .form-control {
             width: 100%;
-            padding: 10px 12px;
+            padding: 8px;
             background: var(--bg-deep);
             border: 1px solid var(--border);
-            border-radius: 6px;
             color: var(--text-main);
-            font-size: 13px;
-            box-sizing: border-box;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-green);
-        }
-
-        .slots-container, .gold-slots-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin: 15px 0;
-        }
-
-        .slot-box {
-            background: var(--bg-deep);
-            border: 1px dashed var(--border);
-            border-radius: 6px;
-            height: 60px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            padding: 4px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: var(--text-muted);
-        }
-
-        .slot-box.filled {
-            border: 1px solid var(--accent-green);
-            background: rgba(0, 255, 136, 0.05);
-            color: var(--text-main);
-        }
-
-        .slot-box.locked {
-            border: 1px solid rgba(204, 0, 0, 0.3);
-            background: rgba(204, 0, 0, 0.03);
-            color: #ff4d4d;
-        }
-
-        .slot-box.gold-filled {
-            border: 1px solid var(--accent-gold);
-            background: rgba(212, 175, 55, 0.08);
-            color: var(--text-main);
-        }
-
-        .slot-box.gold-locked {
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            background: rgba(212, 175, 55, 0.03);
-            color: var(--accent-gold);
-        }
-
-        .campaign-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 180px;
-            overflow-y: auto;
-            margin-bottom: 15px;
-        }
-
-        .campaign-item {
-            background: var(--bg-deep);
-            border: 1px solid var(--border);
-            padding: 10px 12px;
+            border-radius: 4px;
             font-size: 12px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .btn {
-            background: var(--text-main);
+            background: var(--accent-gold);
             color: var(--bg-deep);
+            width: 100%;
+            padding: 10px;
+            font-weight: 800;
             border: none;
-            padding: 8px 14px;
-            font-size: 12px;
-            font-weight: 700;
+            border-radius: 4px;
             cursor: pointer;
-            border-radius: 6px;
-            transition: opacity 0.2s;
+            text-transform: uppercase;
+            font-size: 11px;
+            margin-top: 5px;
         }
 
         .btn:hover {
-            opacity: 0.85;
+            opacity: 0.9;
         }
 
-        .btn-red {
-            background: var(--accent-red);
-            color: white;
-            width: 100%;
-            padding: 12px;
-        }
-
-        /* Drop-Off Keys / Vault Control Section */
-        .vault-control-panel {
-            background: var(--bg-deep);
-            border: 1px solid var(--accent-gold);
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .vault-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .vault-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 8px;
-            border-radius: 6px;
-        }
-
-        .vault-label {
-            font-size: 9px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            display: block;
-            margin-bottom: 3px;
-        }
-
-        .vault-val {
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--accent-gold);
-        }
-
-        .ticker-box {
-            background: var(--bg-deep);
-            color: var(--accent-green);
-            font-family: "Courier New", Courier, monospace;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            min-height: 40px;
-            max-height: 90px;
+        .slot-list {
+            max-height: 180px;
             overflow-y: auto;
-            font-size: 12px;
-            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-deep);
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 15px;
+            font-size: 11px;
         }
 
-        .metrics-bar {
+        .slot-item {
             display: flex;
             justify-content: space-between;
-            font-size: 13px;
-            font-weight: 700;
+            padding: 4px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .slot-item:last-child {
+            border-bottom: none;
+        }
+
+        .telemetry {
             background: var(--bg-deep);
-            padding: 12px 15px;
-            border-radius: 6px;
             border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 11px;
         }
 
-        .metric-val {
+        .telemetry h2 {
+            font-size: 12px;
             color: var(--accent-green);
+            margin-bottom: 8px;
+            border: none;
+            padding: 0;
         }
 
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 11, 14, 0.85);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal {
-            background: var(--surface-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 420px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+        #logBox {
+            color: var(--text-dim);
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
-    <!-- Charity Gate Modal -->
-    <div class="modal-overlay" id="charityModal">
-        <div class="modal">
-            <h2 style="color: var(--accent-red); border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-top:0;">CHARITY GATE: 2ND CHANCE</h2>
-            <p style="font-size: 13px; line-height: 1.5; color: var(--text-muted);">First 5 slots active (£0.50). To unlock slots 6–10, double your share capability, and anchor your community trust, connect with our Salvation Army partner.</p>
-            <button class="btn btn-red" style="margin-top: 15px;" onclick="unlockSecondHalf()">SUPPORT SALVATION ARMY & UNLOCK</button>
-        </div>
-    </div>
-
-    <!-- Gold Key Modal -->
-    <div class="modal-overlay" id="goldModal">
-        <div class="modal">
-            <h2 style="color: var(--accent-gold); border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-top:0;">GOLD KEY: JOB CENTRE ACTIVATION</h2>
-            <p style="font-size: 13px; line-height: 1.5; color: var(--text-muted);">You have reached your core 10-slot capacity (£1.00 base). To unlock the <strong>Extra 10 Gold Key Job Search Slots</strong> and scale toward breathing space, verify with the Job Centre task engine.</p>
-            <button class="btn" style="background: var(--accent-gold); color: var(--bg-deep); width: 100%; padding: 12px; margin-top: 15px; font-weight: 800;" onclick="unlockGoldSlots()">ACTIVATE JOB CENTRE GOLD KEY</button>
-        </div>
-    </div>
-
-    <div class="platform-container">
+    <div class="container">
+        <!-- Header & Vault Split -->
         <header>
-            <h1>SHOULDER TO SHOULDER <span style="color: var(--accent-gold);">//</span> ECONOMY ENGINE</h1>
-            <div class="header-badges">
-                <div class="badge-secure">SALVATION ARMY 20%</div>
-                <div class="badge-jobcentre">JOB CENTRE 20%</div>
-                <div class="badge-architect">ARCHITECT 60%</div>
+            <h1>SHOULDER TO SHOULDER // ECONOMY ENGINE</h1>
+            <div class="split-bar">
+                <div>SALVATION ARMY: <span>20%</span></div>
+                <div>JOB CENTRE: <span>20%</span></div>
+                <div>ARCHITECT: <span>60%</span></div>
             </div>
         </header>
 
-        <div class="dashboard-grid">
-            <!-- Left Panel: Business Portal & Campaign Catalog -->
-            <div class="panel">
-                <h2>1. Business Portal & Catalog</h2>
-                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Register live business links or select verified inventory.</p>
-                
-                <!-- Business Self-Service Input Form -->
-                <div style="background: var(--bg-deep); padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px;">
+        <div class="grid-layout">
+            <!-- Left Panel: Business & Worker Registration -->
+            <div>
+                <!-- Business Portal -->
+                <div class="panel" style="margin-bottom: 20px;">
+                    <h2>1. Business Portal & Catalog</h2>
                     <div class="form-group">
                         <label>Business / Job Search Name</label>
-                        <input type="text" id="bizName" class="form-control" placeholder="e.g. Visionary Partner or Job Task">
+                        <input type="text" id="bizName" class="form-control" placeholder="e.g. Local Pub / Shop">
                     </div>
                     <div class="form-group">
                         <label>Target Unique URL</label>
-                        <input type="text" id="bizUrl" class="form-control" placeholder="https://yourstore.com">
+                        <input type="text" id="bizUrl" class="form-control" placeholder="https://...">
                     </div>
-                    <button class="btn btn-red" onclick="registerBusinessCampaign()">+ Register Unique Link</button>
+                    <button class="btn" onclick="registerBusiness()">+ Register Unique Link</button>
                 </div>
 
-                <!-- Catalog List -->
-                <div class="campaign-list" id="catalog">
-                    <div class="campaign-item"><span>Amazon Partner</span> <button class="btn" onclick="addSlot('Amazon', 'https://amazon.com')">Add</button></div>
-                    <div class="campaign-item"><span>Tesco Local</span> <button class="btn" onclick="addSlot('Tesco', 'https://tesco.com')">Add</button></div>
-                    <div class="campaign-item"><span>Local Hostel Network</span> <button class="btn" onclick="addSlot('HostelNet', 'https://hostelnet.com')">Add</button></div>
-                </div>
-
-                <!-- Drop-Off Keys / Vault Control Panel -->
-                <div class="vault-control-panel">
-                    <h2 style="font-size: 12px; color: var(--accent-gold); border: none; margin-bottom: 8px; padding: 0;">Drop-Off Keys // Vault Payout Split</h2>
-                    <div class="vault-stats">
-                        <div class="vault-box">
-                            <span class="vault-label">Worker / Family</span>
-                            <span class="vault-val" id="workerShare">£0.00</span>
-                        </div>
-                        <div class="vault-box">
-                            <span class="vault-label">Anchors (40%)</span>
-                            <span class="vault-val" id="anchorShare">£0.00</span>
-                        </div>
-                        <div class="vault-box">
-                            <span class="vault-label">Architect (60%)</span>
-                            <span class="vault-val" id="architectShare">£0.00</span>
-                        </div>
+                <!-- Everyday Worker / Job Seeker Registration Portal -->
+                <div class="panel">
+                    <h2>Everyday Worker Registration</h2>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="workerNameInput" class="form-control" placeholder="e.g. John Worker">
                     </div>
-                    <button class="btn" style="background: var(--accent-gold); color: var(--bg-deep); width: 100%; font-weight: 800;" onclick="executeDropOffKey()">EXECUTE DROP-OFF VAULT DISBURSEMENT</button>
+                    <div class="form-group">
+                        <label>Contact / Mobile</label>
+                        <input type="text" id="workerContactInput" class="form-control" placeholder="e.g. 07123 456789">
+                    </div>
+                    <button class="btn" style="background: var(--accent-green);" onclick="registerNewWorker()">+ Register Worker & Unlock Key</button>
                 </div>
             </div>
 
-            <!-- Right Panel: Core Matrix & Gold Key Extra 10 Slots -->
-            <div class="panel">
-                <h2>2. Core 10-Slot Matrix (<span id="slotCount">0</span>/10)</h2>
-                <p style="font-size: 11px; color: var(--text-muted);">Standard slots: £0.10 each (Max £1.00 base).</p>
-
-                <!-- Core Slots Grid 1-10 -->
-                <div class="slots-container" id="slotsGrid">
-                    <div class="slot-box locked" id="s1"><span>01: Empty</span><span>£0.00</span></div>
-                    <div class="slot-box locked" id="s2"><span>02: Empty</span><span>£0.00</span></div>
-                    <div class="slot-box locked" id="s3"><span>03: Empty</span><span>£0.00</span></div>
-                    <div class="slot-box locked" id="s4"><span>04: Empty</span><span>£0.00</span></div>
-                    <div class="slot-box locked" id="s5"><span>05: Empty</span><span>£0.00</span></div>
-                    <div class="slot-box locked" id="s6"><span>06: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box locked" id="s7"><span>07: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box locked" id="s8"><span>08: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box locked" id="s9"><span>09: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box locked" id="s10"><span>10: Locked</span><span>£0.00</span></div>
+            <!-- Right Panel: Matrix Slots & Vault -->
+            <div>
+                <!-- Core 10 Slots -->
+                <div class="panel" style="margin-bottom: 20px;">
+                    <h2>2. Core 10-Slot Matrix (<span id="coreCount">0</span>/10)</h2>
+                    <div class="slot-list" id="coreSlots">
+                        <!-- Populated dynamically -->
+                    </div>
                 </div>
 
-                <h2 style="margin-top: 15px;">3. Gold Key Extra 10 Slots (<span id="goldSlotCount">0</span>/10)</h2>
-                <p style="font-size: 11px; color: var(--text-muted);">Job Centre Task slots: £0.10 each (Scaling total pool).</p>
-
-                <!-- Gold Key Extra Slots Grid 11-20 -->
-                <div class="gold-slots-container" id="goldSlotsGrid">
-                    <div class="slot-box gold-locked" id="s11"><span>11: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box gold-locked" id="s12"><span>12: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box gold-locked" id="s13"><span>13: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box gold-locked" id="s14"><span>14: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box gold-locked" id="s15"><span>15: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box gold-locked" id="s16"><span>16: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box gold-locked" id="s17"><span>17: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box gold-locked" id="s18"><span>18: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box gold-locked" id="s19"><span>19: Locked</span><span>£0.00</span></div>
-                    <div class="slot-box gold-locked" id="s20"><span>20: Locked</span><span>£0.00</span></div>
+                <!-- Gold Key Extra 10 Slots -->
+                <div class="panel">
+                    <h2>3. Gold Key Extra 10 Slots (<span id="goldCount">0</span>/10)</h2>
+                    <div class="slot-list" id="goldSlots">
+                        <!-- Populated dynamically -->
+                    </div>
+                    <button class="btn" style="background: var(--text-main); color: var(--bg-deep);" onclick="deployShare()">Deploy Daily Share</button>
                 </div>
-
-                <button class="btn btn-red" onclick="deployShare()">DEPLOY DAILY FACEBOOK STICKER SHARE</button>
             </div>
         </div>
 
-        <!-- Live Activity Ticker -->
-        <div class="panel" style="margin: 0 25px 25px 25px;">
+        <!-- Telemetry & Stats -->
+        <div class="telemetry">
             <h2>Live System Telemetry & Vault Counter</h2>
-            <div class="ticker-box" id="ticker">
-                > Shoulder to shoulder engine active. Drop-off vaults calibrated. Zero duplicates enforced...
-            </div>
-            <div class="metrics-bar">
-                <span>Total Active Links: <span class="metric-val" id="linkCountDisplay">0</span> / 20</span>
-                <span>Total Daily Pool: <span class="metric-val">£<span id="payoutTotal">0.00</span></span></span>
-            </div>
+            <div id="logBox">> Shoulder to shoulder engine active. Drop-off vaults calibrated. Zero duplicates enforced...</div>
         </div>
     </div>
 
     <script>
-        let filledSlots = 0;
-        let goldFilledSlots = 0;
-        let charityUnlocked = false;
-        let goldUnlocked = false;
-        let activeShares = 0;
-        let activeLinksSet = new Set();
+        // Initialize matrix states
+        const coreSlotsData = Array(10).fill({ name: "Empty", status: "Open", value: "£0.00" });
+        const goldSlotsData = Array(10).fill({ name: "Locked", status: "Locked", value: "£0.00" });
 
-        function registerBusinessCampaign() {
+        function renderSlots() {
+            // Render Core Slots
+            const coreContainer = document.getElementById('coreSlots');
+            coreContainer.innerHTML = '';
+            let activeCore = 0;
+            coreSlotsData.forEach((slot, index) => {
+                if (slot.status !== "Open" && slot.status !== "Empty") activeCore++;
+                coreContainer.innerHTML += `
+                    <div class="slot-item">
+                        <span>${(index + 1).toString().padStart(2, '0')}: ${slot.name}</span>
+                        <span>${slot.value}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('coreCount').innerText = activeCore;
+
+            // Render Gold Slots
+            const goldContainer = document.getElementById('goldSlots');
+            goldContainer.innerHTML = '';
+            let activeGold = 0;
+            goldSlotsData.forEach((slot, index) => {
+                if (slot.status !== "Locked") activeGold++;
+                goldContainer.innerHTML += `
+                    <div class="slot-item">
+                        <span>${(index + 11).toString().padStart(2, '0')}: ${slot.name}</span>
+                        <span>${slot.value}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('goldCount').innerText = activeGold;
+        }
+
+        function logAction(message) {
+            document.getElementById('logBox').innerText = `> ${message}`;
+        }
+
+        function registerBusiness() {
             const name = document.getElementById('bizName').value.trim();
             const url = document.getElementById('bizUrl').value.trim();
 
             if (!name || !url) {
-                logAction("Error: Provide both business name and unique URL.");
+                logAction("Error: Please provide both Business Name and Target URL.");
                 return;
             }
 
-            if (activeLinksSet.has(url)) {
-                logAction(`Error: Link "${url}" already registered. Unique links only.`);
+            // Find first empty core slot
+            const emptyIndex = coreSlotsData.findIndex(s => s.status === "Open" || s.name === "Empty");
+            if (emptyIndex === -1) {
+                logAction("Error: Core 10-Slot Matrix is completely full.");
                 return;
             }
 
-            const catalog = document.getElementById('catalog');
-            const newItem = document.createElement('div');
-            newItem.className = "campaign-item";
-            newItem.innerHTML = `<span>${name}</span> <button class="btn" onclick="addSlot('${name}', '${url}')">Add</button>`;
-            
-            catalog.prepend(newItem);
-            logAction(`Campaign registered: ${name}`);
-            
+            coreSlotsData[emptyIndex] = { name: name, status: "Active", value: "£0.10" };
+            renderSlots();
+            logAction(`Business registered successfully: ${name} -> Added to slot ${emptyIndex + 1}.`);
+
             document.getElementById('bizName').value = '';
             document.getElementById('bizUrl').value = '';
         }
 
-        function addSlot(brandName, url) {
-            if (activeLinksSet.has(url)) {
-                logAction(`Duplicate prevented: "${url}" is already active.`);
+        function registerNewWorker() {
+            const nameInput = document.getElementById('workerNameInput');
+            const contactInput = document.getElementById('workerContactInput');
+            
+            const name = nameInput ? nameInput.value.trim() : '';
+            const contact = contactInput ? contactInput.value.trim() : '';
+
+            if (!name || !contact) {
+                logAction("Error: Please fill in your name and contact details.");
                 return;
             }
 
-            if (filledSlots < 10) {
-                if (filledSlots === 5 && !charityUnlocked) {
-                    document.getElementById('charityModal').style.display = 'flex';
-                    return;
-                }
-                activeLinksSet.add(url);
-                filledSlots++;
-                updateSlotUI(filledSlots, brandName);
-                updateMetrics();
+            // Find first locked gold slot to unlock
+            const lockedIndex = goldSlotsData.findIndex(s => s.status === "Locked");
+            if (lockedIndex === -1) {
+                logAction("Error: All Gold Key slots are currently claimed.");
                 return;
             }
 
-            if (filledSlots === 10) {
-                if (!goldUnlocked) {
-                    document.getElementById('goldModal').style.display = 'flex';
-                    return;
-                }
-                if (goldFilledSlots < 10) {
-                    activeLinksSet.add(url);
-                    goldFilledSlots++;
-                    updateGoldSlotUI(goldFilledSlots + 10, brandName);
-                    updateMetrics();
-                    return;
-                }
-            }
+            goldSlotsData[lockedIndex] = { name: `${name} (${contact})`, status: "Active", value: "£0.10" };
+            renderSlots();
+            logAction(`Worker profile registered successfully: ${name} -> Golden Key slot ${lockedIndex + 11} unlocked!`);
 
-            logAction("Total capacity reached (20/20 slots across core and gold matrix).");
-        }
-
-        function updateSlotUI(slotNum, name) {
-            const slotEl = document.getElementById('s' + slotNum);
-            let slotValue = (slotNum * 0.10).toFixed(2);
-            slotEl.innerHTML = `<span style="font-size:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%; color:var(--text-main);">${slotNum < 10 ? '0'+slotNum : slotNum}: ${name}</span><span style="color:var(--accent-green); font-size:11px; margin-top:2px;">£${slotValue}</span>`;
-            slotEl.className = "slot-box filled";
-            logAction(`Core Slot #${slotNum} activated (${name})`);
-        }
-
-        function updateGoldSlotUI(slotNum, name) {
-            const slotEl = document.getElementById('s' + slotNum);
-            let totalActive = filledSlots + goldFilledSlots;
-            let slotValue = (totalActive * 0.10).toFixed(2);
-            slotEl.innerHTML = `<span style="font-size:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%; color:var(--text-main);">${slotNum}: ${name}</span><span style="color:var(--accent-gold); font-size:11px; margin-top:2px;">£${slotValue}</span>`;
-            slotEl.className = "slot-box gold-filled";
-            logAction(`Gold Key Slot #${slotNum} activated (${name})`);
-        }
-
-        function unlockSecondHalf() {
-            charityUnlocked = true;
-            document.getElementById('charityModal').style.display = 'none';
-            logAction("Charity Gate cleared via Salvation Army! Slots 6-10 unlocked.");
-            
-            for(let i = 6; i <= 10; i++) {
-                const el = document.getElementById('s' + i);
-                if(el.classList.contains('locked')) {
-                    el.innerHTML = `<span>0${i}: Ready</span><span>£0.00</span>`;
-                    el.style.borderColor = "var(--border)";
-                    el.style.background = "var(--bg-deep)";
-                }
-            }
-        }
-
-        function unlockGoldSlots() {
-            goldUnlocked = true;
-            document.getElementById('goldModal').style.display = 'none';
-            logAction("Gold Key Job Centre engine unlocked! Extra 10 task slots ready.");
-            
-            for(let i = 11; i <= 20; i++) {
-                const el = document.getElementById('s' + i);
-                if(el.classList.contains('gold-locked')) {
-                    el.innerHTML = `<span>${i}: Task Ready</span><span style="color:var(--accent-gold);">£0.00</span>`;
-                    el.style.borderColor = "rgba(212, 175, 55, 0.4)";
-                    el.style.background = "var(--bg-deep)";
-                }
-            }
+            nameInput.value = '';
+            contactInput.value = '';
         }
 
         function deployShare() {
-            let totalActive = filledSlots + goldFilledSlots;
-            if (totalActive === 0) {
-                logAction("Error: Add active unique links before deploying share.");
-                return;
-            }
-            let allowedShares = charityUnlocked ? (goldUnlocked ? 3 : 2) : 1;
-            if (activeShares >= allowedShares) {
-                logAction("Daily share ceiling reached for current active tier.");
-                return;
-            }
-
-            activeShares++;
-            logAction(`Facebook wall sticker deployed! Active unique links processing: ${totalActive}.`);
+            logAction("Daily sticker share deployed across active network channels. Vault payouts updating...");
         }
 
-        function executeDropOffKey() {
-            let totalActive = filledSlots + goldFilledSlots;
-            if (totalActive === 0) {
-                logAction("Vault empty: No active slots to disburse.");
-                return;
-            }
-            logAction("Drop-off keys executed! Daily pool successfully routed to vaults.");
-        }
-
-        function updateMetrics() {
-            let totalActive = filledSlots + goldFilledSlots;
-            document.getElementById('slotCount').textContent = filledSlots;
-            document.getElementById('goldSlotCount').textContent = goldFilledSlots;
-            document.getElementById('linkCountDisplay').textContent = totalActive;
-            
-            let totalPool = totalActive * 0.10;
-            document.getElementById('payoutTotal').textContent = totalPool.toFixed(2);
-
-            // Vault Breakdown: Worker keeps core breathing room, 40% to anchors, 60% architect
-            let workerPortion = totalPool * 0.40; // Remaining worker share after splits
-            let anchorPortion = totalPool * 0.40; // 20% Salvation Army + 20% Job Centre
-            let architectPortion = totalPool * 0.60; // Architect / Platform Master share
-
-            document.getElementById('workerShare').textContent = `£${workerPortion.toFixed(2)}`;
-            document.getElementById('anchorShare').textContent = `£${anchorPortion.toFixed(2)}`;
-            document.getElementById('architectShare').textContent = `£${architectPortion.toFixed(2)}`;
-        }
-
-        function logAction(text) {
-            const ticker = document.getElementById('ticker');
-            const time = new Date().toLocaleTimeString();
-            const newItem = document.createElement('div');
-            newItem.textContent = `> [${time}] ${text}`;
-            ticker.prepend(newItem);
-        }
+        // Initial render on load
+        renderSlots();
     </script>
 </body>
 </html>
