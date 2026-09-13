@@ -131,11 +131,12 @@
         .slot-box {
             border: 2px dashed #777;
             background: #fafafa;
-            height: 45px;
+            height: 55px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
@@ -238,7 +239,7 @@
     <div class="modal-overlay" id="charityModal">
         <div class="modal">
             <h2 style="color: var(--salvation-red); border-bottom: 2px solid var(--salvation-black); padding-bottom: 8px; margin-top:0;">CHARITY GATE: 2ND CHANCE</h2>
-            <p style="font-size: 14px; line-height: 1.4;">You have filled your first 5 slots! To unlock slots 6 through 10, double your share capability, and target the full <strong>£1.00 daily board value</strong>, connect with our Salvation Army trust anchor.</p>
+            <p style="font-size: 14px; line-height: 1.4;">You have filled your first 5 slots (£0.50)! To unlock slots 6 through 10, double your share capability, and target the full <strong>£1.00 daily board value</strong>, connect with our Salvation Army trust anchor.</p>
             <button class="btn btn-red" style="width:100%; padding: 12px; font-size: 14px; margin-top: 10px;" onclick="unlockSecondHalf()">SUPPORT SALVATION ARMY & UNLOCK</button>
         </div>
     </div>
@@ -268,31 +269,31 @@
                     <button class="btn btn-red" style="width: 100%;" onclick="registerBusinessCampaign()">+ Register Live Campaign</button>
                 </div>
 
-                <!-- Catalog List (Cleaned of outside noise) -->
+                <!-- Catalog List -->
                 <div class="campaign-list" id="catalog">
-                    <div class="campaign-item"><span>Amazon Partner</span> <button class="btn" onclick="addSlot('Amazon')">+ Add</button></div>
-                    <div class="campaign-item"><span>Tesco Local</span> <button class="btn" onclick="addSlot('Tesco')">+ Add</button></div>
-                    <div class="campaign-item"><span>Local Hostel Network</span> <button class="btn" onclick="addSlot('HostelNet')">+ Add</button></div>
+                    <div class="campaign-item"><span>Amazon Partner</span> <button class="btn" onclick="addSlot('Amazon', 'https://amazon.com')">+ Add</button></div>
+                    <div class="campaign-item"><span>Tesco Local</span> <button class="btn" onclick="addSlot('Tesco', 'https://tesco.com')">+ Add</button></div>
+                    <div class="campaign-item"><span>Local Hostel Network</span> <button class="btn" onclick="addSlot('HostelNet', 'https://hostelnet.com')">+ Add</button></div>
                 </div>
             </div>
 
             <!-- Right Panel: Your 10-Slot Billboard Matrix -->
             <div class="panel">
                 <h2>2. Your 10-Slot Billboard Matrix (<span id="slotCount">0</span>/10)</h2>
-                <p style="font-size: 12px; color: #555;">Slots 1–5: Standard | Slots 6–10: Unlocked via Charity Gate</p>
+                <p style="font-size: 12px; color: #555;">Each active link adds precisely £0.10 to your daily board.</p>
 
-                <!-- Slots Grid 1-10 -->
+                <!-- Slots Grid 1-10 with visible Link & Value counting -->
                 <div class="slots-container" id="slotsGrid">
-                    <div class="slot-box locked" id="s1">1: Empty</div>
-                    <div class="slot-box locked" id="s2">2: Empty</div>
-                    <div class="slot-box locked" id="s3">3: Empty</div>
-                    <div class="slot-box locked" id="s4">4: Empty</div>
-                    <div class="slot-box locked" id="s5">5: Empty</div>
-                    <div class="slot-box locked" id="s6">6: Locked</div>
-                    <div class="slot-box locked" id="s7">7: Locked</div>
-                    <div class="slot-box locked" id="s8">8: Locked</div>
-                    <div class="slot-box locked" id="s9">9: Locked</div>
-                    <div class="slot-box locked" id="s10">10: Locked</div>
+                    <div class="slot-box locked" id="s1"><span>1: Empty</span><span style="color:#888;">£0.00</span></div>
+                    <div class="slot-box locked" id="s2"><span>2: Empty</span><span style="color:#888;">£0.00</span></div>
+                    <div class="slot-box locked" id="s3"><span>3: Empty</span><span style="color:#888;">£0.00</span></div>
+                    <div class="slot-box locked" id="s4"><span>4: Empty</span><span style="color:#888;">£0.00</span></div>
+                    <div class="slot-box locked" id="s5"><span>5: Empty</span><span style="color:#888;">£0.00</span></div>
+                    <div class="slot-box locked" id="s6"><span>6: Locked</span><span style="color:#888;">£0.00</span></div>
+                    <div class="slot-box locked" id="s7"><span>7: Locked</span><span style="color:#888;">£0.00</span></div>
+                    <div class="slot-box locked" id="s8"><span>8: Locked</span><span style="color:#888;">£0.00</span></div>
+                    <div class="slot-box locked" id="s9"><span>9: Locked</span><span style="color:#888;">£0.00</span></div>
+                    <div class="slot-box locked" id="s10"><span>10: Locked</span><span style="color:#888;">£0.00</span></div>
                 </div>
 
                 <button class="btn btn-red" style="width: 100%; margin-top: 5px;" onclick="deployShare()">DEPLOY DAILY FACEBOOK STICKER SHARE</button>
@@ -301,13 +302,13 @@
 
         <!-- Live Activity Ticker -->
         <div class="panel" style="background: #fafafa;">
-            <h2>Live System Ticker</h2>
+            <h2>Live System Ticker & Link Counter</h2>
             <div class="ticker-box" id="ticker">
-                > Clean matrix initialized. Visionary framework active. Ready for deployment...
+                > Link counting engine initialized. 0 unique links active. Board value: £0.00. Ready...
             </div>
             <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold;">
-                <span>Active Shares: <span id="shareCount">0</span>/<span id="maxShares">1</span> Daily Drop</span>
-                <span>Daily Board Value: £<span id="payoutTotal">0.00</span> (£1.00 Max)</span>
+                <span>Active Links Count: <span id="linkCountDisplay">0</span> / 10 Unique Links</span>
+                <span>Daily Board Total: £<span id="payoutTotal">0.00</span> (£1.00 Max)</span>
             </div>
         </div>
     </div>
@@ -316,6 +317,7 @@
         let filledSlots = 0;
         let charityUnlocked = false;
         let activeShares = 0;
+        let activeLinksSet = new Set(); // Prevents duplicate links
 
         function registerBusinessCampaign() {
             const name = document.getElementById('bizName').value.trim();
@@ -326,21 +328,31 @@
                 return;
             }
 
+            if (activeLinksSet.has(url)) {
+                logAction(`Error: Link "${url}" is already registered! Unique links only.`);
+                return;
+            }
+
             const catalog = document.getElementById('catalog');
             const newItem = document.createElement('div');
             newItem.className = "campaign-item";
-            newItem.innerHTML = `<span>${name}</span> <button class="btn" onclick="addSlot('${name}')">+ Add</button>`;
+            newItem.innerHTML = `<span>${name}</span> <button class="btn" onclick="addSlot('${name}', '${url}')">+ Add</button>`;
             
             catalog.prepend(newItem);
-            logAction(`New business campaign registered live: ${name}`);
+            logAction(`New business campaign registered live with link: ${name}`);
             
             document.getElementById('bizName').value = '';
             document.getElementById('bizUrl').value = '';
         }
 
-        function addSlot(brandName) {
+        function addSlot(brandName, url) {
             if (filledSlots >= 10) {
                 logAction("Matrix full at 10 slots!");
+                return;
+            }
+
+            if (activeLinksSet.has(url)) {
+                logAction(`Duplicate link detected! "${url}" is already active on your board.`);
                 return;
             }
 
@@ -349,35 +361,37 @@
                 return;
             }
 
+            activeLinksSet.add(url);
             filledSlots++;
-            updateSlotUI(filledSlots, brandName);
+            
+            let slotValue = (filledSlots * 0.10).toFixed(2);
+            updateSlotUI(filledSlots, brandName, slotValue);
             updateMetrics();
         }
 
-        function updateSlotUI(slotNum, name) {
+        function updateSlotUI(slotNum, name, val) {
             const slotEl = document.getElementById('s' + slotNum);
-            slotEl.textContent = `${slotNum}: ${name}`;
+            slotEl.innerHTML = `<span style="font-size:9px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${slotNum}: ${name}</span><span style="color:#004466; font-size:11px;">£${val}</span>`;
             slotEl.className = "slot-box filled";
-            logAction(`Added ${name} to Billboard Slot ${slotNum}.`);
+            logAction(`Link #${slotNum} added (${name}) -> Board value now £${val}`);
         }
 
         function unlockSecondHalf() {
             charityUnlocked = true;
             document.getElementById('charityModal').style.display = 'none';
-            document.getElementById('maxShares').textContent = '2';
-            logAction("Charity Gate cleared via Salvation Army! Slots 6-10 and double share capacity unlocked.");
+            logAction("Charity Gate cleared via Salvation Army! Slots 6-10 unlocked.");
             
             for(let i = 6; i <= 10; i++) {
                 const el = document.getElementById('s' + i);
                 if(el.classList.contains('locked')) {
-                    el.textContent = `${i}: Ready`;
+                    el.innerHTML = `<span>${i}: Ready</span><span style="color:#888;">£0.00</span>`;
                 }
             }
         }
 
         function deployShare() {
             if (filledSlots === 0) {
-                logAction("Error: Add at least one campaign before deploying sticker share.");
+                logAction("Error: Add at least one unique link before deploying sticker share.");
                 return;
             }
             let allowedShares = charityUnlocked ? 2 : 1;
@@ -387,12 +401,12 @@
             }
 
             activeShares++;
-            document.getElementById('shareCount').textContent = activeShares;
-            logAction(`Facebook wall sticker deployed successfully! Share #${activeShares} active.`);
+            logAction(`Facebook wall sticker deployed successfully! Active links working: ${filledSlots}.`);
         }
 
         function updateMetrics() {
             document.getElementById('slotCount').textContent = filledSlots;
+            document.getElementById('linkCountDisplay').textContent = filledSlots;
             let payout = (filledSlots * 0.10).toFixed(2);
             document.getElementById('payoutTotal').textContent = payout;
         }
