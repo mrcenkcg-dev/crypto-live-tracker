@@ -165,17 +165,17 @@
 <body>
 
     <div class="container">
-        <!-- Header Cleaned (No Internal Spits Shown) -->
+        <!-- Header -->
         <header>
             <h1>SHOULDER TO SHOULDER // ECONOMY ENGINE</h1>
         </header>
 
         <div class="grid-layout">
-            <!-- Left Panel: Business & Worker Registration -->
+            <!-- Left Panel: Business, Payout Tags & Worker Registration -->
             <div>
-                <!-- Business Portal -->
+                <!-- Business & Affiliate Portal -->
                 <div class="panel" style="margin-bottom: 20px;">
-                    <h2>1. Business Portal & Catalog</h2>
+                    <h2>1. Business Portal & Vault Payouts</h2>
                     <div class="form-group">
                         <label>Business / Job Search Name</label>
                         <input type="text" id="bizName" class="form-control" placeholder="e.g. Local Pub / Shop">
@@ -184,10 +184,18 @@
                         <label>Target Unique URL</label>
                         <input type="text" id="bizUrl" class="form-control" placeholder="https://...">
                     </div>
-                    <button class="btn" onclick="registerBusiness()">+ Register Unique Link</button>
+                    <div class="form-group">
+                        <label>Amazon Associate Tag</label>
+                        <input type="text" id="amazonTag" class="form-control" value="mrcenk20-21">
+                    </div>
+                    <div class="form-group">
+                        <label>Monzo Payout Tag / Handle</label>
+                        <input type="text" id="monzoTag" class="form-control" placeholder="e.g. $mrcenk or phone">
+                    </div>
+                    <button class="btn" onclick="registerBusiness()">+ Register Unique Link & Payout</button>
                 </div>
 
-                <!-- Everyday Worker / Job Seeker Registration Portal -->
+                <!-- Everyday Worker Registration -->
                 <div class="panel">
                     <h2>Everyday Worker Registration</h2>
                     <div class="form-group">
@@ -226,17 +234,15 @@
         <!-- Telemetry & Stats -->
         <div class="telemetry">
             <h2>Live System Telemetry & Vault Counter</h2>
-            <div id="logBox">> Shoulder to shoulder engine active. Drop-off vaults calibrated. Zero duplicates enforced...</div>
+            <div id="logBox">> Shoulder to shoulder engine active. Amazon tag [mrcenk20-21] and Monzo vaults calibrated...</div>
         </div>
     </div>
 
     <script>
-        // Initialize matrix states
         const coreSlotsData = Array(10).fill({ name: "Empty", status: "Open", value: "£0.00" });
         const goldSlotsData = Array(10).fill({ name: "Locked", status: "Locked", value: "£0.00" });
 
         function renderSlots() {
-            // Render Core Slots
             const coreContainer = document.getElementById('coreSlots');
             coreContainer.innerHTML = '';
             let activeCore = 0;
@@ -251,7 +257,6 @@
             });
             document.getElementById('coreCount').innerText = activeCore;
 
-            // Render Gold Slots
             const goldContainer = document.getElementById('goldSlots');
             goldContainer.innerHTML = '';
             let activeGold = 0;
@@ -274,22 +279,23 @@
         function registerBusiness() {
             const name = document.getElementById('bizName').value.trim();
             const url = document.getElementById('bizUrl').value.trim();
+            const amazon = document.getElementById('amazonTag').value.trim();
+            const monzo = document.getElementById('monzoTag').value.trim();
 
             if (!name || !url) {
-                logAction("Error: Please provide both Business Name and Target URL.");
+                logAction("Error: Please provide Business Name and Target URL.");
                 return;
             }
 
-            // Find first empty core slot
             const emptyIndex = coreSlotsData.findIndex(s => s.status === "Open" || s.name === "Empty");
             if (emptyIndex === -1) {
                 logAction("Error: Core 10-Slot Matrix is completely full.");
                 return;
             }
 
-            coreSlotsData[emptyIndex] = { name: name, status: "Active", value: "£0.10" };
+            coreSlotsData[emptyIndex] = { name: `${name} [AMZ: ${amazon}]`, status: "Active", value: "£0.10" };
             renderSlots();
-            logAction(`Business registered successfully: ${name} -> Added to slot ${emptyIndex + 1}.`);
+            logAction(`Business registered: ${name} linked with Amazon (${amazon}) & Monzo payout.`);
 
             document.getElementById('bizName').value = '';
             document.getElementById('bizUrl').value = '';
@@ -307,7 +313,6 @@
                 return;
             }
 
-            // Find first locked gold slot to unlock
             const lockedIndex = goldSlotsData.findIndex(s => s.status === "Locked");
             if (lockedIndex === -1) {
                 logAction("Error: All Gold Key slots are currently claimed.");
@@ -316,17 +321,16 @@
 
             goldSlotsData[lockedIndex] = { name: `${name} (${contact})`, status: "Active", value: "£0.10" };
             renderSlots();
-            logAction(`Worker profile registered successfully: ${name} -> Golden Key slot ${lockedIndex + 11} unlocked!`);
+            logAction(`Worker profile registered: ${name} -> Golden Key slot ${lockedIndex + 11} unlocked!`);
 
             nameInput.value = '';
             contactInput.value = '';
         }
 
         function deployShare() {
-            logAction("Daily sticker share deployed across active network channels. Vault payouts updating...");
+            logAction("Daily sticker share deployed. Amazon Associate tags and Monzo vaults active...");
         }
 
-        // Initial render on load
         renderSlots();
     </script>
 </body>
