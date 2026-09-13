@@ -3,170 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Big Together</title>
+    <title>MRCENK - Community Marketplace</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f4f4f9; color: #333; }
-        .card { background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        input, select, button { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; }
-        button { background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .error { color: red; font-weight: bold; }
-        .section-box { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .stats { font-size: 0.9em; color: #555; margin-top: 5px; }
-        .share-btn { background: #28a745; margin-top: 5px; }
-        .fb-btn { background: #1877f2; margin-top: 5px; }
-        .native-btn { background: #6f42c1; margin-top: 5px; }
+        :root {
+            --salvation-red: #cc0000;
+            --salvation-black: #111111;
+            --clipboard-bg: #f4f1ea;
+            --paper-bg: #ffffff;
+            --border-color: #333333;
+        }
+
+        body {
+            background-color: var(--clipboard-bg);
+            color: var(--salvation-black);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .clipboard {
+            background: var(--paper-bg);
+            border: 4px solid var(--salvation-black);
+            border-radius: 4px;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+            padding: 40px 30px 30px 30px;
+            margin-top: 20px;
+        }
+
+        /* Clipboard Clip at Top */
+        .clipboard::before {
+            content: "";
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 35px;
+            background: var(--salvation-black);
+            border-radius: 4px;
+            border: 2px solid #555;
+        }
+
+        header {
+            border-bottom: 3px solid var(--salvation-red);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 1px;
+            color: var(--salvation-black);
+        }
+
+        .badge {
+            background: var(--salvation-red);
+            color: white;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 2px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 700px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            border: 2px solid var(--salvation-black);
+            padding: 20px;
+            background: #fff;
+            border-radius: 2px;
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            font-size: 18px;
+            border-bottom: 2px solid var(--salvation-black);
+            padding-bottom: 8px;
+        }
+
+        .action-button {
+            background: var(--salvation-red);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: background 0.2s;
+            margin-top: 15px;
+        }
+
+        .action-button:hover {
+            background: #a30000;
+        }
+
+        .ticker-box {
+            background: #111;
+            color: #00ff66;
+            font-family: monospace;
+            padding: 12px;
+            border-radius: 2px;
+            min-height: 40px;
+            max-height: 100px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Get Big Together</h1>
-    <p>Complete tasks, track your activity, and choose your preferred reward path.</p>
+    <div class="clipboard">
+        <header>
+            <h1>MRCENK <span style="color: var(--salvation-red);">//</span> COMMUNITY ENGINE</h1>
+            <div class="badge">SALVATION ARMY PARTNERSHIP (20%)</div>
+        </header>
 
-    <!-- Payout Option Section -->
-    <div class="section-box">
-        <h3>Choose Payout Option</h3>
-        <select id="payoutOption" onchange="togglePayoutInput()">
-            <option value="gift_card">Gift Cards</option>
-            <option value="bank">Bank / Monzo</option>
-            <option value="charity">Charity Donation</option>
-            <option value="community_fund">Community Fund</option>
-        </select>
-        <input type="text" id="payoutDetails" placeholder="Enter your email or account details..." style="display:none;">
-        <button type="button" onclick="savePayoutChoice()">Save Payout Preference</button>
+        <div class="grid-container">
+            <!-- Business Owner Panel -->
+            <div class="panel">
+                <h2>Business Portal</h2>
+                <p>Connect your storefront directly to active community members and hostel networks with zero upfront ad fees.</p>
+                <div style="margin-top: 20px;">
+                    <strong>Active Campaign:</strong> Rock Steady Security<br>
+                    <strong>Status:</strong> Live & Connected
+                </div>
+                <button class="action-button" onclick="simClick('Business View')">VIEW LIVE TRAFFIC</button>
+            </div>
+
+            <!-- Clicker / Billboard Panel -->
+            <div class="panel">
+                <h2>Clicker Portal</h2>
+                <p>Tap your link to support local businesses and the community fund. One click, instant tracking.</p>
+                <div style="margin-top: 20px;">
+                    <strong>Your Share:</strong> Active<br>
+                    <strong>Charity Split:</strong> 20% Locked
+                </div>
+                <button class="action-button" onclick="simClick('User Click')">TAP TO ACTIVATE</button>
+            </div>
+        </div>
+
+        <!-- Live Activity Ticker -->
+        <div class="panel" style="background: #fafafa;">
+            <h2>Live Activity Ticker</h2>
+            <div class="ticker-box" id="ticker">
+                > System initialized. Ready for user actions...
+            </div>
+            <div class="stats">
+                <span>Total Clicks Today: <span id="clickCount">0</span></span>
+                <span>Community Fund: £<span id="fundTotal">0.00</span></span>
+            </div>
+        </div>
     </div>
-
-    <!-- Add Resource Section -->
-    <div class="section-box">
-        <h3>Add Your Resource / Board</h3>
-        <form id="submitForm">
-            <select id="boardType">
-                <option value="Social Reach Partner">Social Reach Partner</option>
-                <option value="System Provider Offer">System Provider Offer</option>
-            </select>
-            <input type="text" id="name" placeholder="Name / Title" required>
-            <input type="text" id="reach" placeholder="Reach / Goal (e.g. 500 views)">
-            <input type="url" id="link" placeholder="Link URL (https://...)" required>
-            <button type="submit">Add to Board</button>
-        </form>
-    </div>
-
-    <!-- Community & System Boards Section -->
-    <h3>Community & System Boards</h3>
-    <div id="boardContainer">Loading boards...</div>
 
     <script>
-        function togglePayoutInput() {
-            const option = document.getElementById('payoutOption').value;
-            const detailsInput = document.getElementById('payoutDetails');
-            if (option === 'bank' || option === 'gift_card') {
-                detailsInput.style.display = 'block';
-                detailsInput.placeholder = option === 'bank' ? 'Enter Sort Code & Account / Monzo tag' : 'Enter Gift Card email address';
-            } else {
-                detailsInput.style.display = 'none';
-            }
+        let clicks = 0;
+        let fund = 0.00;
+
+        function simClick(source) {
+            clicks++;
+            fund += 0.05;
+            const ticker = document.getElementById('ticker');
+            const time = new Date().toLocaleTimeString();
+            
+            const newItem = document.createElement('div');
+            newItem.textContent = `> [${time}] Action registered via ${source}. Value distributed.`;
+            ticker.prepend(newItem);
+
+            document.getElementById('clickCount').textContent = clicks;
+            document.getElementById('fundTotal').textContent = fund.toFixed(2);
         }
-
-        async function loadBoards() {
-            try {
-                const response = await fetch('/api/board');
-                if (!response.ok) throw new Error('Network response was not ok');
-                const boards = await response.json();
-                
-                const container = document.getElementById('boardContainer');
-                container.innerHTML = '';
-                
-                if (boards.length === 0) {
-                    container.innerHTML = '<p>No boards available right now.</p>';
-                    return;
-                }
-
-                boards.forEach(board => {
-                    const encodedLink = encodeURIComponent(board.link);
-                    const fbShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedLink}`;
-
-                    const div = document.createElement('div');
-                    div.className = 'card';
-                    div.innerHTML = `
-                        <strong>${board.name}</strong> (${board.type})<br>
-                        <span>Reach Target: ${board.reach || 'N/A'}</span><br>
-                        <div class="stats">
-                            🔥 Clicks: <strong>${board.clicks || 0}</strong> | 👥 Joined / Interactions: <strong>${board.joined || 0}</strong>
-                        </div>
-                        <a href="${board.link}" target="_blank" onclick="logClick('${board.name}', '${board.link}')">Visit Link</a>
-                        <button class="share-btn" onclick="copyLink('${board.link}')">Copy Link to Share</button>
-                        <a href="${fbShareUrl}" target="_blank" style="text-decoration: none;">
-                            <button class="fb-btn" type="button">Share Directly to Facebook</button>
-                        </a>
-                        <button class="native-btn" onclick="nativeShare('${board.name}', '${board.link}')">Share to TikTok / Instagram / Apps</button>
-                    `;
-                    container.appendChild(div);
-                });
-            } catch (err) {
-                document.getElementById('boardContainer').innerHTML = '<p class="error">Failed to load boards.</p>';
-            }
-        }
-
-        function copyLink(link) {
-            navigator.clipboard.writeText(link);
-            alert('Link copied to clipboard! Ready to share.');
-        }
-
-        async function nativeShare(name, link) {
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: name,
-                        text: `Check out this offer: ${name}`,
-                        url: link,
-                    });
-                } catch (err) {
-                    console.log('Share canceled or failed', err);
-                }
-            } else {
-                copyLink(link);
-                alert('Direct device sharing is not supported on this browser. Link copied instead!');
-            }
-        }
-
-        async function logClick(name, link) {
-            await fetch('/api/click', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, link })
-            });
-            setTimeout(loadBoards, 500);
-        }
-
-        function savePayoutChoice() {
-            const choice = document.getElementById('payoutOption').value;
-            const details = document.getElementById('payoutDetails').value;
-            alert(`Payout preference saved for ${choice}!\nDetails: ${details || 'None provided'}`);
-        }
-
-        document.getElementById('submitForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const type = document.getElementById('boardType').value;
-            const name = document.getElementById('name').value;
-            const reach = document.getElementById('reach').value;
-            const link = document.getElementById('link').value;
-
-            const res = await fetch('/api/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type, name, reach, link })
-            });
-
-            if (res.ok) {
-                document.getElementById('submitForm').reset();
-                loadBoards();
-            } else {
-                alert('Error submitting resource.');
-            }
-        });
-
-        togglePayoutInput();
-        loadBoards();
     </script>
 </body>
 </html>
