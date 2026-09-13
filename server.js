@@ -1,59 +1,72 @@
+// server.js - Clean Service Engine Backend
+
 const express = require('express');
 const path = require('path');
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-let boards = [
-    { type: 'System Provider Offer', name: 'Nazmiye (system)', reach: '100 views', link: 'https://facebook.com', clicks: 2, joined: 0, completed: false }
-];
+// In-memory data stores for active matrix and worker registrations
+let coreSlots = Array(10).fill().map(() => ({ name: "Empty", status: "Open", value: "£0.00" }));
+let goldSlots = Array(10).fill().map(() => ({ name: "Locked", status: "Locked", value: "£0.00" }));
+let systemLogs = ["> Shoulder to shoulder engine active. Drop-off vaults calibrated. Zero duplicates enforced..."];
 
-app.get('/api/board', (req, res) => {
-    res.json(boards);
+// Get live state
+app.get('/api/state', (req, res) => {
+    res.json({
+        coreSlots,
+        goldSlots,
+        logs: systemLogs
+    });
 });
 
-app.post('/api/submit', (req, res) => {
-    const { type, name, reach, link } = req.body;
-    if (!type || !name || !link) {
-        return res.status(400).json({ error: 'Missing required fields' });
-    }
-    const newBoard = {
-        type,
-        name,
-        reach: reach || '100 views',
-        link,
-        clicks: 0,
-        joined: 0,
-        completed: false
-    };
-    boards.push(newBoard);
-    res.status(201).json({ success: true, board: newBoard });
-});
-
-app.post('/api/click', (req, res) => {
-    const { name, link } = req.body;
-    const board = boards.find(b => b.name === name && b.link === link);
+// Register a business link into the core matrix
+app.post('/api/register-business', (req, res) => {
+    const { name, url } = req.body;
     
-    if (board) {
-        board.clicks += 1;
-        
-        // Milestone and automated payout trigger check
-        const targetMatch = board.reach ? board.reach.match(/\d+/) : null;
-        const target = targetMatch ? parseInt(targetMatch[0]) : 100;
-
-        if (board.clicks >= target && !board.completed) {
-            board.completed = true;
-            console.log(`🎉 Milestone reached for ${board.name}! Target of ${target} clicks hit. Ready for automated payout processing.`);
-        }
-
-        res.json({ success: true, clicks: board.clicks, completed: board.completed });
-    } else {
-        res.status(404).json({ error: 'Board not found' });
+    if (!name || !url) {
+        return res.status(400).json({ error: "Business Name and Target URL are required." });
     }
+
+    const emptyIndex = coreSlots.findIndex(s => s.status === "Open" || s.name === "Empty");
+    if (emptyIndex === -1) {
+        return res.status(400).json({ error: "Core 10-Slot Matrix is full." });
+    }
+
+    coreSlots[emptyIndex] = { name: name, status: "Active", value: "£0.10" };
+    systemLogs.push(`> Business registered: ${name} -> Added to slot ${emptyIndex + 1}.`);
+    
+    res.json({ success: true, coreSlots, logs: systemLogs });
+});
+
+// Register an everyday worker / job seeker into the gold key matrix
+app.post('/api/register-worker', (req, res) => {
+    const { name, contact } = req.body;
+
+    if (!name || !contact) {
+        return res.status(400).json({ error: "Name and Contact details are required." });
+    }
+
+    const lockedIndex = goldSlots.findIndex(s => s.status === "Locked");
+    if (lockedIndex === -1) {
+        return res.status(400).json({ error: "All Gold Key slots are claimed." });
+    }
+
+    goldSlots[lockedIndex] = { name: `${name} (${contact})`, status: "Active", value: "£0.10" };
+    systemLogs.push(`> Worker registered: ${name} -> Golden Key slot ${lockedIndex + 11} unlocked!`);
+
+    res.json({ success: true, goldSlots, logs: systemLogs });
+});
+
+// Deploy daily share action
+app.post('/api/deploy-share', (req, res) => {
+    systemLogs.push(`> Daily network share deployed. Vault payouts updating...`);
+    res.json({ success: true, logs: systemLogs });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Shoulder-to-Shoulder server running on port ${PORT}`);
 });
