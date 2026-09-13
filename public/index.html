@@ -100,6 +100,27 @@
             padding-bottom: 6px;
         }
 
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 3px;
+            color: #444;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+
         .slots-container {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -120,6 +141,8 @@
             transition: all 0.2s;
             text-align: center;
             padding: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .slot-box.filled {
@@ -138,7 +161,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            max-height: 160px;
+            max-height: 180px;
             overflow-y: auto;
             margin-bottom: 10px;
         }
@@ -147,7 +170,7 @@
             background: #f9f9f9;
             border: 1px solid #ccc;
             padding: 8px;
-            font-size: 13px;
+            font-size: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -215,36 +238,48 @@
     <div class="modal-overlay" id="charityModal">
         <div class="modal">
             <h2 style="color: var(--salvation-red); border-bottom: 2px solid var(--salvation-black); padding-bottom: 8px; margin-top:0;">CHARITY GATE: 2ND CHANCE</h2>
-            <p style="font-size: 14px; line-height: 1.4;">You have filled your first 5 slots! To unlock slots 6 through 10 and double your share capability to <strong>£1.00/day</strong>, connect with our trust anchor.</p>
+            <p style="font-size: 14px; line-height: 1.4;">You have filled your first 5 slots! To unlock slots 6 through 10, double your share capability, and target the full <strong>£1.00 daily board value</strong>, connect with our Salvation Army trust anchor.</p>
             <button class="btn btn-red" style="width:100%; padding: 12px; font-size: 14px; margin-top: 10px;" onclick="unlockSecondHalf()">SUPPORT SALVATION ARMY & UNLOCK</button>
         </div>
     </div>
 
     <div class="clipboard">
         <header>
-            <h1>MRCENK <span style="color: var(--salvation-red);">//</span> 10-SLOT BILLBOARD</h1>
+            <h1>MRCENK <span style="color: var(--salvation-red);">//</span> 10-SLOT BILLBOARD MARKETPLACE</h1>
             <div class="badge">SALVATION ARMY 20% SECURED</div>
         </header>
 
         <div class="dashboard-grid">
-            <!-- Left Panel: Campaign Catalog -->
+            <!-- Left Panel: Business Portal & Campaign Catalog -->
             <div class="panel">
-                <h2>1. Choose Campaign Catalog</h2>
-                <p style="font-size: 13px; color: #555;">Pick brands to fill your personal wall matrix.</p>
+                <h2>1. Business Portal & Catalog</h2>
+                <p style="font-size: 12px; color: #555; margin-bottom: 10px;">Register a live business spot or pick from active inventory.</p>
                 
+                <!-- Business Self-Service Input Form -->
+                <div style="background: #f4f1ea; padding: 10px; border: 1px solid #ccc; margin-bottom: 10px; border-radius: 2px;">
+                    <div class="form-group">
+                        <label>Business / Storefront Name</label>
+                        <input type="text" id="bizName" class="form-control" placeholder="e.g. Rock Steady Security">
+                    </div>
+                    <div class="form-group">
+                        <label>Target Link / Storefront URL</label>
+                        <input type="text" id="bizUrl" class="form-control" placeholder="https://yourstore.com">
+                    </div>
+                    <button class="btn btn-red" style="width: 100%;" onclick="registerBusinessCampaign()">+ Register Live Campaign</button>
+                </div>
+
+                <!-- Catalog List -->
                 <div class="campaign-list" id="catalog">
                     <div class="campaign-item"><span>Amazon Partner</span> <button class="btn" onclick="addSlot('Amazon')">+ Add</button></div>
                     <div class="campaign-item"><span>Tesco Local</span> <button class="btn" onclick="addSlot('Tesco')">+ Add</button></div>
                     <div class="campaign-item"><span>Rock Steady Security</span> <button class="btn" onclick="addSlot('RockSteady')">+ Add</button></div>
-                    <div class="campaign-item"><span>Local Hostel Network</span> <button class="btn" onclick="addSlot('HostelNet')">+ Add</button></div>
-                    <div class="campaign-item"><span>Anadolu Psych Records</span> <button class="btn" onclick="addSlot('PsychMusic')">+ Add</button></div>
                 </div>
             </div>
 
             <!-- Right Panel: Your 10-Slot Billboard Matrix -->
             <div class="panel">
-                <h2>2. Your Billboard Matrix (<span id="slotCount">0</span>/10)</h2>
-                <p style="font-size: 13px; color: #555;">Slots 1–5: Standard | Slots 6–10: Unlocked via Charity Gate</p>
+                <h2>2. Your 10-Slot Billboard Matrix (<span id="slotCount">0</span>/10)</h2>
+                <p style="font-size: 12px; color: #555;">Slots 1–5: Standard | Slots 6–10: Unlocked via Charity Gate</p>
 
                 <!-- Slots Grid 1-10 -->
                 <div class="slots-container" id="slotsGrid">
@@ -260,7 +295,7 @@
                     <div class="slot-box locked" id="s10">10: Locked</div>
                 </div>
 
-                <button class="btn btn-red" style="width: 100%; margin-top: 5px;" onclick="deployShare()">DEPLOY DAILY FACEBOOK SHARE</button>
+                <button class="btn btn-red" style="width: 100%; margin-top: 5px;" onclick="deployShare()">DEPLOY DAILY FACEBOOK STICKER SHARE</button>
             </div>
         </div>
 
@@ -268,11 +303,11 @@
         <div class="panel" style="background: #fafafa;">
             <h2>Live System Ticker</h2>
             <div class="ticker-box" id="ticker">
-                > Billboard engine ready. Select campaigns to build your matrix...
+                > Marketplace engine initialized. Register a business or select slots to build...
             </div>
             <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold;">
-                <span>Active Shares: <span id="shareCount">0</span>/2 Daily Drops</span>
-                <span>Projected Daily Payout: £<span id="payoutTotal">0.00</span></span>
+                <span>Active Shares: <span id="shareCount">0</span>/<span id="maxShares">1</span> Daily Drop</span>
+                <span>Daily Board Value: £<span id="payoutTotal">0.00</span> (£1.00 Max)</span>
             </div>
         </div>
     </div>
@@ -281,6 +316,27 @@
         let filledSlots = 0;
         let charityUnlocked = false;
         let activeShares = 0;
+
+        function registerBusinessCampaign() {
+            const name = document.getElementById('bizName').value.trim();
+            const url = document.getElementById('bizUrl').value.trim();
+
+            if (!name || !url) {
+                logAction("Error: Please provide both business name and link.");
+                return;
+            }
+
+            const catalog = document.getElementById('catalog');
+            const newItem = document.createElement('div');
+            newItem.className = "campaign-item";
+            newItem.innerHTML = `<span>${name}</span> <button class="btn" onclick="addSlot('${name}')">+ Add</button>`;
+            
+            catalog.prepend(newItem);
+            logAction(`New business campaign registered live: ${name}`);
+            
+            document.getElementById('bizName').value = '';
+            document.getElementById('bizUrl').value = '';
+        }
 
         function addSlot(brandName) {
             if (filledSlots >= 10) {
@@ -302,15 +358,15 @@
             const slotEl = document.getElementById('s' + slotNum);
             slotEl.textContent = `${slotNum}: ${name}`;
             slotEl.className = "slot-box filled";
-            logAction(`Added ${name} to Slot ${slotNum}.`);
+            logAction(`Added ${name} to Billboard Slot ${slotNum}.`);
         }
 
         function unlockSecondHalf() {
             charityUnlocked = true;
             document.getElementById('charityModal').style.display = 'none';
-            logAction("Charity Gate cleared! Slots 6-10 unlocked via Salvation Army engagement.");
+            document.getElementById('maxShares').textContent = '2';
+            logAction("Charity Gate cleared via Salvation Army! Slots 6-10 and double share capacity unlocked.");
             
-            // Unlock visual styling for slots 6-10
             for(let i = 6; i <= 10; i++) {
                 const el = document.getElementById('s' + i);
                 if(el.classList.contains('locked')) {
@@ -321,22 +377,22 @@
 
         function deployShare() {
             if (filledSlots === 0) {
-                logAction("Error: Add at least one campaign before sharing.");
+                logAction("Error: Add at least one campaign before deploying sticker share.");
                 return;
             }
-            if (activeShares >= (charityUnlocked ? 2 : 1)) {
+            let allowedShares = charityUnlocked ? 2 : 1;
+            if (activeShares >= allowedShares) {
                 logAction("Daily share limit reached. Come back tomorrow for your next drop!");
                 return;
             }
 
             activeShares++;
             document.getElementById('shareCount').textContent = activeShares;
-            logAction(`Facebook wall sticker deployed successfully! Share #${activeShares} live.`);
+            logAction(`Facebook wall sticker deployed successfully! Share #${activeShares} active.`);
         }
 
         function updateMetrics() {
             document.getElementById('slotCount').textContent = filledSlots;
-            // 10p per filled slot structure scaling to £1.00 max
             let payout = (filledSlots * 0.10).toFixed(2);
             document.getElementById('payoutTotal').textContent = payout;
         }
