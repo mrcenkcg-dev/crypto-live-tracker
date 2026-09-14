@@ -109,7 +109,7 @@
 
     <div class="container">
         <h1>Community Engine Portal</h1>
-        <p style="text-align: center; color: #94a3b8;">Fair rotation network: Max 10 active slots per participant.</p>
+        <p style="text-align: center; color: #94a3b8;">Fair rotation network: Weekly Payout Settlement Cycle.</p>
 
         <!-- Role Selector Tabs -->
         <div class="nav-tabs" id="navTabs">
@@ -135,7 +135,7 @@
 
         <!-- Clicker / Task Worker Portal Section -->
         <div id="clickerPortal" class="portal-section">
-            <h3>Task Worker Portal (£2.00 Fixed Queue)</h3>
+            <h3>Task Worker Portal (£2.00 Fixed / Weekly Settlement)</h3>
             <div id="clickerFormArea">
                 <input type="text" id="clickerRealName" placeholder="Enter Your Real Name" required>
                 <input type="text" id="clickerSocialHandle" placeholder="Enter Social Handle (e.g. TikTok / FB Name)" required>
@@ -144,7 +144,7 @@
                     <option value="Facebook">Facebook Group / Profile Feed</option>
                     <option value="Other">Other Social Media</option>
                 </select>
-                <button class="action-btn" onclick="registerClicker()">Log In & Open £2 Task Queue</button>
+                <button class="action-btn" onclick="registerClicker()">Log In & Open Task Queue</button>
             </div>
             <div id="clickerSessionArea" style="display:none;">
                 <p>Status: <strong style="color: #34d399;">ONLINE (Ready for Task Dispatch)</strong></p>
@@ -153,8 +153,9 @@
                 <div class="ledger-box">
                     <p style="margin: 0 0 5px 0; font-size: 14px; color: #94a3b8;">Secure HMAC Token:</p>
                     <div class="hmac-box" id="displayHmac">Generating secure token...</div>
-                    <p style="margin: 10px 0 5px 0; font-size: 14px; color: #94a3b8;">Nightly Earnings & Completed Jobs:</p>
+                    <p style="margin: 10px 0 5px 0; font-size: 14px; color: #94a3b8;">Weekly Accumulated Earnings:</p>
                     <div style="font-size: 24px; font-weight: bold; color: #34d399;" id="earningsDisplay">£0.00 (<span id="jobCounter">0</span> jobs completed)</div>
+                    <p style="margin: 8px 0 0 0; font-size: 12px; color: #fbbf24;">* Payouts are settled automatically at the end of each weekly cycle.</p>
                 </div>
 
                 <h4 style="margin-top: 20px; color: #38bdf8;">Current £2.00 Task Available</h4>
@@ -179,7 +180,7 @@
             microFeeEntry: 0.50,
             userSlotLimit: 10,
             secretKey: "community-engine-secure-key-2026",
-            taskBounty: 2.00 // Strictly fixed £2.00 per task
+            taskBounty: 2.00
         };
 
         window.onload = function() {
@@ -273,7 +274,7 @@
             
             updateLedgerDisplay();
             loadNextTask();
-            document.getElementById('clickerNotice').innerText = "Dispatcher session active. Complete tasks sequentially.";
+            document.getElementById('clickerNotice').innerText = "Session active. Complete £2.00 tasks to build your weekly balance.";
         }
 
         function loadNextTask() {
@@ -286,7 +287,7 @@
                         <strong>Task #${jobs + 1}: Social Rotation & Traffic Route</strong><br>
                         <span style="color: #34d399; font-weight: bold;">Fixed Bounty: £${CONFIG.taskBounty.toFixed(2)}</span>
                     </div>
-                    <button class="action-btn" style="width: auto; padding: 8px 16px; margin: 0; background: #10b981;" onclick="completeTask()">Finish & Claim £2</button>
+                    <button class="action-btn" style="width: auto; padding: 8px 16px; margin: 0; background: #10b981;" onclick="completeTask()">Finish & Add £2</button>
                 </div>
             `;
         }
@@ -302,8 +303,8 @@
             localStorage.setItem('engine_clicker_earnings', earnings.toFixed(2));
 
             updateLedgerDisplay();
-            alert(`Task #${jobs} completed successfully! Added £${CONFIG.taskBounty.toFixed(2)} to your ledger.`);
-            loadNextTask(); // Instantly queue up the next £2 task!
+            alert(`Task #${jobs} completed! £2.00 added to your weekly accumulation.`);
+            loadNextTask();
         }
 
         function updateLedgerDisplay() {
