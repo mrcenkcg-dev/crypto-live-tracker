@@ -68,6 +68,16 @@
             margin-top: 15px;
             border-left: 4px solid #34d399;
         }
+        .task-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         .hmac-box {
             background: #0f172a;
             padding: 10px;
@@ -104,7 +114,7 @@
         <!-- Role Selector Tabs -->
         <div class="nav-tabs" id="navTabs">
             <button id="btnBusiness" class="active" onclick="switchPortal('business')">Business / Slot Owner</button>
-            <button id="btnClicker" onclick="switchPortal('clicker')">Clicker Community Member</button>
+            <button id="btnClicker" onclick="switchPortal('clicker')">Clicker / Task Worker</button>
         </div>
 
         <!-- Business Portal Section -->
@@ -123,33 +133,35 @@
             <p id="bizNotice" style="margin-top: 10px; font-size: 14px; color: #38bdf8;"></p>
         </div>
 
-        <!-- Clicker Community Portal Section -->
+        <!-- Clicker / Task Worker Portal Section -->
         <div id="clickerPortal" class="portal-section">
-            <h3>Clicker Community Portal (Multi-Social Dispatch)</h3>
+            <h3>Task Worker Portal (£2.00 Fixed Queue)</h3>
             <div id="clickerFormArea">
                 <input type="text" id="clickerRealName" placeholder="Enter Your Real Name" required>
-                <input type="text" id="clickerSocialHandle" placeholder="Enter Social Handle (e.g. Nazmi TikTok / FB Name)" required>
+                <input type="text" id="clickerSocialHandle" placeholder="Enter Social Handle (e.g. TikTok / FB Name)" required>
                 <select id="clickerPlatform">
                     <option value="TikTok">TikTok Live Stream / Game Screen</option>
                     <option value="Facebook">Facebook Group / Profile Feed</option>
                     <option value="Other">Other Social Media</option>
                 </select>
-                <textarea id="clickerReason" rows="2" placeholder="Task Purpose / Objective..." required></textarea>
-                <button class="action-btn" onclick="registerClicker()">Generate Secure HMACS & Start</button>
+                <button class="action-btn" onclick="registerClicker()">Log In & Open £2 Task Queue</button>
             </div>
             <div id="clickerSessionArea" style="display:none;">
-                <p>Status: <strong style="color: #34d399;">ONLINE (Ready for A-to-B Routing)</strong></p>
-                <p>Courier: <span id="displayClickerName" style="color: #38bdf8; font-weight: bold;"></span> (<span id="displayClickerSocial" style="color: #cbd5e1;"></span> via <span id="displayPlatform" style="color: #38bdf8;"></span>)</p>
+                <p>Status: <strong style="color: #34d399;">ONLINE (Ready for Task Dispatch)</strong></p>
+                <p>Worker: <span id="displayClickerName" style="color: #38bdf8; font-weight: bold;"></span> (<span id="displayClickerSocial" style="color: #cbd5e1;"></span> via <span id="displayPlatform" style="color: #38bdf8;"></span>)</p>
                 
                 <div class="ledger-box">
-                    <p style="margin: 0 0 5px 0; font-size: 14px; color: #94a3b8;">Secure HMAC Token (For Social Sharing Verification):</p>
+                    <p style="margin: 0 0 5px 0; font-size: 14px; color: #94a3b8;">Secure HMAC Token:</p>
                     <div class="hmac-box" id="displayHmac">Generating secure token...</div>
-                    <p style="margin: 10px 0 5px 0; font-size: 14px; color: #94a3b8;">Completed Jobs Ledger:</p>
-                    <div style="font-size: 28px; font-weight: bold; color: #34d399;" id="jobCounter">0</div>
-                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #38bdf8;">Jobs logged permanently per session.</p>
+                    <p style="margin: 10px 0 5px 0; font-size: 14px; color: #94a3b8;">Nightly Earnings & Completed Jobs:</p>
+                    <div style="font-size: 24px; font-weight: bold; color: #34d399;" id="earningsDisplay">£0.00 (<span id="jobCounter">0</span> jobs completed)</div>
                 </div>
 
-                <button class="action-btn" onclick="completeJob()" style="background: #10b981; margin-top: 15px;">+ Complete Task / Register Job</button>
+                <h4 style="margin-top: 20px; color: #38bdf8;">Current £2.00 Task Available</h4>
+                <div id="activeTaskContainer">
+                    <!-- Dynamic £2 task populated here -->
+                </div>
+
                 <button class="action-btn logout-btn" onclick="logout('clicker')">Log Out / Switch</button>
             </div>
             <p id="clickerNotice" style="margin-top: 10px; font-size: 14px; color: #34d399;"></p>
@@ -166,8 +178,8 @@
             maxFreeSlots: 1500,
             microFeeEntry: 0.50,
             userSlotLimit: 10,
-            testWindowDays: 7,
-            secretKey: "community-engine-secure-key-2026"
+            secretKey: "community-engine-secure-key-2026",
+            taskBounty: 2.00 // Strictly fixed £2.00 per task
         };
 
         window.onload = function() {
@@ -193,16 +205,13 @@
             }
         }
 
-        // Lightweight browser-based HMAC-SHA256 generator for secure social sharing verification
         async function generateHMAC(message, secret) {
             const encoder = new TextEncoder();
             const keyData = encoder.encode(secret);
             const msgData = encoder.encode(message);
-            
             const cryptoKey = await crypto.subtle.importKey(
                 "raw", keyData, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
             );
-            
             const signature = await crypto.subtle.sign("HMAC", cryptoKey, msgData);
             const hashArray = Array.from(new Uint8Array(signature));
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
@@ -225,10 +234,9 @@
             const realName = document.getElementById('clickerRealName').value;
             const socialHandle = document.getElementById('clickerSocialHandle').value;
             const platform = document.getElementById('clickerPlatform').value;
-            const reason = document.getElementById('clickerReason').value;
 
-            if (!realName || !socialHandle || !reason) {
-                alert("Please fill in all details: Real Name, Social Handle, and Purpose.");
+            if (!realName || !socialHandle) {
+                alert("Please fill in your Real Name and Social Handle.");
                 return;
             }
 
@@ -238,11 +246,11 @@
             localStorage.setItem('engine_clicker_real', realName);
             localStorage.setItem('engine_clicker_social', socialHandle);
             localStorage.setItem('engine_clicker_platform', platform);
-            localStorage.setItem('engine_clicker_reason', reason);
             localStorage.setItem('engine_clicker_hmac', hmacToken);
             
             if (!localStorage.getItem('engine_clicker_jobs')) {
                 localStorage.setItem('engine_clicker_jobs', '0');
+                localStorage.setItem('engine_clicker_earnings', '0.00');
             }
             
             loadClickerSession(realName, socialHandle, platform, hmacToken);
@@ -263,17 +271,46 @@
             document.getElementById('displayPlatform').innerText = platform;
             document.getElementById('displayHmac').innerText = hmacToken;
             
-            const currentJobs = localStorage.getItem('engine_clicker_jobs') || '0';
-            document.getElementById('jobCounter').innerText = currentJobs;
-            document.getElementById('clickerNotice').innerText = "Dispatcher session active. Secure social HMAC generated.";
+            updateLedgerDisplay();
+            loadNextTask();
+            document.getElementById('clickerNotice').innerText = "Dispatcher session active. Complete tasks sequentially.";
         }
 
-        function completeJob() {
+        function loadNextTask() {
+            const container = document.getElementById('activeTaskContainer');
             let jobs = parseInt(localStorage.getItem('engine_clicker_jobs') || '0');
+
+            container.innerHTML = `
+                <div class="task-card">
+                    <div>
+                        <strong>Task #${jobs + 1}: Social Rotation & Traffic Route</strong><br>
+                        <span style="color: #34d399; font-weight: bold;">Fixed Bounty: £${CONFIG.taskBounty.toFixed(2)}</span>
+                    </div>
+                    <button class="action-btn" style="width: auto; padding: 8px 16px; margin: 0; background: #10b981;" onclick="completeTask()">Finish & Claim £2</button>
+                </div>
+            `;
+        }
+
+        function completeTask() {
+            let jobs = parseInt(localStorage.getItem('engine_clicker_jobs') || '0');
+            let earnings = parseFloat(localStorage.getItem('engine_clicker_earnings') || '0.00');
+
             jobs += 1;
+            earnings += CONFIG.taskBounty;
+
             localStorage.setItem('engine_clicker_jobs', jobs);
+            localStorage.setItem('engine_clicker_earnings', earnings.toFixed(2));
+
+            updateLedgerDisplay();
+            alert(`Task #${jobs} completed successfully! Added £${CONFIG.taskBounty.toFixed(2)} to your ledger.`);
+            loadNextTask(); // Instantly queue up the next £2 task!
+        }
+
+        function updateLedgerDisplay() {
+            const jobs = localStorage.getItem('engine_clicker_jobs') || '0';
+            const earnings = parseFloat(localStorage.getItem('engine_clicker_earnings') || '0.00').toFixed(2);
             document.getElementById('jobCounter').innerText = jobs;
-            alert(`Job logged successfully! Total completed jobs recorded: ${jobs}`);
+            document.getElementById('earningsDisplay').innerText = `£${earnings}`;
         }
 
         function logout(type) {
@@ -289,13 +326,11 @@
                 localStorage.removeItem('engine_clicker_real');
                 localStorage.removeItem('engine_clicker_social');
                 localStorage.removeItem('engine_clicker_platform');
-                localStorage.removeItem('engine_clicker_reason');
                 localStorage.removeItem('engine_clicker_hmac');
                 document.getElementById('clickerFormArea').style.display = 'block';
                 document.getElementById('clickerSessionArea').style.display = 'none';
                 document.getElementById('clickerRealName').value = '';
                 document.getElementById('clickerSocialHandle').value = '';
-                document.getElementById('clickerReason').value = '';
                 document.getElementById('clickerNotice').innerText = '';
             }
         }
