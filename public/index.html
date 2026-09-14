@@ -34,6 +34,24 @@
         }
         .stat-item { text-align: center; }
         .stat-value { font-size: 24px; font-weight: bold; color: #34d399; }
+        .form-box {
+            background: #334155;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .form-box input, .form-box button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .form-box input { background: #1e293b; color: #fff; }
+        .form-box button { background: #0284c7; color: #fff; font-weight: bold; cursor: pointer; }
+        .form-box button:hover { background: #0369a1; }
         .slot-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -59,7 +77,7 @@
         <div class="stats-box">
             <div class="stat-item">
                 <div>Free Tier Limit</div>
-                <div class="stat-value">1,500</div>
+                <div class="stat-value" id="freeLimit">1,500</div>
             </div>
             <div class="stat-item">
                 <div>User Slot Cap</div>
@@ -71,20 +89,30 @@
             </div>
         </div>
 
-        <h3>Active Rotation Slots (Sample View)</h3>
+        <!-- Registration Form for Business / Participant -->
+        <div class="form-box">
+            <h3>Register Your Business / Slots</h3>
+            <input type="text" id="bizName" placeholder="Enter your Name or Business Name" required>
+            <input type="number" id="slotCount" min="1" max="10" placeholder="Number of slots (Max 10)" required>
+            <button onclick="registerParticipant()">Register Now</button>
+            <p id="noticeMsg" style="margin-top: 10px; font-size: 14px; color: #38bdf8;"></p>
+        </div>
+
+        <h3>Active Rotation Slots</h3>
         <div class="slot-grid" id="slotContainer">
             <!-- Slots populated dynamically -->
         </div>
     </div>
 
     <script>
-        // Core Business Rules Configuration
         const CONFIG = {
             maxFreeSlots: 1500,
             microFeeEntry: 0.50, // 50p toll starting at 1501
-            userSlotLimit: 10,   // Strict cap per participant
+            userSlotLimit: 10,   
             testWindowDays: 7
         };
+
+        let currentTotalRegistrations = 42; // Simulating active community members
 
         function evaluateRegistration(currentCount) {
             if (currentCount <= CONFIG.maxFreeSlots) {
@@ -97,19 +125,51 @@
                 return { 
                     status: "MICRO_FEE_ACTIVE", 
                     fee: CONFIG.microFeeEntry, 
-                    notice: "Community maintenance toll engaged." 
+                    notice: "Community maintenance toll engaged (50p)." 
                 };
             }
         }
 
-        // Render sample active slots to verify visual layout
-        const container = document.getElementById('slotContainer');
-        for (let i = 1; i <= 10; i++) {
-            const div = document.createElement('div');
-            div.className = 'slot active';
-            div.innerText = `Slot #${i} (Active)`;
-            container.appendChild(div);
+        function registerParticipant() {
+            const name = document.getElementById('bizName').value;
+            const slots = parseInt(document.getElementById('slotCount').value);
+            const noticeBox = document.getElementById('noticeMsg');
+
+            if (!name) {
+                alert("Please enter a business or participant name.");
+                return;
+            }
+            if (isNaN(slots) || slots < 1 || slots > CONFIG.userSlotLimit) {
+                alert("You can only register between 1 and 10 slots maximum.");
+                return;
+            }
+
+            currentTotalRegistrations += slots;
+            const evaluation = evaluateRegistration(currentTotalRegistrations);
+
+            if (evaluation.status === "FREE_TIER") {
+                noticeBox.innerText = `Success, ${name}! Registered ${slots} slots on FREE TIER. (${evaluation.remainingFree} free slots left).`;
+            } else {
+                noticeBox.innerText = `Success, ${name}! Registered ${slots} slots. ${evaluation.notice} Fee: £${evaluation.fee.toFixed(2)}`;
+            }
+
+            refreshSlots(name, slots);
         }
+
+        function refreshSlots(ownerName, count) {
+            const container = document.getElementById('slotContainer');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= count; i++) {
+                const div = document.createElement('div');
+                div.className = 'slot active';
+                div.innerHTML = `<strong>${ownerName}</strong><br>Slot #${i} (Live)`;
+                container.appendChild(div);
+            }
+        }
+
+        // Initialize sample view
+        refreshSlots("System Founder", 3);
     </script>
 
 </body>
