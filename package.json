@@ -1,12 +1,12 @@
 {
   "name": "crypto-live-tracker",
   "version": "1.0.0",
-  "description": "Get Big Together Hub",
+  "description": "Community Engine Tracker",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.19.2"
   }
 }
