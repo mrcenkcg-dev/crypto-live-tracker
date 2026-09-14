@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Community Engine - Live Portal</title>
+    <title>Community Engine - Dual Portal</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -24,23 +24,35 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
         h1 { color: #38bdf8; text-align: center; }
-        .stats-box {
+        .nav-tabs {
             display: flex;
-            justify-content: space-around;
-            background: #334155;
-            padding: 15px;
-            border-radius: 8px;
+            justify-content: center;
+            gap: 15px;
             margin: 20px 0;
         }
-        .stat-item { text-align: center; }
-        .stat-value { font-size: 24px; font-weight: bold; color: #34d399; }
-        .form-box {
+        .nav-tabs button {
+            background: #334155;
+            color: #f8fafc;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .nav-tabs button.active {
+            background: #0284c7;
+        }
+        .portal-section {
+            display: none;
             background: #334155;
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 25px;
         }
-        .form-box input, .form-box button {
+        .portal-section.active {
+            display: block;
+        }
+        input, button.action-btn {
             width: 100%;
             padding: 12px;
             margin-top: 10px;
@@ -49,9 +61,9 @@
             font-size: 16px;
             box-sizing: border-box;
         }
-        .form-box input { background: #1e293b; color: #fff; }
-        .form-box button { background: #0284c7; color: #fff; font-weight: bold; cursor: pointer; }
-        .form-box button:hover { background: #0369a1; }
+        input { background: #1e293b; color: #fff; }
+        button.action-btn { background: #0284c7; color: #fff; font-weight: bold; cursor: pointer; }
+        button.action-btn:hover { background: #0369a1; }
         .slot-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -74,102 +86,104 @@
         <h1>Community Engine Portal</h1>
         <p style="text-align: center; color: #94a3b8;">Fair rotation network: Max 10 active slots per participant.</p>
 
-        <div class="stats-box">
-            <div class="stat-item">
-                <div>Free Tier Limit</div>
-                <div class="stat-value" id="freeLimit">1,500</div>
-            </div>
-            <div class="stat-item">
-                <div>User Slot Cap</div>
-                <div class="stat-value">10 / user</div>
-            </div>
-            <div class="stat-item">
-                <div>Test Window</div>
-                <div class="stat-value">7 Days</div>
-            </div>
+        <!-- Role Selector Tabs -->
+        <div class="nav-tabs">
+            <button id="btnBusiness" class="active" onclick="switchPortal('business')">Business / Slot Owner</button>
+            <button id="btnClicker" onclick="switchPortal('clicker')">Clicker Community Member</button>
         </div>
 
-        <!-- Registration Form for Business / Participant -->
-        <div class="form-box">
-            <h3>Register Your Business / Slots</h3>
-            <input type="text" id="bizName" placeholder="Enter your Name or Business Name" required>
+        <!-- Business Portal Section -->
+        <div id="businessPortal" class="portal-section active">
+            <h3>Business Slot Registration</h3>
+            <p style="color: #94a3b8; font-size: 14px;">Secure up to 10 rotation slots to feature your products or links.</p>
+            <input type="text" id="bizName" placeholder="Enter Business Name" required>
             <input type="number" id="slotCount" min="1" max="10" placeholder="Number of slots (Max 10)" required>
-            <button onclick="registerParticipant()">Register Now</button>
-            <p id="noticeMsg" style="margin-top: 10px; font-size: 14px; color: #38bdf8;"></p>
+            <button class="action-btn" onclick="registerBusiness()">Register Business Slots</button>
+            <p id="bizNotice" style="margin-top: 10px; font-size: 14px; color: #38bdf8;"></p>
         </div>
 
-        <h3>Active Rotation Slots</h3>
+        <!-- Clicker Community Portal Section -->
+        <div id="clickerPortal" class="portal-section">
+            <h3>Clicker Community Registration</h3>
+            <p style="color: #94a3b8; font-size: 14px;">Join the 1,500-member free tier to start engaging and tracking rewards.</p>
+            <input type="text" id="clickerName" placeholder="Enter Your Name / Handle" required>
+            <input type="email" id="clickerEmail" placeholder="Enter Your Email" required>
+            <button class="action-btn" onclick="registerClicker()">Join Clicker Network</button>
+            <p id="clickerNotice" style="margin-top: 10px; font-size: 14px; color: #34d399;"></p>
+        </div>
+
+        <h3>Active Network Overview</h3>
         <div class="slot-grid" id="slotContainer">
-            <!-- Slots populated dynamically -->
+            <!-- Dynamic items populated here -->
         </div>
     </div>
 
     <script>
         const CONFIG = {
             maxFreeSlots: 1500,
-            microFeeEntry: 0.50, // 50p toll starting at 1501
-            userSlotLimit: 10,   
+            microFeeEntry: 0.50,
+            userSlotLimit: 10,
             testWindowDays: 7
         };
 
-        let currentTotalRegistrations = 42; // Simulating active community members
+        function switchPortal(portalType) {
+            const bizTab = document.getElementById('btnBusiness');
+            const clickerTab = document.getElementById('btnClicker');
+            const bizSection = document.getElementById('businessPortal');
+            const clickerSection = document.getElementById('clickerPortal');
 
-        function evaluateRegistration(currentCount) {
-            if (currentCount <= CONFIG.maxFreeSlots) {
-                return { 
-                    status: "FREE_TIER", 
-                    fee: 0.00, 
-                    remainingFree: CONFIG.maxFreeSlots - currentCount 
-                };
+            if (portalType === 'business') {
+                bizTab.classList.add('active');
+                clickerTab.classList.remove('active');
+                bizSection.classList.add('active');
+                clickerSection.classList.remove('active');
             } else {
-                return { 
-                    status: "MICRO_FEE_ACTIVE", 
-                    fee: CONFIG.microFeeEntry, 
-                    notice: "Community maintenance toll engaged (50p)." 
-                };
+                clickerTab.classList.add('active');
+                bizTab.classList.remove('active');
+                clickerSection.classList.add('active');
+                bizSection.classList.remove('active');
             }
         }
 
-        function registerParticipant() {
+        function registerBusiness() {
             const name = document.getElementById('bizName').value;
             const slots = parseInt(document.getElementById('slotCount').value);
-            const noticeBox = document.getElementById('noticeMsg');
+            const notice = document.getElementById('bizNotice');
 
-            if (!name) {
-                alert("Please enter a business or participant name.");
-                return;
-            }
-            if (isNaN(slots) || slots < 1 || slots > CONFIG.userSlotLimit) {
-                alert("You can only register between 1 and 10 slots maximum.");
+            if (!name || isNaN(slots) || slots < 1 || slots > CONFIG.userSlotLimit) {
+                alert("Please enter a valid business name and 1-10 slots.");
                 return;
             }
 
-            currentTotalRegistrations += slots;
-            const evaluation = evaluateRegistration(currentTotalRegistrations);
-
-            if (evaluation.status === "FREE_TIER") {
-                noticeBox.innerText = `Success, ${name}! Registered ${slots} slots on FREE TIER. (${evaluation.remainingFree} free slots left).`;
-            } else {
-                noticeBox.innerText = `Success, ${name}! Registered ${slots} slots. ${evaluation.notice} Fee: £${evaluation.fee.toFixed(2)}`;
-            }
-
-            refreshSlots(name, slots);
+            notice.innerText = `Success! ${name} registered ${slots} slots on the rotation network.`;
+            renderSlots(name, slots);
         }
 
-        function refreshSlots(ownerName, count) {
+        function registerClicker() {
+            const name = document.getElementById('clickerName').value;
+            const notice = document.getElementById('clickerNotice');
+
+            if (!name) {
+                alert("Please enter your name or handle.");
+                return;
+            }
+
+            notice.innerText = `Welcome aboard, ${name}! You are registered in the Clicker Community tier.`;
+        }
+
+        function renderSlots(ownerName, count) {
             const container = document.getElementById('slotContainer');
             container.innerHTML = '';
-            
             for (let i = 1; i <= count; i++) {
                 const div = document.createElement('div');
                 div.className = 'slot active';
-                div.innerHTML = `<strong>${ownerName}</strong><br>Slot #${i} (Live)`;
+                div.innerHTML = `<strong>${ownerName}</strong><br>Slot #${i}`;
                 container.appendChild(div);
             }
         }
 
-        // Initialize sample view
-        refreshSlots("System Founder", 3);
+        // Initial setup
+        renderSlots("Sample Partner", 3);
     </script>
 
 </body>
