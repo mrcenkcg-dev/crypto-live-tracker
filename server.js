@@ -1,3 +1,8 @@
+const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
 // Dual-Vacancy Logic & 7-Day Test State
 const CONFIG = {
     maxFreeSlots: 1500,
@@ -6,18 +11,16 @@ const CONFIG = {
     testWindowDays: 7
 };
 
-function evaluateRegistration(currentCount) {
-    if (currentCount <= CONFIG.maxFreeSlots) {
-        return { 
-            status: "FREE_TIER", 
-            fee: 0.00, 
-            remainingFree: CONFIG.maxFreeSlots - currentCount 
-        };
-    } else {
-        return { 
-            status: "MICRO_FEE_ACTIVE", 
-            fee: CONFIG.microFeeEntry, 
-            notice: "Community maintenance toll engaged." 
-        };
-    }
-}
+app.use(express.static(__dirname));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/api/config', (req, res) => {
+    res.json(CONFIG);
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
+});
