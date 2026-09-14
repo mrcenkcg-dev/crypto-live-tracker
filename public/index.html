@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Community Engine - Dual Portal</title>
+    <title>Community Engine - Launch Portal</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -39,9 +39,7 @@
             cursor: pointer;
             font-weight: bold;
         }
-        .nav-tabs button.active {
-            background: #0284c7;
-        }
+        .nav-tabs button.active { background: #0284c7; }
         .portal-section {
             display: none;
             background: #334155;
@@ -49,9 +47,7 @@
             border-radius: 8px;
             margin-bottom: 25px;
         }
-        .portal-section.active {
-            display: block;
-        }
+        .portal-section.active { display: block; }
         input, button.action-btn {
             width: 100%;
             padding: 12px;
@@ -64,6 +60,7 @@
         input { background: #1e293b; color: #fff; }
         button.action-btn { background: #0284c7; color: #fff; font-weight: bold; cursor: pointer; }
         button.action-btn:hover { background: #0369a1; }
+        .logout-btn { background: #ef4444 !important; margin-top: 15px; }
         .slot-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -87,7 +84,7 @@
         <p style="text-align: center; color: #94a3b8;">Fair rotation network: Max 10 active slots per participant.</p>
 
         <!-- Role Selector Tabs -->
-        <div class="nav-tabs">
+        <div class="nav-tabs" id="navTabs">
             <button id="btnBusiness" class="active" onclick="switchPortal('business')">Business / Slot Owner</button>
             <button id="btnClicker" onclick="switchPortal('clicker')">Clicker Community Member</button>
         </div>
@@ -95,20 +92,32 @@
         <!-- Business Portal Section -->
         <div id="businessPortal" class="portal-section active">
             <h3>Business Slot Registration</h3>
-            <p style="color: #94a3b8; font-size: 14px;">Secure up to 10 rotation slots to feature your products or links.</p>
-            <input type="text" id="bizName" placeholder="Enter Business Name" required>
-            <input type="number" id="slotCount" min="1" max="10" placeholder="Number of slots (Max 10)" required>
-            <button class="action-btn" onclick="registerBusiness()">Register Business Slots</button>
+            <div id="bizFormArea">
+                <input type="text" id="bizName" placeholder="Enter Business Name" required>
+                <input type="number" id="slotCount" min="1" max="10" placeholder="Number of slots (Max 10)" required>
+                <button class="action-btn" onclick="registerBusiness()">Save & Go Online</button>
+            </div>
+            <div id="bizSessionArea" style="display:none;">
+                <p>Status: <strong style="color: #34d399;">ONLINE (Active Dispatcher)</strong></p>
+                <p>Logged in as: <span id="displayBizName" style="color: #38bdf8; font-weight: bold;"></span></p>
+                <button class="action-btn logout-btn" onclick="logout('business')">Log Out / Switch</button>
+            </div>
             <p id="bizNotice" style="margin-top: 10px; font-size: 14px; color: #38bdf8;"></p>
         </div>
 
         <!-- Clicker Community Portal Section -->
         <div id="clickerPortal" class="portal-section">
-            <h3>Clicker Community Registration</h3>
-            <p style="color: #94a3b8; font-size: 14px;">Join the 1,500-member free tier to start engaging and tracking rewards.</p>
-            <input type="text" id="clickerName" placeholder="Enter Your Name / Handle" required>
-            <input type="email" id="clickerEmail" placeholder="Enter Your Email" required>
-            <button class="action-btn" onclick="registerClicker()">Join Clicker Network</button>
+            <h3>Clicker Community Portal</h3>
+            <div id="clickerFormArea">
+                <input type="text" id="clickerName" placeholder="Enter Your Name / Handle" required>
+                <button class="action-btn" onclick="registerClicker()">Start Daily Rotation Task</button>
+            </div>
+            <div id="clickerSessionArea" style="display:none;">
+                <p>Status: <strong style="color: #34d399;">ONLINE (Ready for A-to-B Routing)</strong></p>
+                <p>Courier: <span id="displayClickerName" style="color: #38bdf8; font-weight: bold;"></span></p>
+                <button class="action-btn" onclick="simulateTaskCompletion()" style="background: #10b981;">Complete Today's Task</button>
+                <button class="action-btn logout-btn" onclick="logout('clicker')">Log Out / Switch</button>
+            </div>
             <p id="clickerNotice" style="margin-top: 10px; font-size: 14px; color: #34d399;"></p>
         </div>
 
@@ -124,6 +133,10 @@
             microFeeEntry: 0.50,
             userSlotLimit: 10,
             testWindowDays: 7
+        };
+
+        window.onload = function() {
+            checkSavedSessions();
         };
 
         function switchPortal(portalType) {
@@ -148,27 +161,75 @@
         function registerBusiness() {
             const name = document.getElementById('bizName').value;
             const slots = parseInt(document.getElementById('slotCount').value);
-            const notice = document.getElementById('bizNotice');
-
             if (!name || isNaN(slots) || slots < 1 || slots > CONFIG.userSlotLimit) {
                 alert("Please enter a valid business name and 1-10 slots.");
                 return;
             }
-
-            notice.innerText = `Success! ${name} registered ${slots} slots on the rotation network.`;
+            localStorage.setItem('engine_biz_name', name);
+            localStorage.setItem('engine_biz_slots', slots);
+            loadBizSession(name, slots);
             renderSlots(name, slots);
         }
 
         function registerClicker() {
             const name = document.getElementById('clickerName').value;
-            const notice = document.getElementById('clickerNotice');
-
             if (!name) {
                 alert("Please enter your name or handle.");
                 return;
             }
+            localStorage.setItem('engine_clicker_name', name);
+            loadClickerSession(name);
+        }
 
-            notice.innerText = `Welcome aboard, ${name}! You are registered in the Clicker Community tier.`;
+        function loadBizSession(name, slots) {
+            document.getElementById('bizFormArea').style.display = 'none';
+            document.getElementById('bizSessionArea').style.display = 'block';
+            document.getElementById('displayBizName').innerText = name + ` (${slots} slots)`;
+            renderSlots(name, slots);
+        }
+
+        function loadClickerSession(name) {
+            document.getElementById('clickerFormArea').style.display = 'none';
+            document.getElementById('clickerSessionArea').style.display = 'block';
+            document.getElementById('displayClickerName').innerText = name;
+            document.getElementById('clickerNotice').innerText = "You are online and ready to route traffic!";
+        }
+
+        function simulateTaskCompletion() {
+            alert("Task completed successfully! Rotation verified for today.");
+        }
+
+        function logout(type) {
+            if (type === 'business') {
+                localStorage.removeItem('engine_biz_name');
+                localStorage.removeItem('engine_biz_slots');
+                document.getElementById('bizFormArea').style.display = 'block';
+                document.getElementById('bizSessionArea').style.display = 'none';
+                document.getElementById('bizName').value = '';
+                document.getElementById('slotCount').value = '';
+                renderSlots("Sample Partner", 3);
+            } else {
+                localStorage.removeItem('engine_clicker_name');
+                document.getElementById('clickerFormArea').style.display = 'block';
+                document.getElementById('clickerSessionArea').style.display = 'none';
+                document.getElementById('clickerName').value = '';
+                document.getElementById('clickerNotice').innerText = '';
+            }
+        }
+
+        function checkSavedSessions() {
+            const savedBiz = localStorage.getItem('engine_biz_name');
+            const savedSlots = localStorage.getItem('engine_biz_slots');
+            if (savedBiz && savedSlots) {
+                loadBizSession(savedBiz, parseInt(savedSlots));
+            } else {
+                renderSlots("Sample Partner", 3);
+            }
+
+            const savedClicker = localStorage.getItem('engine_clicker_name');
+            if (savedClicker) {
+                loadClickerSession(savedClicker);
+            }
         }
 
         function renderSlots(ownerName, count) {
@@ -177,13 +238,10 @@
             for (let i = 1; i <= count; i++) {
                 const div = document.createElement('div');
                 div.className = 'slot active';
-                div.innerHTML = `<strong>${ownerName}</strong><br>Slot #${i}`;
+                div.innerHTML = `<strong>${ownerName}</strong><br>Slot #${i} (Live)`;
                 container.appendChild(div);
             }
         }
-
-        // Initial setup
-        renderSlots("Sample Partner", 3);
     </script>
 
 </body>
