@@ -3,22 +3,17 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Dual-Vacancy Logic & 7-Day Test State
-const CONFIG = {
-    maxFreeSlots: 1500,
-    microFeeEntry: 0.50, // 50p toll starting at 1501
-    userSlotLimit: 10,   // Strict cap per participant
-    testWindowDays: 7
-};
+// Serve all static files from the current directory
+app.use(express.static(path.join(__dirname)));
 
-app.use(express.static(__dirname));
-
+// Explicit route for the homepage
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/api/config', (req, res) => {
-    res.json(CONFIG);
+// Catch-all fallback to prevent "Not Found" errors
+app.use((req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(PORT, '0.0.0.0', () => {
