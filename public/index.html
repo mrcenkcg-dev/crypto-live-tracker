@@ -1,71 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoulder to Shoulder // Community Engine</title>
-    <style>
-        body { font-family: monospace; background: #0f172a; color: #f8fafc; padding: 20px; max-width: 800px; margin: auto; }
-        .card { background: #1e293b; border: 1px solid #334155; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
-        input, select, button { width: 100%; padding: 10px; margin-top: 8px; margin-bottom: 12px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 4px; }
-        button { background: #2563eb; cursor: pointer; font-weight: bold; }
-        button:hover { background: #1d4ed8; }
-        .matrix-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .slot { background: #0f172a; padding: 10px; border: 1px solid #334155; border-radius: 4px; font-size: 14px; }
-    </style>
-</head>
-<body>
+// Dual-Vacancy Logic & 7-Day Test State
+const CONFIG = {
+    maxFreeSlots: 1500,
+    microFeeEntry: 0.50, // 50p toll starting at 1501
+    userSlotLimit: 10,   // Strict cap per participant
+    testWindowDays: 7
+};
 
-    <div class="card">
-        <h2>SHOULDER TO SHOULDER // COMMUNITY ENGINE</h2>
-        <p>Direct peer-to-peer ecosystem. First 1,500 spaces open free.</p>
-    </div>
-
-    <div class="card">
-        <h3>1. Business Portal & Vault Payouts</h3>
-        <form id="businessForm">
-            <input type="text" id="bizName" placeholder="Business / Location Name" required>
-            <input type="text" id="bizUrl" placeholder="Target Unique URL" required>
-            <input type="text" id="amazonTag" placeholder="Amazon Associate Tag (e.g. mrcenk20-21)">
-            <input type="text" id="monzoTag" placeholder="Monzo Payout Tag / Handle">
-            <button type="submit">+ Register Unique Link & Payout</button>
-        </form>
-    </div>
-
-    <div class="card">
-        <h3>2. Community Workforce & Resident Registration</h3>
-        <form id="residentForm">
-            <input type="text" id="resName" placeholder="Resident Name (e.g. John)" required>
-            <input type="text" id="resContact" placeholder="Contact / Mobile" required>
-            <select id="workRole">
-                <option value="foot-soldier">Foot Soldier (Outreach & Marketing)</option>
-                <option value="it-programmer">IT / Programmer (Backend & Render Support)</option>
-                <option value="legal-compliance">Legal & Compliance</option>
-            </select>
-            <button type="submit">+ Join Workforce</button>
-        </form>
-    </div>
-
-    <div class="card">
-        <h3>3. Active Community Slots (0/10)</h3>
-        <div class="matrix-grid" id="slotMatrix">
-            <div class="slot">01: Empty (£0.00)</div>
-            <div class="slot">02: Empty (£0.00)</div>
-            <div class="slot">03: Empty (£0.00)</div>
-            <div class="slot">04: Empty (£0.00)</div>
-            <div class="slot">05: Empty (£0.00)</div>
-            <div class="slot">06: Empty (£0.00)</div>
-            <div class="slot">07: Empty (£0.00)</div>
-            <div class="slot">08: Empty (£0.00)</div>
-            <div class="slot">09: Empty (£0.00)</div>
-            <div class="slot">10: Empty (£0.00)</div>
-        </div>
-    </div>
-
-    <div class="card">
-        <h3>Live System Telemetry</h3>
-        <p>> Community engine active. Direct peer channels ready for deployment.</p>
-    </div>
-
-</body>
-</html>
+function evaluateRegistration(currentCount) {
+    if (currentCount <= CONFIG.maxFreeSlots) {
+        return { status: "FREE_TIER", fee: 0.00, remainingFree: CONFIG.maxFreeSlots - currentCount };
+    } else {
+        return { status: "MICRO_FEE_ACTIVE", fee: CONFIG.microFeeEntry, notice: "Community maintenance toll engaged." };
+    }
+}
