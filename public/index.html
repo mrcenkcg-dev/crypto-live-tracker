@@ -48,7 +48,7 @@
             margin-bottom: 25px;
         }
         .portal-section.active { display: block; }
-        input, button.action-btn {
+        input, select, textarea, button.action-btn {
             width: 100%;
             padding: 12px;
             margin-top: 10px;
@@ -57,10 +57,28 @@
             font-size: 16px;
             box-sizing: border-box;
         }
-        input { background: #1e293b; color: #fff; }
+        input, select, textarea { background: #1e293b; color: #fff; }
         button.action-btn { background: #0284c7; color: #fff; font-weight: bold; cursor: pointer; }
         button.action-btn:hover { background: #0369a1; }
         .logout-btn { background: #ef4444 !important; margin-top: 15px; }
+        .ledger-box {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #34d399;
+        }
+        .hmac-box {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #38bdf8;
+            word-break: break-all;
+            margin-top: 10px;
+            border: 1px dashed #334155;
+        }
         .slot-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -107,15 +125,31 @@
 
         <!-- Clicker Community Portal Section -->
         <div id="clickerPortal" class="portal-section">
-            <h3>Clicker Community Portal</h3>
+            <h3>Clicker Community Portal (Multi-Social Dispatch)</h3>
             <div id="clickerFormArea">
-                <input type="text" id="clickerName" placeholder="Enter Your Name / Handle" required>
-                <button class="action-btn" onclick="registerClicker()">Start Daily Rotation Task</button>
+                <input type="text" id="clickerRealName" placeholder="Enter Your Real Name" required>
+                <input type="text" id="clickerSocialHandle" placeholder="Enter Social Handle (e.g. Nazmi TikTok / FB Name)" required>
+                <select id="clickerPlatform">
+                    <option value="TikTok">TikTok Live Stream / Game Screen</option>
+                    <option value="Facebook">Facebook Group / Profile Feed</option>
+                    <option value="Other">Other Social Media</option>
+                </select>
+                <textarea id="clickerReason" rows="2" placeholder="Task Purpose / Objective..." required></textarea>
+                <button class="action-btn" onclick="registerClicker()">Generate Secure HMACS & Start</button>
             </div>
             <div id="clickerSessionArea" style="display:none;">
                 <p>Status: <strong style="color: #34d399;">ONLINE (Ready for A-to-B Routing)</strong></p>
-                <p>Courier: <span id="displayClickerName" style="color: #38bdf8; font-weight: bold;"></span></p>
-                <button class="action-btn" onclick="simulateTaskCompletion()" style="background: #10b981;">Complete Today's Task</button>
+                <p>Courier: <span id="displayClickerName" style="color: #38bdf8; font-weight: bold;"></span> (<span id="displayClickerSocial" style="color: #cbd5e1;"></span> via <span id="displayPlatform" style="color: #38bdf8;"></span>)</p>
+                
+                <div class="ledger-box">
+                    <p style="margin: 0 0 5px 0; font-size: 14px; color: #94a3b8;">Secure HMAC Token (For Social Sharing Verification):</p>
+                    <div class="hmac-box" id="displayHmac">Generating secure token...</div>
+                    <p style="margin: 10px 0 5px 0; font-size: 14px; color: #94a3b8;">Completed Jobs Ledger:</p>
+                    <div style="font-size: 28px; font-weight: bold; color: #34d399;" id="jobCounter">0</div>
+                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #38bdf8;">Jobs logged permanently per session.</p>
+                </div>
+
+                <button class="action-btn" onclick="completeJob()" style="background: #10b981; margin-top: 15px;">+ Complete Task / Register Job</button>
                 <button class="action-btn logout-btn" onclick="logout('clicker')">Log Out / Switch</button>
             </div>
             <p id="clickerNotice" style="margin-top: 10px; font-size: 14px; color: #34d399;"></p>
@@ -132,7 +166,8 @@
             maxFreeSlots: 1500,
             microFeeEntry: 0.50,
             userSlotLimit: 10,
-            testWindowDays: 7
+            testWindowDays: 7,
+            secretKey: "community-engine-secure-key-2026"
         };
 
         window.onload = function() {
@@ -158,7 +193,22 @@
             }
         }
 
-        function registerBusiness() {
+        // Lightweight browser-based HMAC-SHA256 generator for secure social sharing verification
+        async function generateHMAC(message, secret) {
+            const encoder = new TextEncoder();
+            const keyData = encoder.encode(secret);
+            const msgData = encoder.encode(message);
+            
+            const cryptoKey = await crypto.subtle.importKey(
+                "raw", keyData, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+            );
+            
+            const signature = await crypto.subtle.sign("HMAC", cryptoKey, msgData);
+            const hashArray = Array.from(new Uint8Array(signature));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function registerBusiness() {
             const name = document.getElementById('bizName').value;
             const slots = parseInt(document.getElementById('slotCount').value);
             if (!name || isNaN(slots) || slots < 1 || slots > CONFIG.userSlotLimit) {
@@ -171,14 +221,31 @@
             renderSlots(name, slots);
         }
 
-        function registerClicker() {
-            const name = document.getElementById('clickerName').value;
-            if (!name) {
-                alert("Please enter your name or handle.");
+        async function registerClicker() {
+            const realName = document.getElementById('clickerRealName').value;
+            const socialHandle = document.getElementById('clickerSocialHandle').value;
+            const platform = document.getElementById('clickerPlatform').value;
+            const reason = document.getElementById('clickerReason').value;
+
+            if (!realName || !socialHandle || !reason) {
+                alert("Please fill in all details: Real Name, Social Handle, and Purpose.");
                 return;
             }
-            localStorage.setItem('engine_clicker_name', name);
-            loadClickerSession(name);
+
+            const rawData = `${realName}:${socialHandle}:${platform}:${Date.now()}`;
+            const hmacToken = await generateHMAC(rawData, CONFIG.secretKey);
+
+            localStorage.setItem('engine_clicker_real', realName);
+            localStorage.setItem('engine_clicker_social', socialHandle);
+            localStorage.setItem('engine_clicker_platform', platform);
+            localStorage.setItem('engine_clicker_reason', reason);
+            localStorage.setItem('engine_clicker_hmac', hmacToken);
+            
+            if (!localStorage.getItem('engine_clicker_jobs')) {
+                localStorage.setItem('engine_clicker_jobs', '0');
+            }
+            
+            loadClickerSession(realName, socialHandle, platform, hmacToken);
         }
 
         function loadBizSession(name, slots) {
@@ -188,15 +255,25 @@
             renderSlots(name, slots);
         }
 
-        function loadClickerSession(name) {
+        function loadClickerSession(realName, socialHandle, platform, hmacToken) {
             document.getElementById('clickerFormArea').style.display = 'none';
             document.getElementById('clickerSessionArea').style.display = 'block';
-            document.getElementById('displayClickerName').innerText = name;
-            document.getElementById('clickerNotice').innerText = "You are online and ready to route traffic!";
+            document.getElementById('displayClickerName').innerText = realName;
+            document.getElementById('displayClickerSocial').innerText = socialHandle;
+            document.getElementById('displayPlatform').innerText = platform;
+            document.getElementById('displayHmac').innerText = hmacToken;
+            
+            const currentJobs = localStorage.getItem('engine_clicker_jobs') || '0';
+            document.getElementById('jobCounter').innerText = currentJobs;
+            document.getElementById('clickerNotice').innerText = "Dispatcher session active. Secure social HMAC generated.";
         }
 
-        function simulateTaskCompletion() {
-            alert("Task completed successfully! Rotation verified for today.");
+        function completeJob() {
+            let jobs = parseInt(localStorage.getItem('engine_clicker_jobs') || '0');
+            jobs += 1;
+            localStorage.setItem('engine_clicker_jobs', jobs);
+            document.getElementById('jobCounter').innerText = jobs;
+            alert(`Job logged successfully! Total completed jobs recorded: ${jobs}`);
         }
 
         function logout(type) {
@@ -209,10 +286,16 @@
                 document.getElementById('slotCount').value = '';
                 renderSlots("Sample Partner", 3);
             } else {
-                localStorage.removeItem('engine_clicker_name');
+                localStorage.removeItem('engine_clicker_real');
+                localStorage.removeItem('engine_clicker_social');
+                localStorage.removeItem('engine_clicker_platform');
+                localStorage.removeItem('engine_clicker_reason');
+                localStorage.removeItem('engine_clicker_hmac');
                 document.getElementById('clickerFormArea').style.display = 'block';
                 document.getElementById('clickerSessionArea').style.display = 'none';
-                document.getElementById('clickerName').value = '';
+                document.getElementById('clickerRealName').value = '';
+                document.getElementById('clickerSocialHandle').value = '';
+                document.getElementById('clickerReason').value = '';
                 document.getElementById('clickerNotice').innerText = '';
             }
         }
@@ -226,9 +309,12 @@
                 renderSlots("Sample Partner", 3);
             }
 
-            const savedClicker = localStorage.getItem('engine_clicker_name');
-            if (savedClicker) {
-                loadClickerSession(savedClicker);
+            const savedReal = localStorage.getItem('engine_clicker_real');
+            const savedSocial = localStorage.getItem('engine_clicker_social');
+            const savedPlatform = localStorage.getItem('engine_clicker_platform');
+            const savedHmac = localStorage.getItem('engine_clicker_hmac');
+            if (savedReal && savedSocial && savedHmac) {
+                loadClickerSession(savedReal, savedSocial, savedPlatform, savedHmac);
             }
         }
 
