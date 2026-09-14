@@ -3,17 +3,23 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Serve all static files from the current directory
-app.use(express.static(path.join(__dirname)));
+// Serve static files from root or public folder
+app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Explicit route for the homepage
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Catch-all fallback to prevent "Not Found" errors
-app.use((req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    const rootPath = path.join(__dirname, 'index.html');
+    const publicPath = path.join(__dirname, 'public', 'index.html');
+    
+    res.sendFile(rootPath, (err) => {
+        if (err) {
+            res.sendFile(publicPath, (err2) => {
+                if (err2) {
+                    res.status(404).send("Index.html not found in root or public folder.");
+                }
+            });
+        }
+    });
 });
 
 app.listen(PORT, '0.0.0.0', () => {
