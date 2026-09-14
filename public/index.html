@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,382 +6,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shoulder to Shoulder // Community Engine</title>
     <style>
-        :root {
-            --bg-deep: #0a0a0c;
-            --bg-surface: #121318;
-            --border: #2a2b36;
-            --accent-gold: #d4af37;
-            --accent-green: #00ff66;
-            --text-main: #f0f0f5;
-            --text-dim: #8b8d9b;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: monospace;
-        }
-
-        body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        header {
-            border: 1px solid var(--border);
-            background: var(--bg-surface);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 18px;
-            color: var(--accent-gold);
-            margin-bottom: 0;
-            letter-spacing: 2px;
-        }
-
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .grid-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .panel {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-        }
-
-        .panel h2 {
-            font-size: 13px;
-            color: var(--accent-gold);
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 6px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        label {
-            display: block;
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-bottom: 4px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 8px;
-            background: var(--bg-deep);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 6px;
-            font-size: 11px;
-            color: var(--text-main);
-        }
-
-        .checkbox-group label {
-            display: inline;
-            color: var(--text-main);
-            cursor: pointer;
-        }
-
-        .btn {
-            background: var(--accent-gold);
-            color: var(--bg-deep);
-            width: 100%;
-            padding: 10px;
-            font-weight: 800;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 11px;
-            margin-top: 5px;
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-        }
-
-        .slot-list {
-            max-height: 180px;
-            overflow-y: auto;
-            border: 1px solid var(--border);
-            background: var(--bg-deep);
-            border-radius: 4px;
-            padding: 8px;
-            margin-bottom: 15px;
-            font-size: 11px;
-        }
-
-        .slot-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px dashed var(--border);
-            align-items: center;
-        }
-
-        .slot-item:last-child {
-            border-bottom: none;
-        }
-
-        .badge-tags {
-            font-size: 9px;
-            color: var(--accent-green);
-            background: rgba(0, 255, 102, 0.1);
-            padding: 2px 6px;
-            border-radius: 3px;
-        }
-
-        .telemetry {
-            background: var(--bg-deep);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 11px;
-        }
-
-        .telemetry h2 {
-            font-size: 12px;
-            color: var(--accent-green);
-            margin-bottom: 8px;
-            border: none;
-            padding: 0;
-        }
-
-        #logBox {
-            color: var(--text-dim);
-            line-height: 1.4;
-        }
+        body { font-family: monospace; background: #0f172a; color: #f8fafc; padding: 20px; max-width: 800px; margin: auto; }
+        .card { background: #1e293b; border: 1px solid #334155; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        input, select, button { width: 100%; padding: 10px; margin-top: 8px; margin-bottom: 12px; background: #0f172a; border: 1px solid #475569; color: #fff; border-radius: 4px; }
+        button { background: #2563eb; cursor: pointer; font-weight: bold; }
+        button:hover { background: #1d4ed8; }
+        .matrix-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .slot { background: #0f172a; padding: 10px; border: 1px solid #334155; border-radius: 4px; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <h1>SHOULDER TO SHOULDER // COMMUNITY ENGINE</h1>
-        </header>
+    <div class="card">
+        <h2>SHOULDER TO SHOULDER // COMMUNITY ENGINE</h2>
+        <p>Direct peer-to-peer ecosystem. First 1,500 spaces open free.</p>
+    </div>
 
-        <div class="grid-layout">
-            <!-- Left Panel: Business & Resident Registration -->
-            <div>
-                <!-- Business Portal -->
-                <div class="panel" style="margin-bottom: 20px;">
-                    <h2>1. Business Portal & Vault Payouts</h2>
-                    <div class="form-group">
-                        <label>Business / Location Name</label>
-                        <input type="text" id="bizName" class="form-control" placeholder="e.g. Local Shop / Pub">
-                    </div>
-                    <div class="form-group">
-                        <label>Target Unique URL</label>
-                        <input type="text" id="bizUrl" class="form-control" placeholder="https://...">
-                    </div>
-                    <div class="form-group">
-                        <label>Amazon Associate Tag</label>
-                        <input type="text" id="amazonTag" class="form-control" value="mrcenk20-21">
-                    </div>
-                    <div class="form-group">
-                        <label>Monzo Payout Tag / Handle</label>
-                        <input type="text" id="monzoTag" class="form-control" placeholder="e.g. $mrcenk or phone">
-                    </div>
-                    <button class="btn" onclick="registerBusiness()">+ Register Unique Link & Payout</button>
-                </div>
+    <div class="card">
+        <h3>1. Business Portal & Vault Payouts</h3>
+        <form id="businessForm">
+            <input type="text" id="bizName" placeholder="Business / Location Name" required>
+            <input type="text" id="bizUrl" placeholder="Target Unique URL" required>
+            <input type="text" id="amazonTag" placeholder="Amazon Associate Tag (e.g. mrcenk20-21)">
+            <input type="text" id="monzoTag" placeholder="Monzo Payout Tag / Handle">
+            <button type="submit">+ Register Unique Link & Payout</button>
+        </form>
+    </div>
 
-                <!-- Community Resident Registration with Personal Channel Boosting -->
-                <div class="panel">
-                    <h2>Community Resident Registration</h2>
-                    <div class="form-group">
-                        <label>Resident Name (e.g. John)</label>
-                        <input type="text" id="residentNameInput" class="form-control" placeholder="e.g. John">
-                    </div>
-                    <div class="form-group">
-                        <label>Contact / Mobile</label>
-                        <input type="text" id="residentContactInput" class="form-control" placeholder="e.g. 07123 456789">
-                    </div>
-                    <div class="form-group">
-                        <label>Connect Channels to Boost Revenue Multiplier:</label>
-                        <div class="checkbox-group">
-                            <label><input type="checkbox" id="chkFb"> Facebook</label>
-                            <label><input type="checkbox" id="chkTk"> TikTok</label>
-                            <label><input type="checkbox" id="chkWa"> WhatsApp</label>
-                        </div>
-                    </div>
-                    <button class="btn" style="background: var(--accent-green);" onclick="registerResident()">+ Register Resident & Unlock Key</button>
-                </div>
-            </div>
+    <div class="card">
+        <h3>2. Community Workforce & Resident Registration</h3>
+        <form id="residentForm">
+            <input type="text" id="resName" placeholder="Resident Name (e.g. John)" required>
+            <input type="text" id="resContact" placeholder="Contact / Mobile" required>
+            <select id="workRole">
+                <option value="foot-soldier">Foot Soldier (Outreach & Marketing)</option>
+                <option value="it-programmer">IT / Programmer (Backend & Render Support)</option>
+                <option value="legal-compliance">Legal & Compliance</option>
+            </select>
+            <button type="submit">+ Join Workforce</button>
+        </form>
+    </div>
 
-            <!-- Right Panel: Matrix Slots & Vault -->
-            <div>
-                <!-- Core 10 Slots -->
-                <div class="panel" style="margin-bottom: 20px;">
-                    <h2>2. Core 10-Slot Matrix (<span id="coreCount">0</span>/10)</h2>
-                    <div class="slot-list" id="coreSlots">
-                        <!-- Populated dynamically -->
-                    </div>
-                </div>
-
-                <!-- Gold Key Extra 10 Slots -->
-                <div class="panel">
-                    <h2>3. Gold Key Resident Slots (<span id="goldCount">0</span>/10)</h2>
-                    <div class="slot-list" id="goldSlots">
-                        <!-- Populated dynamically -->
-                    </div>
-                    <button class="btn" style="background: var(--text-main); color: var(--bg-deep);" onclick="deployShare()">Deploy Daily Share</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Telemetry & Stats -->
-        <div class="telemetry">
-            <h2>Live System Telemetry & Vault Counter</h2>
-            <div id="logBox">> Community engine active. Resident multi-channel share boosters ready...</div>
+    <div class="card">
+        <h3>3. Active Community Slots (0/10)</h3>
+        <div class="matrix-grid" id="slotMatrix">
+            <div class="slot">01: Empty (£0.00)</div>
+            <div class="slot">02: Empty (£0.00)</div>
+            <div class="slot">03: Empty (£0.00)</div>
+            <div class="slot">04: Empty (£0.00)</div>
+            <div class="slot">05: Empty (£0.00)</div>
+            <div class="slot">06: Empty (£0.00)</div>
+            <div class="slot">07: Empty (£0.00)</div>
+            <div class="slot">08: Empty (£0.00)</div>
+            <div class="slot">09: Empty (£0.00)</div>
+            <div class="slot">10: Empty (£0.00)</div>
         </div>
     </div>
 
-    <script>
-        const coreSlotsData = Array(10).fill({ name: "Empty", status: "Open", value: "£0.00" });
-        const goldSlotsData = Array(10).fill({ name: "Locked", status: "Locked", value: "£0.00" });
+    <div class="card">
+        <h3>Live System Telemetry</h3>
+        <p>> Community engine active. Direct peer channels ready for deployment.</p>
+    </div>
 
-        function renderSlots() {
-            const coreContainer = document.getElementById('coreSlots');
-            coreContainer.innerHTML = '';
-            let activeCore = 0;
-            coreSlotsData.forEach((slot, index) => {
-                if (slot.status !== "Open" && slot.status !== "Empty") activeCore++;
-                coreContainer.innerHTML += `
-                    <div class="slot-item">
-                        <span>${(index + 1).toString().padStart(2, '0')}: ${slot.name}</span>
-                        <span>${slot.value}</span>
-                    </div>
-                `;
-            });
-            document.getElementById('coreCount').innerText = activeCore;
-
-            const goldContainer = document.getElementById('goldSlots');
-            goldContainer.innerHTML = '';
-            let activeGold = 0;
-            goldSlotsData.forEach((slot, index) => {
-                if (slot.status !== "Locked") activeGold++;
-                goldContainer.innerHTML += `
-                    <div class="slot-item">
-                        <span>${(index + 11).toString().padStart(2, '0')}: ${slot.name}</span>
-                        <span>${slot.value}</span>
-                    </div>
-                    `;
-            });
-            document.getElementById('goldCount').innerText = activeGold;
-        }
-
-        function logAction(message) {
-            document.getElementById('logBox').innerText = `> ${message}`;
-        }
-
-        function registerBusiness() {
-            const name = document.getElementById('bizName').value.trim();
-            const url = document.getElementById('bizUrl').value.trim();
-            const amazon = document.getElementById('amazonTag').value.trim();
-
-            if (!name || !url) {
-                logAction("Error: Please provide Business Name and Target URL.");
-                return;
-            }
-
-            const emptyIndex = coreSlotsData.findIndex(s => s.status === "Open" || s.name === "Empty");
-            if (emptyIndex === -1) {
-                logAction("Error: Core 10-Slot Matrix is full.");
-                return;
-            }
-
-            coreSlotsData[emptyIndex] = { name: `${name} [AMZ: ${amazon}]`, status: "Active", value: "£0.10" };
-            renderSlots();
-            logAction(`Business registered: ${name} linked with Amazon (${amazon}).`);
-
-            document.getElementById('bizName').value = '';
-            document.getElementById('bizUrl').value = '';
-        }
-
-        function registerResident() {
-            const nameInput = document.getElementById('residentNameInput');
-            const contactInput = document.getElementById('residentContactInput');
-            const chkFb = document.getElementById('chkFb').checked;
-            const chkTk = document.getElementById('chkTk').checked;
-            const chkWa = document.getElementById('chkWa').checked;
-            
-            const name = nameInput ? nameInput.value.trim() : '';
-            const contact = contactInput ? contactInput.value.trim() : '';
-
-            if (!name || !contact) {
-                logAction("Error: Please fill in your name and contact details.");
-                return;
-            }
-
-            // Calculate active channels for John to boost his revenue potential
-            let channels = [];
-            if (chkFb) channels.push("FB");
-            if (chkTk) channels.push("TikTok");
-            if (chkWa) channels.push("WA");
-            
-            let channelString = channels.length > 0 ? ` [Channels: ${channels.join(', ')}]` : " [No Channels Linked]";
-
-            const lockedIndex = goldSlotsData.findIndex(s => s.status === "Locked");
-            if (lockedIndex === -1) {
-                logAction("Error: All Gold Key resident slots are currently claimed.");
-                return;
-            }
-
-            goldSlotsData[lockedIndex] = { 
-                name: `${name} (${contact})${channelString}`, 
-                status: "Active", 
-                value: channels.length > 0 ? `£0.${channels.length}0` : "£0.10" 
-            };
-            
-            renderSlots();
-            logAction(`Resident registered: ${name} unlocked slot ${lockedIndex + 11} with ${channels.length} active share channels!`);
-
-            nameInput.value = '';
-            contactInput.value = '';
-            document.getElementById('chkFb').checked = false;
-            document.getElementById('chkTk').checked = false;
-            document.getElementById('chkWa').checked = false;
-        }
-
-        function deployShare() {
-            logAction("Daily community network share deployed across resident channels. Multipliers applied.");
-        }
-
-        renderSlots();
-    </script>
 </body>
 </html>
