@@ -1,3 +1,74 @@
+const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Connect to SQLite database
+const db = new sqlite3.Database('./shoulder_to_shoulder.db', (err) => {
+    if (err) {
+        console.error('Error opening database', err.message);
+    } else {
+        console.log('Connected to the SQLite database.');
+        db.run(`CREATE TABLE IF NOT EXISTS monkey_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            channel TEXT,
+            ad_count INTEGER
+        )`);
+    }
+});
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Channel configurations
+const ARQBAK_CHANNELS = {
+    youtube: "https://www.youtube.com/@cenkmahmutgokduman2307",
+    tiktok: "https://www.tiktok.com/@mahmut_gokduman7",
+    facebook: "https://www.facebook.com",
+    instagram: "https://www.instagram.com/@mahmut_gokduman",
+    reddit: "https://www.reddit.com"
+};
+
+// API Endpoint to log monkey activity
+app.post('/api/log', (req, res) => {
+    const { channel, ad_count } = req.body;
+    if (!channel || ad_count === undefined) {
+        return res.status(400).json({ error: 'Missing channel or ad_count' });
+    }
+    
+    const query = `INSERT INTO monkey_logs (channel, ad_count, timestamp) VALUES (?, ?, datetime('now'))`;
+    db.run(query, [channel, ad_count], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ success: true, id: this.lastID });
+    });
+});
+
+// API Endpoint to fetch live stats for badges
+app.get('/api/stats', (req, res) => {
+    db.all(`SELECT channel, SUM(ad_count) as total_ads 
+            FROM monkey_logs 
+            GROUP BY channel`, [], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        let stats = { youtube: 0, tiktok: 0, facebook: 0, instagram: 0, reddit: 0 };
+        if (rows) {
+            rows.forEach(r => {
+                let ch = r.channel.toLowerCase();
+                if (stats[ch] !== undefined) {
+                    stats[ch] = r.total_ads || 0;
+                }
+            });
+        }
+        res.json(stats);
+    });
+});
+
 // Main Storefront Page with Direct Database Counters
 app.get('/', (req, res) => {
     db.all(`SELECT channel, SUM(ad_count) as total_ads FROM monkey_logs GROUP BY channel`, [], (err, rows) => {
@@ -71,4 +142,8 @@ app.get('/', (req, res) => {
             </html>
         `);
     });
+});
+
+app.listen(PORT, () => {
+    console.log(`Live ticker server running on port ${PORT}`);
 });
