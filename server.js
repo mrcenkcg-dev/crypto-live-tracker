@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Channel configurations including YouTube, TikTok, Facebook, Instagram, Reddit
+// Channel configurations
 const ARQBAK_CHANNELS = {
     youtube: "https://www.youtube.com/@cenkmahmutgokduman2307",
     tiktok: "https://www.tiktok.com/@mahmut_gokduman7",
@@ -48,100 +48,102 @@ app.post('/api/log', (req, res) => {
     });
 });
 
-// Root URL (/) now opens your Live Ad Counter Board directly with ONE CLICK!
-app.get('/', (req, res) => {
-    db.all(`SELECT channel, SUM(ad_count) as total_ads, 
-            SUM(CASE WHEN timestamp >= datetime('now', '-1 hour') THEN ad_count ELSE 0 END) as ads_last_hour,
-            MAX(timestamp) as last_run 
+// API Endpoint to fetch live stats for the top badges
+app.get('/api/stats', (req, res) => {
+    db.all(`SELECT channel, SUM(ad_count) as total_ads 
             FROM monkey_logs 
             GROUP BY channel`, [], (err, rows) => {
         if (err) {
-            return res.status(500).send("Database error loading tracker data.");
+            return res.status(500).json({ error: err.message });
         }
-
-        let totalAllChannels = 0;
-        let totalLastHourAllChannels = 0;
+        let stats = { youtube: 0, tiktok: 0, facebook: 0, instagram: 0, reddit: 0 };
         if (rows) {
             rows.forEach(r => {
-                totalAllChannels += (r.total_ads || 0);
-                totalLastHourAllChannels += (r.ads_last_hour || 0);
+                let ch = r.channel.toLowerCase();
+                if (stats[ch] !== undefined) {
+                    stats[ch] = r.total_ads || 0;
+                }
             });
         }
+        res.json(stats);
+    });
+});
 
-        let html = `
-            <html>
-            <head>
-                <title>Three Monkeys Live Tracker - Cenk's Dashboard</title>
-                <meta http-equiv="refresh" content="30">
-                <style>
-                    body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 30px; }
-                    h1 { color: #4CAF50; }
-                    .status { color: #00E676; font-weight: bold; }
-                    .metrics-container { display: flex; gap: 20px; margin: 20px 0; }
-                    .metric-box { background: #1e1e1e; border: 1px solid #333; padding: 20px; border-radius: 8px; flex: 1; text-align: center; }
-                    .metric-number { font-size: 2.5em; color: #00E676; font-weight: bold; font-family: monospace; margin-top: 10px; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                    th, td { border: 1px solid #333; padding: 12px; text-align: left; }
-                    th { background: #1e1e1e; }
-                    ul { line-height: 1.6; }
-                    a { color: #29B6F6; text-decoration: none; }
-                    .ticker { font-size: 1.2em; color: #00E676; font-family: monospace; }
-                </style>
-            </head>
-            <body>
-                <h1>Live Advert & Traffic Dashboard</h1>
-                <p>Status: <span class="status">ONLINE & TICKING LIVE</span></p>
-
-                <div class="metrics-container">
-                    <div class="metric-box">
-                        <div>Adverts Received (Last Hour)</div>
-                        <div class="metric-number">${totalLastHourAllChannels}</div>
-                    </div>
-                    <div class="metric-box">
-                        <div>Total Adverts Recorded</div>
-                        <div class="metric-number">${totalAllChannels}</div>
-                    </div>
-                    <div class="metric-box">
-                        <div>Estimated 24-Hour Total</div>
-                        <div class="metric-number">~${totalLastHourAllChannels * 24}</div>
-                    </div>
+// Main Storefront Page with exact top ticker code block included
+app.get('/', (req, res) => {
+    res.send(`
+        <html>
+        <head>
+            <title>Shoulder to Shoulder - Minimalist Engagement Platform</title>
+            <meta http-equiv="refresh" content="60">
+            <style>
+                body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 40px; margin: 0; line-height: 1.6; }
+                .container { max-width: 700px; margin: 0 auto; background: #1e1e1e; padding: 30px; border-radius: 8px; border: 1px solid #333; position: relative; }
+                h1 { color: #4CAF50; margin-top: 0; }
+                h3 { color: #29B6F6; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 25px; }
+                .btn { display: inline-block; padding: 12px 24px; background: #4CAF50; color: white; font-weight: bold; text-decoration: none; border-radius: 4px; margin-top: 25px; text-align: center; width: 100%; box-sizing: border-box; }
+                .btn:hover { background: #45a049; }
+                ul { padding-left: 20px; }
+                li { margin-bottom: 8px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <!-- Top Ticker Code Block -->
+                <div id="live-top-tickers" style="position: absolute; top: 15px; right: 20px; display: flex; gap: 10px; font-family: monospace; font-size: 0.85em; background: rgba(0,0,0,0.6); padding: 8px 12px; border-radius: 6px; border: 1px solid #333; z-index: 999;">
+                    <div>YT: <span id="ticker-yt" style="color: #00E676;">0</span></div>
+                    <div>IG: <span id="ticker-ig" style="color: #00E676;">0</span></div>
+                    <div>TT: <span id="ticker-tt" style="color: #00E676;">0</span></div>
+                    <div>RD: <span id="ticker-rd" style="color: #00E676;">0</span></div>
                 </div>
 
-                <h3>Platform Channels:</h3>
+                <h1>Shoulder to Shoulder</h1>
+                <p><strong>Minimalist Engagement & Publishing Platform</strong></p>
+                <p>We are happy to accommodate you, and we are proud to have you resident here with us. Your effort, your reward.</p>
+                
+                <h3>Live Hourly Wages</h3>
                 <ul>
-                    <li>YouTube: <a href="${ARQBAK_CHANNELS.youtube}" target="_blank">${ARQBAK_CHANNELS.youtube}</a></li>
-                    <li>TikTok: <a href="${ARQBAK_CHANNELS.tiktok}" target="_blank">${ARQBAK_CHANNELS.tiktok}</a></li>
-                    <li>Facebook: <a href="${ARQBAK_CHANNELS.facebook}" target="_blank">${ARQBAK_CHANNELS.facebook}</a></li>
-                    <li>Instagram: <a href="${ARQBAK_CHANNELS.instagram}" target="_blank">${ARQBAK_CHANNELS.instagram}</a></li>
-                    <li>Reddit: <a href="${ARQBAK_CHANNELS.reddit}" target="_blank">${ARQBAK_CHANNELS.reddit}</a></li>
+                    <li><strong>1 Hour of Work:</strong> £1</li>
+                    <li><strong>24 Hours of Work:</strong> £24</li>
                 </ul>
 
-                <h2>Breakdown by Platform</h2>
-                <table>
-                    <tr>
-                        <th>Platform / Channel</th>
-                        <th>Adverts in Last Hour</th>
-                        <th>Total Adverts Logged</th>
-                        <th>Last Ticker Timestamp</th>
-                    </tr>
-        `;
+                <h3>Milestone Rewards</h3>
+                <ul>
+                    <li><strong>Bronze Tier (6 Hours Work):</strong> + £2 Bonus</li>
+                    <li><strong>Silver Tier (12 Hours Work):</strong> + £5 Bonus</li>
+                    <li><strong>Gold Tier (24 Hours Work):</strong> + £12 Bonus</li>
+                </ul>
 
-        if (rows && rows.length > 0) {
-            rows.forEach(row => {
-                html += `<tr>
-                    <td>${row.channel}</td>
-                    <td class="ticker">${row.ads_last_hour || 0} ads</td>
-                    <td class="ticker">${row.total_ads || 0} ads</td>
-                    <td>${row.last_run || 'N/A'}</td>
-                </tr>`;
-            });
-        } else {
-            html += `<tr><td colspan="4">Waiting for the first 20-minute ticker report to log adverts...</td></tr>`;
-        }
+                <h3>Platform Rules & Terms</h3>
+                <ul>
+                    <li><strong>Real Work, Real Earnings:</strong> Your income depends entirely on your effort. Work hard, browse, and click through automated feeds to earn.</li>
+                    <li><strong>Whole-Pound Cash-Out & Reset:</strong> Payouts are in whole-pound increments (fractional remainders stay with the system). Pressing cash-out triggers an immediate account exit and reset, keeping our slots fresh.</li>
+                    <li><strong>£5 Threshold:</strong> Cash out anytime you hit £5 via Amazon gift cards, Google gift cards, or Google Pay.</li>
+                    <li><strong>Zero Ghosts Policy:</strong> Inactive accounts for 31 days are automatically purged to keep slots open for active participants.</li>
+                    <li><strong>Batch Capacity:</strong> Strict 1,000-slot batches ensure a fair and high-speed environment for everyone.</li>
+                </ul>
 
-        html += `</table></body></html>`;
-        res.send(html);
-    });
+                <a href="${ARQBAK_CHANNELS.youtube}" target="_blank" class="btn">Enter Platform & Join Channels</a>
+            </div>
+
+            <script>
+                // Optional: Auto-fetch live counts into those small top icons every 30 seconds
+                async function updateTopTickers() {
+                    try {
+                        let res = await fetch('/api/stats');
+                        let data = await res.json();
+                        if(data.youtube) document.getElementById('ticker-yt').innerText = data.youtube;
+                        if(data.instagram) document.getElementById('ticker-ig').innerText = data.instagram;
+                        if(data.tiktok) document.getElementById('ticker-tt').innerText = data.tiktok;
+                        if(data.reddit) document.getElementById('ticker-rd').innerText = data.reddit;
+                    } catch(e) {}
+                }
+                updateTopTickers();
+                setInterval(updateTopTickers, 30000);
+            </script>
+        </body>
+        </html>
+    `);
 });
 
 app.listen(PORT, () => {
