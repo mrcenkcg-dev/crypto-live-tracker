@@ -5,6 +5,14 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Arqbak Pipeline - Closed-Loop Social Assets
+const ARQBAK_CHANNELS = {
+    youtube: "https://www.youtube.com/@cenkmahmutgokduman2307",
+    tiktok: "https://www.tiktok.com/@mahmut_gokduman7",
+    instagram: "https://www.instagram.com/mahmut_gokduman",
+    threads: "https://www.threads.net/@mahmut_gokduman"
+};
+
 // Middleware
 app.use(express.json());
 app.use(express.static('public'));
@@ -26,12 +34,13 @@ const db = new sqlite3.Database(dbFile, (err) => {
     }
 });
 
-// Basic status route
+// Basic status route with integrated channels view
 app.get('/', (req, res) => {
     res.json({ 
         status: 'online', 
         platform: 'Shoulder to Shoulder',
-        message: 'Backend automation engine running 24/7' 
+        message: 'Backend automation engine running 24/7',
+        channels: ARQBAK_CHANNELS
     });
 });
 
