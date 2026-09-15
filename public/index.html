@@ -3,123 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoulder to Shoulder | Digital Publishing Ecosystem</title>
+    <title>Shoulder to Shoulder</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        .launch-page {
+            background: #090d16;
+            color: #f0f6fc;
+            padding: 30px;
+            max-width: 650px;
+            margin: 0 auto;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0f1115;
-            color: #f1f3f5;
-            line-height: 1.6;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            width: 100%;
-            max-width: 600px;
-            background: #181c24;
-            border: 1px solid #2a313d;
+        .welcome-box, .green-wage-box, .tier-section, .rules-box {
+            background: #111622;
+            border: 1px solid #30363d;
             border-radius: 8px;
-            padding: 40px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            margin-bottom: 16px;
         }
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
+        .welcome-box h2 {
+            margin: 0 0 4px 0;
             color: #ffffff;
-            text-align: center;
         }
         .subtitle {
-            text-align: center;
-            color: #9ba1a6;
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-        }
-        .rules-box {
-            background: #12151b;
-            border-left: 4px solid #3b82f6;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-radius: 4px;
-        }
-        .rules-box h2 {
-            font-size: 1.1rem;
+            color: #8b949e;
+            font-size: 14px;
             margin-bottom: 12px;
-            color: #60a5fa;
         }
+        .greeting-text {
+            color: #c9d1d9;
+            font-size: 15px;
+            line-height: 1.4;
+            margin: 0;
+        }
+        /* Green Square for Wages */
+        .green-wage-box {
+            background: #0d2818;
+            border-color: #2ea043;
+        }
+        .green-wage-box h3 {
+            color: #2ea043;
+            margin-top: 0;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .wage-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .wage-row.highlight {
+            border-top: 1px solid rgba(46, 160, 67, 0.3);
+            margin-top: 4px;
+            padding-top: 12px;
+        }
+        .rate {
+            color: #2ea043;
+            font-size: 18px;
+        }
+        /* Metallic Tier Balls */
+        .tier-section h3, .rules-box h3 {
+            margin-top: 0;
+            font-size: 15px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .tier-card {
+            display: flex;
+            align-items: center;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        .ball-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-right: 15px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 4px 6px rgba(0,0,0,0.4);
+        }
+        .ball-icon.bronze {
+            background: linear-gradient(135deg, #cd7f32, #8b4513);
+            color: #fff;
+            border: 1px solid #e0a96d;
+        }
+        .ball-icon.silver {
+            background: linear-gradient(135deg, #e0e0e0, #757575);
+            color: #111;
+            border: 1px solid #ffffff;
+        }
+        .ball-icon.gold {
+            background: linear-gradient(135deg, #ffd700, #b8860b);
+            color: #111;
+            border: 1px solid #fffae6;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3), inset 0 2px 4px rgba(255,255,255,0.5);
+        }
+        .tier-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .tier-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .tier-bonus {
+            font-size: 13px;
+            color: #f0b429;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+        /* Rules */
         .rules-box ul {
-            list-style-type: none;
+            margin: 0;
+            padding-left: 20px;
+            color: #8b949e;
+            font-size: 14px;
+            line-height: 1.6;
         }
         .rules-box li {
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            color: #d1d5db;
-            position: relative;
-            padding-left: 20px;
+            margin-bottom: 8px;
         }
-        .rules-box li::before {
-            content: "•";
-            color: #3b82f6;
-            position: absolute;
-            left: 0;
-            font-weight: bold;
+        .rules-box strong {
+            color: #f0f6fc;
         }
-        .cta-section {
-            text-align: center;
-        }
-        .btn {
-            display: inline-block;
-            background: #2563eb;
-            color: #ffffff;
-            padding: 12px 30px;
-            font-size: 1rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background 0.2s;
+        /* Launch Button */
+        .launch-btn {
             width: 100%;
-            margin-bottom: 12px;
+            background: #238636;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
         }
-        .btn:hover {
-            background: #1d4ed8;
-        }
-        .note {
-            font-size: 0.8rem;
-            color: #6b7280;
-            margin-top: 15px;
+        .launch-btn:hover {
+            background: #2ea043;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Shoulder to Shoulder</h1>
+<div class="launch-page">
+    <!-- Welcome Header -->
+    <div class="welcome-box">
+        <h2>Shoulder to Shoulder</h2>
         <p class="subtitle">Minimalist Engagement & Publishing Platform</p>
+        <p class="greeting-text">We are happy to accommodate you, and we are proud to have you resident here with us. Your effort, your reward.</p>
+    </div>
 
-        <div class="rules-box">
-            <h2>Platform Rules & Terms</h2>
-            <ul>
-                <li><strong>Real Work, Real Earnings:</strong> Your income depends entirely on your effort and time invested. Work hard, browse, and click through automated feeds to earn. Depending on your pace, you can even reach your goals fast.</li>
-                <li><strong>£5 Cash Out Threshold:</strong> Once your balance hits £5, you can cash out anytime you choose via Amazon gift cards, Google gift cards, or Google Pay—or keep building your balance.</li>
-                <li><strong>Zero Ghosts Policy:</strong> Accounts inactive for 31 days are automatically purged from the system, and unclaimed funds are reclaimed to keep our slots open for active participants.</li>
-                <li><strong>Batch Capacity:</strong> We manage capacity in strict batches (e.g., 1,000 slots at a time) to ensure everyone active gets a fair and productive environment.</li>
-            </ul>
+    <!-- Green Square: Hourly Wages -->
+    <div class="green-wage-box">
+        <h3>Live Hourly Wages</h3>
+        <div class="wage-row"><span>1 Hour of Work</span> <span class="rate">£1</span></div>
+        <div class="wage-row highlight"><span>24 Hours of Work</span> <span class="rate">£24</span></div>
+    </div>
+
+    <!-- Metallic Tier Balls & Bonus Rewards -->
+    <div class="tier-section">
+        <h3>Milestone Rewards</h3>
+        
+        <div class="tier-card">
+            <div class="ball-icon bronze">Bronze</div>
+            <div class="tier-info">
+                <span class="tier-title">Bronze Tier (6 Hours Work)</span>
+                <span class="tier-bonus">+ £2 Bonus</span>
+            </div>
         </div>
 
-        <div class="cta-section">
-            <a href="/login" class="btn">Enter Platform & Join Channels</a>
-            <p class="note">By entering, you agree to maintain active participation and follow platform guidelines.</p>
+        <div class="tier-card">
+            <div class="ball-icon silver">Silver</div>
+            <div class="tier-info">
+                <span class="tier-title">Silver Tier (12 Hours Work)</span>
+                <span class="tier-bonus">+ £5 Bonus</span>
+            </div>
+        </div>
+
+        <div class="tier-card">
+            <div class="ball-icon gold">Gold</div>
+            <div class="tier-info">
+                <span class="tier-title">Gold Tier (24 Hours Work)</span>
+                <span class="tier-bonus">+ £12 Bonus</span>
+            </div>
         </div>
     </div>
+
+    <!-- Platform Rules & Terms -->
+    <div class="rules-box">
+        <h3>Platform Rules & Terms</h3>
+        <ul>
+            <li><strong>Real Work, Real Earnings:</strong> Your income depends entirely on your effort. Work hard, browse, and click through automated feeds to earn.</li>
+            <li><strong>Whole-Pound Cash-Out & Reset:</strong> Payouts are in whole-pound increments (fractional remainders stay with the system). Pressing cash-out triggers an immediate account exit and reset, keeping our slots fresh.</li>
+            <li><strong>£5 Threshold:</strong> Cash out anytime you hit £5 via Amazon gift cards, Google gift cards, or Google Pay.</li>
+            <li><strong>Zero Ghosts Policy:</strong> Inactive accounts for 31 days are automatically purged to keep slots open for active participants.</li>
+            <li><strong>Batch Capacity:</strong> Strict 1,000-slot batches ensure a fair and high-speed environment for everyone.</li>
+        </ul>
+    </div>
+
+    <!-- Action Button -->
+    <button class="launch-btn">Enter Platform & Join Channels</button>
+</div>
 
 </body>
 </html>
