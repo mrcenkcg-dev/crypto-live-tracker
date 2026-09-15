@@ -32,12 +32,17 @@ const ARQBAK_CHANNELS = {
     reddit: "https://www.reddit.com"
 };
 
-// Helper function to validate your email (accepts both gmail and googlemail)
+// Helper function to validate your email
 function isValidAdmin(email) {
     if (!email) return false;
     const cleanEmail = email.trim().toLowerCase();
     return cleanEmail === 'mrcenk.cg@gmail.com' || cleanEmail === 'mrcenk.cg@googlemail.com';
 }
+
+// Front Page / Storefront
+app.get('/', (req, res) => {
+    res.redirect('/tracker?email=mrcenk.cg@gmail.com');
+});
 
 // API Endpoint to log monkey activity
 app.post('/api/log', (req, res) => {
@@ -55,58 +60,30 @@ app.post('/api/log', (req, res) => {
     });
 });
 
-// Login Page for Admin Access
-app.get('/login', (req, res) => {
-    res.send(`
-        <html>
-        <head>
-            <title>Cenk Login - Live Tracker</title>
-            <style>
-                body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 40px; display: flex; justify-content: center; align-items: center; height: 80vh; }
-                .login-box { background: #1e1e1e; padding: 30px; border-radius: 8px; border: 1px solid #333; width: 350px; }
-                input { width: 100%; padding: 10px; margin: 10px 0 20px 0; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 4px; }
-                button { width: 100%; padding: 10px; background: #4CAF50; border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer; }
-                button:hover { background: #45a049; }
-                h2 { color: #4CAF50; margin-top: 0; }
-            </style>
-        </head>
-        <body>
-            <div class="login-box">
-                <h2>Cenk's Admin Login</h2>
-                <p>Enter your email to access your live tracker:</p>
-                <form action="/auth" method="POST">
-                    <label>Email Address:</label>
-                    <input type="email" name="email" required placeholder="mrcenk.cg@gmail.com">
-                    <button type="submit">Access Live Dashboard</button>
-                </form>
-            </div>
-        </body>
-        </html>
-    `);
-});
-
-// Handle Login Authentication
-app.post('/auth', (req, res) => {
-    const userEmail = req.body.email;
-    if (isValidAdmin(userEmail)) {
-        res.redirect('/tracker?email=' + encodeURIComponent(userEmail.trim().toLowerCase()));
-    } else {
-        res.send(`<html><body style="background:#121212;color:#ff5255;padding:40px;font-family:Arial;"><h2>Access Denied</h2><p>The email address you entered is not recognized as the admin account.</p><a href="/login" style="color:#29B6F6;">Try Again</a></body></html>`);
-    }
-});
-
-// Private Live 20-Minute Tracker Dashboard Endpoint
+// Private Live 20-Minute & Hourly Tracker Dashboard Endpoint
 app.get('/tracker', (req, res) => {
     const userEmail = req.query.email;
     if (!isValidAdmin(userEmail)) {
-        return res.redirect('/login');
+        return res.redirect('/');
     }
 
-    db.all(`SELECT channel, SUM(ad_count) as total_ads, MAX(timestamp) as last_run 
+    // Query for total ads per channel, plus ads received in the last hour
+    db.all(`SELECT channel, SUM(ad_count) as total_ads, 
+            SUM(CASE WHEN timestamp >= datetime('now', '-1 hour') THEN ad_count ELSE 0 END) as ads_last_hour,
+            MAX(timestamp) as last_run 
             FROM monkey_logs 
             GROUP BY channel`, [], (err, rows) => {
         if (err) {
             return res.status(500).send("Database error loading tracker data.");
+        }
+
+        let totalAllChannels = 0;
+        let totalLastHourAllChannels = 0;
+        if (rows) {
+            rows.forEach(r => {
+                totalAllChannels += (r.total_ads || 0);
+                totalLastHourAllChannels += (r.ads_last_hour || 0);
+            });
         }
 
         let html = `
@@ -115,24 +92,39 @@ app.get('/tracker', (req, res) => {
                 <title>Three Monkeys Live Tracker - Cenk's Dashboard</title>
                 <meta http-equiv="refresh" content="30">
                 <style>
-                    body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 20px; }
+                    body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 30px; }
                     h1 { color: #4CAF50; }
                     .status { color: #00E676; font-weight: bold; }
+                    .metrics-container { display: flex; gap: 20px; margin: 20px 0; }
+                    .metric-box { background: #1e1e1e; border: 1px solid #333; padding: 20px; border-radius: 8px; flex: 1; text-align: center; }
+                    .metric-number { font-size: 2.5em; color: #00E676; font-weight: bold; font-family: monospace; margin-top: 10px; }
                     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
                     th, td { border: 1px solid #333; padding: 12px; text-align: left; }
                     th { background: #1e1e1e; }
                     ul { line-height: 1.6; }
                     a { color: #29B6F6; text-decoration: none; }
-                    .logout { float: right; background: #d32f2f; color: white; padding: 8px 15px; border-radius: 4px; }
                     .ticker { font-size: 1.2em; color: #00E676; font-family: monospace; }
                 </style>
             </head>
             <body>
-                <a href="/login" class="logout">Logout</a>
-                <h1>Three Monkeys Live 20-Minute Ticker Dashboard</h1>
-                <p>Logged in as: <strong>${userEmail}</strong></p>
-                <p>Status: <span class="status">ONLINE & TICKING (Real Life)</span></p>
-                
+                <h1>Live Advert & Traffic Dashboard</h1>
+                <p>Status: <span class="status">ONLINE & TICKING LIVE</span></p>
+
+                <div class="metrics-container">
+                    <div class="metric-box">
+                        <div>Adverts Received (Last Hour)</div>
+                        <div class="metric-number">${totalLastHourAllChannels}</div>
+                    </div>
+                    <div class="metric-box">
+                        <div>Total Adverts Recorded</div>
+                        <div class="metric-number">${totalAllChannels}</div>
+                    </div>
+                    <div class="metric-box">
+                        <div>Estimated 24-Hour Total</div>
+                        <div class="metric-number">~${totalLastHourAllChannels * 24}</div>
+                    </div>
+                </div>
+
                 <h3>Platform Channels:</h3>
                 <ul>
                     <li>YouTube: <a href="${ARQBAK_CHANNELS.youtube}" target="_blank">${ARQBAK_CHANNELS.youtube}</a></li>
@@ -142,28 +134,27 @@ app.get('/tracker', (req, res) => {
                     <li>Reddit: <a href="${ARQBAK_CHANNELS.reddit}" target="_blank">${ARQBAK_CHANNELS.reddit}</a></li>
                 </ul>
 
-                <h2>Live 20-Minute Ad & Activity Ticker</h2>
+                <h2>Breakdown by Platform</h2>
                 <table>
                     <tr>
                         <th>Platform / Channel</th>
-                        <th>Ads Brought (Last 20 Mins Window)</th>
-                        <th>Estimated 24-Hour Total</th>
+                        <th>Adverts in Last Hour</th>
+                        <th>Total Adverts Logged</th>
                         <th>Last Ticker Timestamp</th>
                     </tr>
         `;
 
         if (rows && rows.length > 0) {
             rows.forEach(row => {
-                let estimatedDaily = (row.total_ads || 0) * 72; // 72 windows of 20 minutes in 24 hours
                 html += `<tr>
                     <td>${row.channel}</td>
-                    <td class="ticker">${row.total_ads || 0} ads tick</td>
-                    <td>~${estimatedDaily} ads</td>
+                    <td class="ticker">${row.ads_last_hour || 0} ads</td>
+                    <td class="ticker">${row.total_ads || 0} ads</td>
                     <td>${row.last_run || 'N/A'}</td>
                 </tr>`;
             });
         } else {
-            html += `<tr><td colspan="4">Waiting for the first 20-minute monkey ticker report to drop...</td></tr>`;
+            html += `<tr><td colspan="4">Waiting for the first 20-minute ticker report to log adverts...</td></tr>`;
         }
 
         html += `</table></body></html>`;
