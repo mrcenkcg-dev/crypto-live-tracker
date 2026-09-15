@@ -32,8 +32,12 @@ const ARQBAK_CHANNELS = {
     reddit: "https://www.reddit.com"
 };
 
-// Authorized Admin Email
-const ADMIN_EMAIL = "mrcenk.cg@googlemail.com";
+// Helper function to validate your email (accepts both gmail and googlemail)
+function isValidAdmin(email) {
+    if (!email) return false;
+    const cleanEmail = email.trim().toLowerCase();
+    return cleanEmail === 'mrcenk.cg@gmail.com' || cleanEmail === 'mrcenk.cg@googlemail.com';
+}
 
 // API Endpoint to log monkey activity
 app.post('/api/log', (req, res) => {
@@ -72,7 +76,7 @@ app.get('/login', (req, res) => {
                 <p>Enter your email to access your live tracker:</p>
                 <form action="/auth" method="POST">
                     <label>Email Address:</label>
-                    <input type="email" name="email" required placeholder="mrcenk.cg@googlemail.com">
+                    <input type="email" name="email" required placeholder="mrcenk.cg@gmail.com">
                     <button type="submit">Access Live Dashboard</button>
                 </form>
             </div>
@@ -83,9 +87,9 @@ app.get('/login', (req, res) => {
 
 // Handle Login Authentication
 app.post('/auth', (req, res) => {
-    const userEmail = req.body.email ? req.body.email.trim().toLowerCase() : '';
-    if (userEmail === ADMIN_EMAIL.toLowerCase()) {
-        res.redirect('/tracker?email=' + encodeURIComponent(userEmail));
+    const userEmail = req.body.email;
+    if (isValidAdmin(userEmail)) {
+        res.redirect('/tracker?email=' + encodeURIComponent(userEmail.trim().toLowerCase()));
     } else {
         res.send(`<html><body style="background:#121212;color:#ff5255;padding:40px;font-family:Arial;"><h2>Access Denied</h2><p>The email address you entered is not recognized as the admin account.</p><a href="/login" style="color:#29B6F6;">Try Again</a></body></html>`);
     }
@@ -94,7 +98,7 @@ app.post('/auth', (req, res) => {
 // Private Live 20-Minute Tracker Dashboard Endpoint
 app.get('/tracker', (req, res) => {
     const userEmail = req.query.email;
-    if (userEmail !== ADMIN_EMAIL) {
+    if (!isValidAdmin(userEmail)) {
         return res.redirect('/login');
     }
 
@@ -126,7 +130,7 @@ app.get('/tracker', (req, res) => {
             <body>
                 <a href="/login" class="logout">Logout</a>
                 <h1>Three Monkeys Live 20-Minute Ticker Dashboard</h1>
-                <p>Logged in as: <strong>${ADMIN_EMAIL}</strong></p>
+                <p>Logged in as: <strong>${userEmail}</strong></p>
                 <p>Status: <span class="status">ONLINE & TICKING (Real Life)</span></p>
                 
                 <h3>Platform Channels:</h3>
@@ -159,7 +163,7 @@ app.get('/tracker', (req, res) => {
                 </tr>`;
             });
         } else {
-            html += `<tr><td colspan="4">Waiting for the first 20-minute monkey ticker report to drop (1, 2, 3... 100+)...</td></tr>`;
+            html += `<tr><td colspan="4">Waiting for the first 20-minute monkey ticker report to drop...</td></tr>`;
         }
 
         html += `</table></body></html>`;
