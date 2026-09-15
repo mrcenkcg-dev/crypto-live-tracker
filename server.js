@@ -10,7 +10,6 @@ const db = new sqlite3.Database('./shoulder_to_shoulder.db', (err) => {
         console.error('Error opening database', err.message);
     } else {
         console.log('Connected to the SQLite database.');
-        // Initialize table if it doesn't exist
         db.run(`CREATE TABLE IF NOT EXISTS monkey_logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -21,6 +20,7 @@ const db = new sqlite3.Database('./shoulder_to_shoulder.db', (err) => {
 });
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Channel configurations
@@ -31,7 +31,10 @@ const ARQBAK_CHANNELS = {
     threads: "https://www.threads.net/@mahmut_gokduman"
 };
 
-// API Endpoint to log monkey activity (used by backend workers)
+// Authorized Admin Email
+const ADMIN_EMAIL = "mrcenk.cg@googlemail.com";
+
+// API Endpoint to log monkey activity
 app.post('/api/log', (req, res) => {
     const { channel, ad_count } = req.body;
     if (!channel || ad_count === undefined) {
@@ -47,8 +50,54 @@ app.post('/api/log', (req, res) => {
     });
 });
 
-// Live Tracker Dashboard Endpoint
-app.get('/', (req, res) => {
+// Login Page for Admin Access
+app.get('/login', (req, res) => {
+    res.send(`
+        <html>
+        <head>
+            <title>Cenk Login - Live Tracker</title>
+            <style>
+                body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 40px; display: flex; justify-content: center; align-items: center; height: 80vh; }
+                .login-box { background: #1e1e1e; padding: 30px; border-radius: 8px; border: 1px solid #333; width: 350px; }
+                input { width: 100%; padding: 10px; margin: 10px 0 20px 0; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 4px; }
+                button { width: 100%; padding: 10px; background: #4CAF50; border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer; }
+                button:hover { background: #45a049; }
+                h2 { color: #4CAF50; margin-top: 0; }
+            </style>
+        </head>
+        <body>
+            <div class="login-box">
+                <h2>Cenk's Admin Login</h2>
+                <p>Enter your email to access your live tracker:</p>
+                <form action="/auth" method="POST">
+                    <label>Email Address:</label>
+                    <input type="email" name="email" required placeholder="mrcenk.cg@googlemail.com">
+                    <button type="submit">Access Live Dashboard</button>
+                </form>
+            </div>
+        </body>
+        </html>
+    `);
+});
+
+// Handle Login Authentication
+app.post('/auth', (req, res) => {
+    const userEmail = req.body.email ? req.body.email.trim().toLowerCase() : '';
+    if (userEmail === ADMIN_EMAIL.toLowerCase()) {
+        // Redirect directly to the live tracker dashboard upon successful email match
+        res.redirect('/tracker?email=' + encodeURIComponent(userEmail));
+    } else {
+        res.send(`<html><body style="background:#121212;color:#ff5255;padding:40px;font-family:Arial;"><h2>Access Denied</h2><p>The email address you entered is not recognized as the admin account.</p><a href="/login" style="color:#29B6F6;">Try Again</a></body></html>`);
+    }
+});
+
+// Private Live 20-Minute Tracker Dashboard Endpoint
+app.get('/tracker', (req, res) => {
+    const userEmail = req.query.email;
+    if (userEmail !== ADMIN_EMAIL) {
+        return res.redirect('/login');
+    }
+
     db.all(`SELECT channel, SUM(ad_count) as total_ads, MAX(timestamp) as last_run 
             FROM monkey_logs 
             GROUP BY channel`, [], (err, rows) => {
@@ -59,7 +108,7 @@ app.get('/', (req, res) => {
         let html = `
             <html>
             <head>
-                <title>Three Monkeys Live Tracker</title>
+                <title>Three Monkeys Live Tracker - Cenk's Dashboard</title>
                 <meta http-equiv="refresh" content="60">
                 <style>
                     body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 20px; }
@@ -70,10 +119,13 @@ app.get('/', (req, res) => {
                     th { background: #1e1e1e; }
                     ul { line-height: 1.6; }
                     a { color: #29B6F6; text-decoration: none; }
+                    .logout { float: right; background: #d32f2f; color: white; padding: 8px 15px; border-radius: 4px; }
                 </style>
             </head>
             <body>
+                <a href="/login" class="logout">Logout</a>
                 <h1>Three Monkeys Live 20-Minute Tracker</h1>
+                <p>Logged in as: <strong>${ADMIN_EMAIL}</strong></p>
                 <p>Status: <span class="status">ONLINE & RUNNING (Real Life)</span></p>
                 
                 <h3>Linked Channels:</h3>
