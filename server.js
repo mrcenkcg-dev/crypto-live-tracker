@@ -32,18 +32,6 @@ const ARQBAK_CHANNELS = {
     reddit: "https://www.reddit.com"
 };
 
-// Helper function to validate your email
-function isValidAdmin(email) {
-    if (!email) return false;
-    const cleanEmail = email.trim().toLowerCase();
-    return cleanEmail === 'mrcenk.cg@gmail.com' || cleanEmail === 'mrcenk.cg@googlemail.com';
-}
-
-// Front Page / Storefront
-app.get('/', (req, res) => {
-    res.redirect('/tracker?email=mrcenk.cg@gmail.com');
-});
-
 // API Endpoint to log monkey activity
 app.post('/api/log', (req, res) => {
     const { channel, ad_count } = req.body;
@@ -60,14 +48,8 @@ app.post('/api/log', (req, res) => {
     });
 });
 
-// Private Live 20-Minute & Hourly Tracker Dashboard Endpoint
-app.get('/tracker', (req, res) => {
-    const userEmail = req.query.email;
-    if (!isValidAdmin(userEmail)) {
-        return res.redirect('/');
-    }
-
-    // Query for total ads per channel, plus ads received in the last hour
+// Root URL (/) now opens your Live Ad Counter Board directly with ONE CLICK!
+app.get('/', (req, res) => {
     db.all(`SELECT channel, SUM(ad_count) as total_ads, 
             SUM(CASE WHEN timestamp >= datetime('now', '-1 hour') THEN ad_count ELSE 0 END) as ads_last_hour,
             MAX(timestamp) as last_run 
