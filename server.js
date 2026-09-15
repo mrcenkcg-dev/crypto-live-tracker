@@ -69,7 +69,7 @@ app.get('/api/stats', (req, res) => {
     });
 });
 
-// Main Storefront Page with Direct Database Counters
+// Main Storefront Page with Big Clear Visible Counters Right at the Top
 app.get('/', (req, res) => {
     db.all(`SELECT channel, SUM(ad_count) as total_ads FROM monkey_logs GROUP BY channel`, [], (err, rows) => {
         let stats = { youtube: 0, instagram: 0, tiktok: 0, reddit: 0 };
@@ -89,11 +89,15 @@ app.get('/', (req, res) => {
                 <meta http-equiv="refresh" content="30">
                 <style>
                     body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 40px; margin: 0; line-height: 1.6; }
-                    .container { max-width: 700px; margin: 0 auto; background: #1e1e1e; padding: 30px; border-radius: 8px; border: 1px solid #333; position: relative; }
+                    .container { max-width: 700px; margin: 0 auto; background: #1e1e1e; padding: 30px; border-radius: 8px; border: 1px solid #333; }
+                    
+                    /* Big, bold, clear counter box right at the top */
+                    .visible-counter-box { background: #252525; border: 2px solid #00E676; padding: 15px; border-radius: 6px; margin-bottom: 25px; display: flex; justify-content: space-around; text-align: center; }
+                    .counter-item { font-family: monospace; font-size: 1.1em; color: #aaa; }
+                    .counter-item span { display: block; font-size: 1.4em; color: #00E676; font-weight: bold; margin-top: 5px; }
+
                     h1 { color: #4CAF50; margin-top: 0; }
                     h3 { color: #29B6F6; border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 25px; }
-                    .badge-bar { position: absolute; top: 15px; right: 20px; display: flex; gap: 8px; font-family: monospace; font-size: 0.85em; background: rgba(0,0,0,0.6); padding: 8px 12px; border-radius: 6px; border: 1px solid #333; }
-                    .badge-bar span { color: #00E676; font-weight: bold; }
                     .btn { display: inline-block; padding: 12px 24px; background: #4CAF50; color: white; font-weight: bold; text-decoration: none; border-radius: 4px; margin-top: 25px; text-align: center; width: 100%; box-sizing: border-box; }
                     .btn:hover { background: #45a049; }
                     ul { padding-left: 20px; }
@@ -102,12 +106,13 @@ app.get('/', (req, res) => {
             </head>
             <body>
                 <div class="container">
-                    <!-- Direct Live Ticker Badges -->
-                    <div class="badge-bar">
-                        <div>YT: <span>${stats.youtube}</span></div>
-                        <div>IG: <span>${stats.instagram}</span></div>
-                        <div>TT: <span>${stats.tiktok}</span></div>
-                        <div>RD: <span>${stats.reddit}</span></div>
+                    
+                    <!-- HUGE VISIBLE COUNTERS RIGHT AT THE TOP -->
+                    <div class="visible-counter-box">
+                        <div class="counter-item">YouTube<span>${stats.youtube}</span></div>
+                        <div class="counter-item">Instagram<span>${stats.instagram}</span></div>
+                        <div class="counter-item">TikTok<span>${stats.tiktok}</span></div>
+                        <div class="counter-item">Reddit<span>${stats.reddit}</span></div>
                     </div>
 
                     <h1>Shoulder to Shoulder</h1>
