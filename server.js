@@ -23,12 +23,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Channel configurations
+// Channel configurations including YouTube, TikTok, Facebook, Instagram, Reddit
 const ARQBAK_CHANNELS = {
     youtube: "https://www.youtube.com/@cenkmahmutgokduman2307",
     tiktok: "https://www.tiktok.com/@mahmut_gokduman7",
+    facebook: "https://www.facebook.com",
     instagram: "https://www.instagram.com/@mahmut_gokduman",
-    threads: "https://www.threads.net/@mahmut_gokduman"
+    reddit: "https://www.reddit.com"
 };
 
 // Authorized Admin Email
@@ -84,7 +85,6 @@ app.get('/login', (req, res) => {
 app.post('/auth', (req, res) => {
     const userEmail = req.body.email ? req.body.email.trim().toLowerCase() : '';
     if (userEmail === ADMIN_EMAIL.toLowerCase()) {
-        // Redirect directly to the live tracker dashboard upon successful email match
         res.redirect('/tracker?email=' + encodeURIComponent(userEmail));
     } else {
         res.send(`<html><body style="background:#121212;color:#ff5255;padding:40px;font-family:Arial;"><h2>Access Denied</h2><p>The email address you entered is not recognized as the admin account.</p><a href="/login" style="color:#29B6F6;">Try Again</a></body></html>`);
@@ -109,7 +109,7 @@ app.get('/tracker', (req, res) => {
             <html>
             <head>
                 <title>Three Monkeys Live Tracker - Cenk's Dashboard</title>
-                <meta http-equiv="refresh" content="60">
+                <meta http-equiv="refresh" content="30">
                 <style>
                     body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 20px; }
                     h1 { color: #4CAF50; }
@@ -120,29 +120,31 @@ app.get('/tracker', (req, res) => {
                     ul { line-height: 1.6; }
                     a { color: #29B6F6; text-decoration: none; }
                     .logout { float: right; background: #d32f2f; color: white; padding: 8px 15px; border-radius: 4px; }
+                    .ticker { font-size: 1.2em; color: #00E676; font-family: monospace; }
                 </style>
             </head>
             <body>
                 <a href="/login" class="logout">Logout</a>
-                <h1>Three Monkeys Live 20-Minute Tracker</h1>
+                <h1>Three Monkeys Live 20-Minute Ticker Dashboard</h1>
                 <p>Logged in as: <strong>${ADMIN_EMAIL}</strong></p>
-                <p>Status: <span class="status">ONLINE & RUNNING (Real Life)</span></p>
+                <p>Status: <span class="status">ONLINE & TICKING (Real Life)</span></p>
                 
-                <h3>Linked Channels:</h3>
+                <h3>Platform Channels:</h3>
                 <ul>
                     <li>YouTube: <a href="${ARQBAK_CHANNELS.youtube}" target="_blank">${ARQBAK_CHANNELS.youtube}</a></li>
                     <li>TikTok: <a href="${ARQBAK_CHANNELS.tiktok}" target="_blank">${ARQBAK_CHANNELS.tiktok}</a></li>
+                    <li>Facebook: <a href="${ARQBAK_CHANNELS.facebook}" target="_blank">${ARQBAK_CHANNELS.facebook}</a></li>
                     <li>Instagram: <a href="${ARQBAK_CHANNELS.instagram}" target="_blank">${ARQBAK_CHANNELS.instagram}</a></li>
-                    <li>Threads: <a href="${ARQBAK_CHANNELS.threads}" target="_blank">${ARQBAK_CHANNELS.threads}</a></li>
+                    <li>Reddit: <a href="${ARQBAK_CHANNELS.reddit}" target="_blank">${ARQBAK_CHANNELS.reddit}</a></li>
                 </ul>
 
-                <h2>Live 20-Minute Ad & Activity Counts</h2>
+                <h2>Live 20-Minute Ad & Activity Ticker</h2>
                 <table>
                     <tr>
-                        <th>Channel</th>
-                        <th>Ads Brought (Last Window)</th>
+                        <th>Platform / Channel</th>
+                        <th>Ads Brought (Last 20 Mins Window)</th>
                         <th>Estimated 24-Hour Total</th>
-                        <th>Last Activity Time</th>
+                        <th>Last Ticker Timestamp</th>
                     </tr>
         `;
 
@@ -151,13 +153,13 @@ app.get('/tracker', (req, res) => {
                 let estimatedDaily = (row.total_ads || 0) * 72; // 72 windows of 20 minutes in 24 hours
                 html += `<tr>
                     <td>${row.channel}</td>
-                    <td>${row.total_ads || 0} ads</td>
+                    <td class="ticker">${row.total_ads || 0} ads tick</td>
                     <td>~${estimatedDaily} ads</td>
                     <td>${row.last_run || 'N/A'}</td>
                 </tr>`;
             });
         } else {
-            html += `<tr><td colspan="4">Waiting for the first 20-minute monkey report to drop...</td></tr>`;
+            html += `<tr><td colspan="4">Waiting for the first 20-minute monkey ticker report to drop (1, 2, 3... 100+)...</td></tr>`;
         }
 
         html += `</table></body></html>`;
@@ -166,5 +168,5 @@ app.get('/tracker', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Live tracker server running on port ${PORT}`);
+    console.log(`Live ticker server running on port ${PORT}`);
 });
