@@ -3,103 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoulder to Shoulder</title>
+    <title>Shoulder to Shoulder | Digital Publishing Ecosystem</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
         body {
-            background-color: #0b0f19;
-            color: #f3f4f6;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f1115;
+            color: #f1f3f5;
+            line-height: 1.6;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
         .container {
-            max-width: 600px;
             width: 100%;
-            background: #1f2937;
+            max-width: 600px;
+            background: #181c24;
+            border: 1px solid #2a313d;
+            border-radius: 8px;
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            border: 1px solid #374151;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
         h1 {
-            font-size: 2rem;
-            margin-bottom: 15px;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
             color: #ffffff;
-            letter-spacing: -0.5px;
+            text-align: center;
         }
-        p {
-            color: #9ca3af;
-            font-size: 1rem;
-            line-height: 1.5;
+        .subtitle {
+            text-align: center;
+            color: #9ba1a6;
+            font-size: 0.95rem;
             margin-bottom: 30px;
         }
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(16, 185, 129, 0.1);
-            color: #34d399;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 30px;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #34d399;
-            border-radius: 50%;
-            margin-right: 8px;
-            box-shadow: 0 0 8px #34d399;
-        }
-        .action-box {
-            background: #111827;
+        .rules-box {
+            background: #12151b;
+            border-left: 4px solid #3b82f6;
             padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #374151;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+        .rules-box h2 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: #60a5fa;
+        }
+        .rules-box ul {
+            list-style-type: none;
+        }
+        .rules-box li {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #d1d5db;
+            position: relative;
+            padding-left: 20px;
+        }
+        .rules-box li::before {
+            content: "•";
+            color: #3b82f6;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        .cta-section {
+            text-align: center;
         }
         .btn {
             display: inline-block;
-            background: #3b82f6;
-            color: white;
+            background: #2563eb;
+            color: #ffffff;
+            padding: 12px 30px;
+            font-size: 1rem;
             font-weight: 600;
-            padding: 12px 24px;
-            border-radius: 6px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
             text-decoration: none;
             transition: background 0.2s;
             width: 100%;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
+            margin-bottom: 12px;
         }
         .btn:hover {
-            background: #2563eb;
+            background: #1d4ed8;
+        }
+        .note {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="status-badge">
-            <span class="status-dot"></span> System Online & Active 24/7
-        </div>
-        
         <h1>Shoulder to Shoulder</h1>
-        <p>Automated digital publishing ecosystem. Autonomous background workflows operating continuously.</p>
-        
-        <div class="action-box">
-            <button class="btn" onclick="alert('System ready for participant connection.')">Join Platform</button>
+        <p class="subtitle">Minimalist Engagement & Publishing Platform</p>
+
+        <div class="rules-box">
+            <h2>Platform Rules & Terms</h2>
+            <ul>
+                <li><strong>Real Work, Real Earnings:</strong> Your income depends entirely on your effort and time invested. Work hard, browse, and click through automated feeds to earn. Depending on your pace, you can even reach your goals fast.</li>
+                <li><strong>£5 Cash Out Threshold:</strong> Once your balance hits £5, you can cash out anytime you choose via Amazon gift cards, Google gift cards, or Google Pay—or keep building your balance.</li>
+                <li><strong>Zero Ghosts Policy:</strong> Accounts inactive for 31 days are automatically purged from the system, and unclaimed funds are reclaimed to keep our slots open for active participants.</li>
+                <li><strong>Batch Capacity:</strong> We manage capacity in strict batches (e.g., 1,000 slots at a time) to ensure everyone active gets a fair and productive environment.</li>
+            </ul>
+        </div>
+
+        <div class="cta-section">
+            <a href="/login" class="btn">Enter Platform & Join Channels</a>
+            <p class="note">By entering, you agree to maintain active participation and follow platform guidelines.</p>
         </div>
     </div>
 
