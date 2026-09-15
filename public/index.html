@@ -3,375 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Community Engine - Business Operations Portal</title>
+    <title>Shoulder to Shoulder</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: #0b0f19;
+            color: #f3f4f6;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
         }
         .container {
-            max-width: 800px;
+            max-width: 600px;
             width: 100%;
-            background: #1e293b;
-            padding: 30px;
+            background: #1f2937;
+            padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            border: 1px solid #374151;
         }
-        h1 { color: #38bdf8; text-align: center; }
-        .nav-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
         }
-        .nav-tabs button {
-            background: #334155;
-            color: #f8fafc;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
+        p {
+            color: #9ca3af;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 30px;
         }
-        .nav-tabs button.active { background: #0284c7; }
-        .portal-section {
-            display: none;
-            background: #334155;
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 30px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #34d399;
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 8px #34d399;
+        }
+        .action-box {
+            background: #111827;
             padding: 20px;
             border-radius: 8px;
-            margin-bottom: 25px;
+            border: 1px solid #374151;
         }
-        .portal-section.active { display: block; }
-        input, select, textarea, button.action-btn {
+        .btn {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.2s;
             width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border-radius: 6px;
             border: none;
-            font-size: 16px;
-            box-sizing: border-box;
+            cursor: pointer;
+            font-size: 1rem;
         }
-        input, select, textarea { background: #1e293b; color: #fff; }
-        button.action-btn { background: #0284c7; color: #fff; font-weight: bold; cursor: pointer; }
-        button.action-btn:hover { background: #0369a1; }
-        .logout-btn { background: #ef4444 !important; margin-top: 15px; }
-        .ledger-box {
-            background: #1e293b;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 15px;
-            border-left: 4px solid #34d399;
+        .btn:hover {
+            background: #2563eb;
         }
-        .task-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .hmac-box {
-            background: #0f172a;
-            padding: 10px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 13px;
-            color: #38bdf8;
-            word-break: break-all;
-            margin-top: 10px;
-            border: 1px dashed #334155;
-        }
-        .slot-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .slot {
-            background: #475569;
-            padding: 15px;
-            text-align: center;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        .slot.active { background: #0284c7; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Community Engine Ops Portal</h1>
-        <p style="text-align: center; color: #94a3b8;">Strict Business Operations: Verified Weekly Ledger</p>
-
-        <!-- Role Selector Tabs -->
-        <div class="nav-tabs" id="navTabs">
-            <button id="btnBusiness" class="active" onclick="switchPortal('business')">Slot Owner / Node</button>
-            <button id="btnClicker" onclick="switchPortal('clicker')">Task Worker / Payout Profile</button>
+        <div class="status-badge">
+            <span class="status-dot"></span> System Online & Active 24/7
         </div>
-
-        <!-- Business Portal Section -->
-        <div id="businessPortal" class="portal-section active">
-            <h3>Business Slot Operations</h3>
-            <div id="bizFormArea">
-                <input type="text" id="bizName" placeholder="Business / Entity Name" required>
-                <input type="number" id="slotCount" min="1" max="10" placeholder="Allocated Slots (Max 10)" required>
-                <button class="action-btn" onclick="registerBusiness()">Initialize Node</button>
-            </div>
-            <div id="bizSessionArea" style="display:none;">
-                <p>Status: <strong style="color: #34d399;">NODE ACTIVE</strong></p>
-                <p>Entity: <span id="displayBizName" style="color: #38bdf8; font-weight: bold;"></span></p>
-                <button class="action-btn logout-btn" onclick="logout('business')">Close Node Session</button>
-            </div>
-            <p id="bizNotice" style="margin-top: 10px; font-size: 14px; color: #38bdf8;"></p>
-        </div>
-
-        <!-- Clicker / Task Worker Portal Section -->
-        <div id="clickerPortal" class="portal-section">
-            <h3>Worker Payout & Task Terminal</h3>
-            <div id="clickerFormArea">
-                <input type="text" id="clickerRealName" placeholder="Full Legal Name (For Payout Record)" required>
-                <input type="text" id="clickerSocialHandle" placeholder="Verified Social Handle / Account ID" required>
-                <input type="text" id="clickerPayoutDetail" placeholder="Payout Destination (Bank Sort/Acc or PayPal Email)" required>
-                <select id="clickerPlatform">
-                    <option value="TikTok">TikTok Live Stream Stream Network</option>
-                    <option value="Facebook">Facebook Group / Profile Feed</option>
-                    <option value="Other">Other Verified Channel</option>
-                </select>
-                <button class="action-btn" onclick="registerClicker()">Register Payout Profile & Open Terminal</button>
-            </div>
-            <div id="clickerSessionArea" style="display:none;">
-                <p>Status: <strong style="color: #34d399;">TERMINAL ACTIVE (Weekly Audit Ready)</strong></p>
-                <p>Worker: <span id="displayClickerName" style="color: #38bdf8; font-weight: bold;"></span></p>
-                <p style="font-size: 13px; color: #cbd5e1; margin: 2px 0;">Handle: <span id="displayClickerSocial"></span> | Payout Target: <span id="displayPayoutDetail" style="color: #34d399; font-weight: bold;"></span></p>
-                
-                <div class="ledger-box">
-                    <p style="margin: 0 0 5px 0; font-size: 14px; color: #94a3b8;">Secure Terminal HMAC Hash:</p>
-                    <div class="hmac-box" id="displayHmac">Authenticating terminal...</div>
-                    <p style="margin: 10px 0 5px 0; font-size: 14px; color: #94a3b8;">Weekly Earned Balance (Strict Ledger):</p>
-                    <div style="font-size: 24px; font-weight: bold; color: #34d399;" id="earningsDisplay">£0.00 (<span id="jobCounter">0</span> units verified)</div>
-                    <p style="margin: 8px 0 0 0; font-size: 12px; color: #fbbf24;">* Disbursed at weekly financial audit against verified destination.</p>
-                </div>
-
-                <h4 style="margin-top: 20px; color: #38bdf8;">Assigned Unit Task (£2.00 Fixed)</h4>
-                <div id="activeTaskContainer">
-                    <!-- Dynamic £2 task populated here -->
-                </div>
-
-                <button class="action-btn logout-btn" onclick="logout('clicker')">Lock Terminal / Sign Out</button>
-            </div>
-            <p id="clickerNotice" style="margin-top: 10px; font-size: 14px; color: #34d399;"></p>
-        </div>
-
-        <h3>Active Network Nodes</h3>
-        <div class="slot-grid" id="slotContainer">
-            <!-- Dynamic items populated here -->
+        
+        <h1>Shoulder to Shoulder</h1>
+        <p>Automated digital publishing ecosystem. Autonomous background workflows operating continuously.</p>
+        
+        <div class="action-box">
+            <button class="btn" onclick="alert('System ready for participant connection.')">Join Platform</button>
         </div>
     </div>
-
-    <script>
-        const CONFIG = {
-            maxFreeSlots: 1500,
-            microFeeEntry: 0.50,
-            userSlotLimit: 10,
-            secretKey: "community-engine-secure-key-2026",
-            taskBounty: 2.00
-        };
-
-        window.onload = function() {
-            checkSavedSessions();
-        };
-
-        function switchPortal(portalType) {
-            const bizTab = document.getElementById('btnBusiness');
-            const clickerTab = document.getElementById('btnClicker');
-            const bizSection = document.getElementById('businessPortal');
-            const clickerSection = document.getElementById('clickerPortal');
-
-            if (portalType === 'business') {
-                bizTab.classList.add('active');
-                clickerTab.classList.remove('active');
-                bizSection.classList.add('active');
-                clickerSection.classList.remove('active');
-            } else {
-                clickerTab.classList.add('active');
-                bizTab.classList.remove('active');
-                clickerSection.classList.add('active');
-                bizSection.classList.remove('active');
-            }
-        }
-
-        async function generateHMAC(message, secret) {
-            const encoder = new TextEncoder();
-            const keyData = encoder.encode(secret);
-            const msgData = encoder.encode(message);
-            const cryptoKey = await crypto.subtle.importKey(
-                "raw", keyData, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
-            );
-            const signature = await crypto.subtle.sign("HMAC", cryptoKey, msgData);
-            const hashArray = Array.from(new Uint8Array(signature));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        async function registerBusiness() {
-            const name = document.getElementById('bizName').value;
-            const slots = parseInt(document.getElementById('slotCount').value);
-            if (!name || isNaN(slots) || slots < 1 || slots > CONFIG.userSlotLimit) {
-                alert("Please enter a valid entity name and 1-10 slots.");
-                return;
-            }
-            localStorage.setItem('engine_biz_name', name);
-            localStorage.setItem('engine_biz_slots', slots);
-            loadBizSession(name, slots);
-            renderSlots(name, slots);
-        }
-
-        async function registerClicker() {
-            const realName = document.getElementById('clickerRealName').value;
-            const socialHandle = document.getElementById('clickerSocialHandle').value;
-            const payoutDetail = document.getElementById('clickerPayoutDetail').value;
-            const platform = document.getElementById('clickerPlatform').value;
-
-            if (!realName || !socialHandle || !payoutDetail) {
-                alert("Complete all fields: Legal Name, Social Handle, and Payout Destination are mandatory for business auditing.");
-                return;
-            }
-
-            const rawData = `${realName}:${socialHandle}:${payoutDetail}:${platform}:${Date.now()}`;
-            const hmacToken = await generateHMAC(rawData, CONFIG.secretKey);
-
-            localStorage.setItem('engine_clicker_real', realName);
-            localStorage.setItem('engine_clicker_social', socialHandle);
-            localStorage.setItem('engine_clicker_payout', payoutDetail);
-            localStorage.setItem('engine_clicker_platform', platform);
-            localStorage.setItem('engine_clicker_hmac', hmacToken);
-            
-            if (!localStorage.getItem('engine_clicker_jobs')) {
-                localStorage.setItem('engine_clicker_jobs', '0');
-                localStorage.setItem('engine_clicker_earnings', '0.00');
-            }
-            
-            loadClickerSession(realName, socialHandle, payoutDetail, platform, hmacToken);
-        }
-
-        function loadBizSession(name, slots) {
-            document.getElementById('bizFormArea').style.display = 'none';
-            document.getElementById('bizSessionArea').style.display = 'block';
-            document.getElementById('displayBizName').innerText = name + ` (${slots} slots)`;
-            renderSlots(name, slots);
-        }
-
-        function loadClickerSession(realName, socialHandle, payoutDetail, platform, hmacToken) {
-            document.getElementById('clickerFormArea').style.display = 'none';
-            document.getElementById('clickerSessionArea').style.display = 'block';
-            document.getElementById('displayClickerName').innerText = realName;
-            document.getElementById('displayClickerSocial').innerText = socialHandle;
-            document.getElementById('displayPayoutDetail').innerText = payoutDetail;
-            document.getElementById('displayHmac').innerText = hmacToken;
-            
-            updateLedgerDisplay();
-            loadNextTask();
-            document.getElementById('clickerNotice').innerText = "Terminal secured. Complete sequential units to build audit ledger.";
-        }
-
-        function loadNextTask() {
-            const container = document.getElementById('activeTaskContainer');
-            let jobs = parseInt(localStorage.getItem('engine_clicker_jobs') || '0');
-
-            container.innerHTML = `
-                <div class="task-card">
-                    <div>
-                        <strong>Unit Task #${jobs + 1}: Verified Traffic Route</strong><br>
-                        <span style="color: #34d399; font-weight: bold;">Bounty: £${CONFIG.taskBounty.toFixed(2)}</span>
-                    </div>
-                    <button class="action-btn" style="width: auto; padding: 8px 16px; margin: 0; background: #10b981;" onclick="completeTask()">Verify & Log £2</button>
-                </div>
-            `;
-        }
-
-        function completeTask() {
-            let jobs = parseInt(localStorage.getItem('engine_clicker_jobs') || '0');
-            let earnings = parseFloat(localStorage.getItem('engine_clicker_earnings') || '0.00');
-
-            jobs += 1;
-            earnings += CONFIG.taskBounty;
-
-            localStorage.setItem('engine_clicker_jobs', jobs);
-            localStorage.setItem('engine_clicker_earnings', earnings.toFixed(2));
-
-            updateLedgerDisplay();
-            alert(`Unit #${jobs} logged successfully. £2.00 added to weekly audit ledger.`);
-            loadNextTask();
-        }
-
-        function updateLedgerDisplay() {
-            const jobs = localStorage.getItem('engine_clicker_jobs') || '0';
-            const earnings = parseFloat(localStorage.getItem('engine_clicker_earnings') || '0.00').toFixed(2);
-            document.getElementById('jobCounter').innerText = jobs;
-            document.getElementById('earningsDisplay').innerText = `£${earnings}`;
-        }
-
-        function logout(type) {
-            if (type === 'business') {
-                localStorage.removeItem('engine_biz_name');
-                localStorage.removeItem('engine_biz_slots');
-                document.getElementById('bizFormArea').style.display = 'block';
-                document.getElementById('bizSessionArea').style.display = 'none';
-                document.getElementById('bizName').value = '';
-                document.getElementById('slotCount').value = '';
-                renderSlots("Verified Node", 3);
-            } else {
-                localStorage.removeItem('engine_clicker_real');
-                localStorage.removeItem('engine_clicker_social');
-                localStorage.removeItem('engine_clicker_payout');
-                localStorage.removeItem('engine_clicker_platform');
-                localStorage.removeItem('engine_clicker_hmac');
-                document.getElementById('clickerFormArea').style.display = 'block';
-                document.getElementById('clickerSessionArea').style.display = 'none';
-                document.getElementById('clickerRealName').value = '';
-                document.getElementById('clickerSocialHandle').value = '';
-                document.getElementById('clickerPayoutDetail').value = '';
-                document.getElementById('clickerNotice').innerText = '';
-            }
-        }
-
-        function checkSavedSessions() {
-            const savedBiz = localStorage.getItem('engine_biz_name');
-            const savedSlots = localStorage.getItem('engine_biz_slots');
-            if (savedBiz && savedSlots) {
-                loadBizSession(savedBiz, parseInt(savedSlots));
-            } else {
-                renderSlots("Verified Node", 3);
-            }
-
-            const savedReal = localStorage.getItem('engine_clicker_real');
-            const savedSocial = localStorage.getItem('engine_clicker_social');
-            const savedPayout = localStorage.getItem('engine_clicker_payout');
-            const savedPlatform = localStorage.getItem('engine_clicker_platform');
-            const savedHmac = localStorage.getItem('engine_clicker_hmac');
-            if (savedReal && savedSocial && savedPayout && savedHmac) {
-                loadClickerSession(savedReal, savedSocial, savedPayout, savedPlatform, savedHmac);
-            }
-        }
-
-        function renderSlots(ownerName, count) {
-            const container = document.getElementById('slotContainer');
-            container.innerHTML = '';
-            for (let i = 1; i <= count; i++) {
-                const div = document.createElement('div');
-                div.className = 'slot active';
-                div.innerHTML = `<strong>${ownerName}</strong><br>Node Unit #${i} (Live)`;
-                container.appendChild(div);
-            }
-        }
-    </script>
 
 </body>
 </html>
