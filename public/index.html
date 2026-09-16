@@ -3,162 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoulder to Shoulder - Live Activity & Channel Counters</title>
+    <title>Shoulder to Shoulder</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            color: #333;
+            background-color: #080c10;
+            color: #00ff66;
+            font-family: 'Courier New', Courier, monospace;
             margin: 0;
-            padding: 20px;
+            padding: 25px;
             text-align: center;
         }
+        .top-counter-bar {
+            background: #11161d;
+            border: 1px solid #00ff66;
+            padding: 12px;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            color: #58a6ff;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.15);
+        }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 2px solid #00ff66;
+            padding: 35px;
+            background-color: #03070c;
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.25);
+            text-align: left;
+        }
+        .emblem-header {
+            text-align: center;
+            border-bottom: 2px solid #00ff66;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
         }
         h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
+            font-size: 2.6rem;
+            margin-bottom: 8px;
+            color: #00ff66;
+            text-shadow: 0 0 12px rgba(0, 255, 102, 0.6);
+            letter-spacing: 2px;
         }
         .subtitle {
-            font-size: 1.1rem;
-            color: #7f8c8d;
-            margin-bottom: 30px;
+            font-size: 1.15rem;
+            color: #8b949e;
+            letter-spacing: 1px;
         }
-        .counters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+        .section {
+            border-top: 1px dashed #238636;
+            padding: 22px 0;
+            margin: 22px 0;
         }
-        .counter-card {
-            background: #f8f9fa;
-            border: 1px solid #e1e4e8;
-            padding: 20px;
-            border-radius: 8px;
-        }
-        .counter-card h3 {
-            margin: 0 0 10px 0;
-            font-size: 1rem;
-            color: #555;
-            text-transform: uppercase;
-        }
-        .counter-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #2980b9;
-            margin: 0;
-        }
-        .agreement-section {
-            text-align: left;
-            background: #fffdf0;
-            border: 1px solid #f1c40f;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-        .agreement-section h2 {
-            font-size: 1.2rem;
-            color: #d35400;
+        .section h2 {
+            font-size: 1.3rem;
             margin-top: 0;
+            color: #58a6ff;
+            text-shadow: 0 0 8px rgba(88, 166, 255, 0.3);
         }
-        .agreement-section p {
-            margin: 8px 0;
-            line-height: 1.5;
+        p {
+            margin: 12px 0;
+            line-height: 1.6;
+            color: #c9d1d9;
         }
-        .status {
-            font-weight: bold;
-            color: #27ae60;
-            margin-top: 20px;
+        .rules-box {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            padding: 18px;
+            margin-top: 15px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
         }
-        .links-section {
-            margin-top: 20px;
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+            color: #c9d1d9;
         }
-        .links-section a {
-            display: inline-block;
-            background: #ff0000;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
+        li {
+            margin: 10px 0;
+            line-height: 1.6;
         }
-        .links-section a:hover {
-            background: #cc0000;
-        }
+        .gold-badge { color: #f1c40f; font-weight: bold; text-shadow: 0 0 6px rgba(241, 196, 15, 0.4); }
+        .silver-tier { color: #bdc3c7; font-weight: bold; text-shadow: 0 0 6px rgba(189, 195, 199, 0.4); }
+        .bronze-tier { color: #e67e22; font-weight: bold; text-shadow: 0 0 6px rgba(230, 126, 34, 0.4); }
+        .highlight { color: #00ff66; font-weight: bold; }
     </style>
 </head>
 <body>
+
+    <!-- Small Top Counter for Activity / Links -->
+    <div class="top-counter-bar">
+        Live Link Activity Counter: <span id="link-counter" style="font-weight: bold; color: #00ff66;">0</span>
+    </div>
+
     <div class="container">
-        <h1>Shoulder to Shoulder</h1>
-        <div class="subtitle">Live Activity & Channel Counters</div>
+        <!-- Big Emblem Header -->
+        <div class="emblem-header">
+            <h1>SHOULDER TO SHOULDER</h1>
+            <div class="subtitle">Official Business Platform & Operations Agreement</div>
+        </div>
 
-        <!-- Counters Grid -->
-        <div class="counters-grid">
-            <div class="counter-card">
-                <h3>YouTube</h3>
-                <p class="counter-value" id="count-youtube">0</p>
-            </div>
-            <div class="counter-card">
-                <h3>TikTok</h3>
-                <p class="counter-value" id="count-tiktok">0</p>
-            </div>
-            <div class="counter-card">
-                <h3>Instagram</h3>
-                <p class="counter-value" id="count-instagram">0</p>
-            </div>
-            <div class="counter-card">
-                <h3>Facebook</h3>
-                <p class="counter-value" id="count-facebook">0</p>
-            </div>
-            <div class="counter-card">
-                <h3>Reddit</h3>
-                <p class="counter-value" id="count-reddit">0</p>
+        <!-- Strict Business Rules & Rates -->
+        <div class="section">
+            <h2>Work Rates & Guaranteed Structure</h2>
+            <div class="rules-box">
+                <p><strong>Hourly Guarantee:</strong> You work <span class="highlight">1 hour</span>, you make <span class="highlight">£1</span>. You work <span class="highlight">2 hours</span>, you make <span class="highlight">2 pounds</span>.</p>
+                <p><strong>Daily Standard:</strong> 1 hour = £1 | 24 hours = £24.</p>
             </div>
         </div>
 
-        <!-- Restored Agreement & Wage Section -->
-        <div class="agreement-section">
-            <h2>Platform Terms & Agreement</h2>
-            <p><strong>Hourly Wage Rate:</strong> Set standard baseline structure for active community engagement.</p>
-            <p><strong>Pound Agreements:</strong> Verified milestone tracking for £1 and £5 tier allocations.</p>
-            <p>Transparency, fairness, and mutual support are the core of our community platform.</p>
+        <!-- Bonus Tiers -->
+        <div class="section">
+            <h2>Milestone Bonus Tiers</h2>
+            <div class="rules-box">
+                <p><strong>Gold Badge (24 Hours Work):</strong> Receives a <span class="gold-badge">£12 bonus</span>.</p>
+                <p><strong>Silver Tier (12 Hours Work):</strong> Receives a <span class="silver-tier">£6 bonus</span>.</p>
+                <p><strong>Bronze Tier (6 Hours Work):</strong> Receives a <span class="bronze-tier">£2 bonus</span>.</p>
+            </div>
         </div>
 
-        <!-- YouTube Link Integration -->
-        <div class="links-section">
-            <a href="https://www.youtube.com" target="_blank">Visit Community YouTube Channel</a>
+        <!-- Payout & Account Rules -->
+        <div class="section">
+            <h2>Payout Policy & Account Terms</h2>
+            <div class="rules-box">
+                <ul>
+                    <li><strong>Minimum Cash Out:</strong> Minimum <span class="highlight">£5 cash out</span> limit. Anything less than a pound or below threshold is not paid out.</li>
+                    <li><strong>Cash Out Procedure:</strong> When you cash out, you must sign out and sign in again.</li>
+                    <li><strong>Account Inactivity:</strong> If your account is not used for <span class="highlight">31 days</span>, your account is automatically deleted and you lose everything.</li>
+                    <li><strong>Payout Methods:</strong> Strictly via <strong>Amazon gift card</strong>, <strong>Google Pay</strong>, or chosen banking/gift card options. No direct cash handling.</li>
+                </ul>
+            </div>
         </div>
-
-        <div class="status" id="system-status">System Status: Connected & Live</div>
     </div>
 
     <script>
-        async function fetchStats() {
+        async function fetchLinkCount() {
             try {
                 const response = await fetch('/api/stats');
                 const data = await response.json();
                 if (data && data.counts) {
-                    for (const [channel, count] of Object.entries(data.counts)) {
-                        const el = document.getElementById(`count-${channel}`);
-                        if (el) el.textContent = count;
-                    }
+                    const total = Object.values(data.counts).reduce((a, b) => a + b, 0);
+                    document.getElementById('link-counter').textContent = total;
                 }
             } catch (err) {
-                console.error('Failed to fetch stats:', err);
-                document.getElementById('system-status').textContent = 'System Status: Connection Error';
-                document.getElementById('system-status').style.color = '#c0392b';
+                console.error('Counter fetch error:', err);
             }
         }
 
-        // Fetch stats immediately and every 5 seconds
-        fetchStats();
-        setInterval(fetchStats, 5000);
+        fetchLinkCount();
+        setInterval(fetchLinkCount, 5000);
     </script>
 </body>
 </html>
