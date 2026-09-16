@@ -165,7 +165,7 @@
     <div id="pageMain">
         <h1>SHOULDER TO SHOULDER</h1>
         <p><strong>Welcome to the Official Global Micro-Task & Testing Workplace</strong></p>
-        <p>Shoulder to Shoulder is an open, self-service digital platform where international workers complete short testing sessions across games, technology, and creative art tasks. Our automated systems ensure smooth tracking, transparent progression, and reliable Monzo rewards.</p>
+        <p>Shoulder to Shoulder is an open, self-service digital platform where international workers complete hourly testing sessions across games, technology, and creative art tasks. Earnings accumulate strictly by active session hours on our climbing scale, with secure Monzo payouts.</p>
 
         <div class="grid-info">
             <div class="info-card">
@@ -208,7 +208,7 @@
         <div class="registration-box">
             <h3>Join the Workplace & Start Session Tracker</h3>
             <p class="notice-text">
-                <strong>Important:</strong> Enter your correct details below to instantly enter the active task hub. Payouts and rewards are distributed securely via <strong>Monzo</strong> once the £5 minimum threshold is reached.
+                <strong>Important:</strong> Enter your correct details below to instantly enter the active task hub. Hourly earnings accumulate on the timer and are distributed securely via <strong>Monzo</strong> once the £5 minimum threshold is reached.
             </p>
             
             <form id="workerRegistrationForm" onsubmit="handleRegistration(event)">
@@ -225,7 +225,7 @@
     <!-- PAGE 2: WORKER HUB & TASK CATEGORIES -->
     <div id="pageCategoryHub" class="hidden">
         <h1>Worker Hub & Task Categories</h1>
-        <p>Welcome aboard, <strong id="welcomeUser">Worker</strong>! Select an activity hub below to browse available tasks and launch your test sessions.</p>
+        <p>Welcome aboard, <strong id="welcomeUser">Worker</strong>! Select an activity hub below to browse available testing tasks while your hourly session timer runs.</p>
         
         <h2>Select Your Activity Hub</h2>
         <div class="category-grid">
@@ -242,7 +242,7 @@
 
         <!-- Dynamic Task Display Container -->
         <div id="taskDisplayContainer" class="task-list-box hidden">
-            <h3 id="selectedCategoryTitle">Available Tasks</h3>
+            <h3 id="selectedCategoryTitle">Available Testing Tasks</h3>
             <div id="taskListContent">Loading tasks...</div>
         </div>
 
@@ -285,7 +285,7 @@
         const titleElement = document.getElementById('selectedCategoryTitle');
         const contentElement = document.getElementById('taskListContent');
 
-        titleElement.textContent = categoryName + ' - Available Activities';
+        titleElement.textContent = categoryName + ' - Active Testing Sessions';
         container.classList.remove('hidden');
 
         // Filter tasks matching the selected category
@@ -302,9 +302,9 @@
                 <div class="task-item">
                     <div>
                         <strong>${task.title}</strong><br>
-                        <small style="color: #666;">Duration: ${task.duration} | Reward Rate: ${task.reward}</small>
+                        <small style="color: #666;">Session Activity | Pay governed by Hourly Ladder</small>
                     </div>
-                    <button onclick="startTaskSession('${task.title}', '${task.url}')" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Start Task & Open</button>
+                    <button onclick="startTaskSession('${task.title}', '${task.url}')" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Start Session & Open</button>
                 </div>
             `;
         });
@@ -313,7 +313,7 @@
     }
 
     function startTaskSession(taskTitle, taskUrl) {
-        alert('Starting session for: ' + taskTitle + '. Opening task window in a new tab!');
+        alert('Starting hourly session activity: ' + taskTitle + '. Opening task window in a new tab!');
         window.open(taskUrl, '_blank');
     }
 
