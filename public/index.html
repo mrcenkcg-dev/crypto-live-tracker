@@ -148,12 +148,34 @@
             align-items: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
+        /* Fast-action popup banner for high energy momentum */
+        #speedPopup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+            animation: bounceIn 0.4s ease;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
         .hidden {
             display: none;
         }
     </style>
 </head>
 <body>
+
+<!-- High-Speed Momentum Popup Notification -->
+<div id="speedPopup">⚡ Boom! Task completed in record time! Next item unlocked!</div>
 
 <div class="container">
     <!-- Live Activity Counter Header -->
@@ -313,7 +335,13 @@
     }
 
     function startTaskSession(taskTitle, taskUrl) {
-        alert('Starting hourly session activity: ' + taskTitle + '. Opening task window in a new tab!');
+        // Trigger high-energy momentum popup feedback
+        const popup = document.getElementById('speedPopup');
+        popup.style.display = 'block';
+        setTimeout(() => {
+            popup.style.display = 'none';
+        }, 3500);
+
         window.open(taskUrl, '_blank');
     }
 
