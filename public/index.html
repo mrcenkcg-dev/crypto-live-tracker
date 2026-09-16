@@ -3,176 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoulder to Shoulder</title>
+    <title>Shoulder to Shoulder - Official Platform</title>
     <style>
         body {
-            background-color: #080c10;
-            color: #00ff66;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
             margin: 0;
-            padding: 25px;
-            text-align: center;
-        }
-        .top-counter-bar {
-            background: #11161d;
-            border: 1px solid #00ff66;
-            padding: 12px;
-            margin-bottom: 25px;
-            font-size: 0.95rem;
-            color: #58a6ff;
-            box-shadow: 0 0 10px rgba(0, 255, 102, 0.15);
+            padding: 20px;
         }
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
-            border: 2px solid #00ff66;
-            padding: 35px;
-            background-color: #03070c;
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.25);
-            text-align: left;
-        }
-        .emblem-header {
-            text-align: center;
-            border-bottom: 2px solid #00ff66;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         h1 {
-            font-size: 2.6rem;
-            margin-bottom: 8px;
-            color: #00ff66;
-            text-shadow: 0 0 12px rgba(0, 255, 102, 0.6);
-            letter-spacing: 2px;
+            color: #1a1a1a;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
         }
-        .subtitle {
-            font-size: 1.15rem;
-            color: #8b949e;
-            letter-spacing: 1px;
-        }
-        .section {
-            border-top: 1px dashed #238636;
-            padding: 22px 0;
-            margin: 22px 0;
-        }
-        .section h2 {
-            font-size: 1.3rem;
-            margin-top: 0;
-            color: #58a6ff;
-            text-shadow: 0 0 8px rgba(88, 166, 255, 0.3);
-        }
-        p {
-            margin: 12px 0;
-            line-height: 1.6;
-            color: #c9d1d9;
-        }
-        .rules-box {
-            background: #0d1117;
-            border: 1px solid #30363d;
-            padding: 18px;
-            margin-top: 15px;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        h2 {
+            color: #0056b3;
+            margin-top: 25px;
         }
         ul {
-            margin: 10px 0;
-            padding-left: 20px;
-            color: #c9d1d9;
-        }
-        li {
-            margin: 10px 0;
             line-height: 1.6;
         }
-        a.channel-link {
-            color: #58a6ff;
-            text-decoration: none;
+        .counter-box {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 18px;
             font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
         }
-        a.channel-link:hover {
-            text-decoration: underline;
-            color: #00ff66;
+        .registration-box {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
         }
-        .gold-badge { color: #f1c40f; font-weight: bold; text-shadow: 0 0 6px rgba(241, 196, 15, 0.4); }
-        .silver-tier { color: #bdc3c7; font-weight: bold; text-shadow: 0 0 6px rgba(189, 195, 199, 0.4); }
-        .bronze-tier { color: #e67e22; font-weight: bold; text-shadow: 0 0 6px rgba(230, 126, 34, 0.4); }
-        .highlight { color: #00ff66; font-weight: bold; }
+        .registration-box form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 450px;
+            margin-top: 15px;
+        }
+        .registration-box input, .registration-box select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .registration-box button {
+            background: #007bff;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .registration-box button:hover {
+            background: #0056b3;
+        }
+        .notice-text {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Small Top Counter for Activity / Links -->
-    <div class="top-counter-bar">
-        Live Link Activity Counter: <span id="link-counter" style="font-weight: bold; color: #00ff66;">0</span>
+<div class="container">
+    <div class="counter-box">
+        Live Link Activity Counter: <span id="activityCounter">0</span>
     </div>
 
-    <div class="container">
-        <!-- Big Emblem Header -->
-        <div class="emblem-header">
-            <h1>SHOULDER TO SHOULDER</h1>
-            <div class="subtitle">Official Business Platform & Operations Agreement</div>
-        </div>
+    <h1>SHOULDER TO SHOULDER</h1>
+    <p><strong>Official Business Platform & Operations Agreement</strong></p>
 
-        <!-- Active Worker Channels & Routing -->
-        <div class="section">
-            <h2>Active Worker Channels & Traffic Engine</h2>
-            <div class="rules-box">
-                <p><strong>Automatic Routing:</strong> Workers signed into the platform are routed directly to active channels to drive engagement and ad views.</p>
-                <ul>
-                    <li><strong>YouTube Channel:</strong> <a href="https://www.youtube.com/@cenkmahmutgokduman2307" target="_blank" class="channel-link">@cenkmahmutgokduman2307</a></li>
-                    <li><strong>TikTok Channel:</strong> <a href="https://www.tiktok.com/@mahmut_gokduman7" target="_blank" class="channel-link">@mahmut_gokduman7</a></li>
-                    <li><strong>Instagram:</strong> <a href="https://www.instagram.com/@mahmut_gokduman" target="_blank" class="channel-link">@mahmut_gokduman</a></li>
-                    <li><strong>Facebook Platform:</strong> <a href="https://www.facebook.com" target="_blank" class="channel-link">Facebook Network</a></li>
-                </ul>
-            </div>
-        </div>
+    <h2>Active Worker Channels & Traffic Engine</h2>
+    <p><strong>Automatic Routing:</strong> Workers signed into the platform are routed directly to active channels to drive engagement and ad views.</p>
+    <ul>
+        <li><strong>YouTube Channel:</strong> @cenkmahmutgokduman2307</li>
+        <li><strong>TikTok Channel:</strong> @mahmut_gokduman7</li>
+        <li><strong>Instagram:</strong> @mahmut_gokduman</li>
+        <li><strong>Facebook Platform:</strong> Facebook Network</li>
+    </ul>
 
-        <!-- Strict Business Rules & Rates -->
-        <div class="section">
-            <h2>Work Rates & Guaranteed Structure</h2>
-            <div class="rules-box">
-                <p><strong>Hourly Guarantee:</strong> You work <span class="highlight">1 hour</span>, you make <span class="highlight">£1</span>. You work <span class="highlight">2 hours</span>, you make <span class="highlight">2 pounds</span>.</p>
-                <p><strong>Daily Standard:</strong> 1 hour = £1 | 24 hours = £24.</p>
-            </div>
-        </div>
+    <h2>Work Rates & Guaranteed Structure</h2>
+    <ul>
+        <li><strong>Hourly Guarantee:</strong> You work 1 hour, you make £1. You work 2 hours, you make 2 pounds.</li>
+        <li><strong>Daily Standard:</strong> 1 hour = £1 | 24 hours = £24.</li>
+    </ul>
 
-        <!-- Bonus Tiers -->
-        <div class="section">
-            <h2>Milestone Bonus Tiers</h2>
-            <div class="rules-box">
-                <p><strong>Gold Badge (24 Hours Work):</strong> Receives a <span class="gold-badge">£12 bonus</span>.</p>
-                <p><strong>Silver Tier (12 Hours Work):</strong> Receives a <span class="silver-tier">£6 bonus</span>.</p>
-                <p><strong>Bronze Tier (6 Hours Work):</strong> Receives a <span class="bronze-tier">£2 bonus</span>.</p>
-            </div>
-        </div>
+    <h2>Milestone Bonus Tiers</h2>
+    <ul>
+        <li><strong>Gold Badge (24 Hours Work):</strong> Receives a £12 bonus.</li>
+        <li><strong>Silver Tier (12 Hours Work):</strong> Receives a £6 bonus.</li>
+        <li><strong>Bronze Tier (6 Hours Work):</strong> Receives a £2 bonus.</li>
+    </ul>
 
-        <!-- Payout & Account Rules -->
-        <div class="section">
-            <h2>Payout Policy & Account Terms</h2>
-            <div class="rules-box">
-                <ul>
-                    <li><strong>Minimum Cash Out:</strong> Minimum <span class="highlight">£5 cash out</span> limit. Anything less than a pound or below threshold is not paid out.</li>
-                    <li><strong>Cash Out Procedure:</strong> When you cash out, you must sign out and sign in again.</li>
-                    <li><strong>Account Inactivity:</strong> If your account is not used for <span class="highlight">31 days</span>, your account is automatically deleted and you lose everything.</li>
-                    <li><strong>Payout Methods:</strong> Strictly via <strong>Amazon gift card</strong>, <strong>Google Pay</strong>, or chosen banking/gift card options. No direct cash handling.</li>
-                </ul>
-            </div>
-        </div>
+    <h2>Payout Policy & Account Terms</h2>
+    <ul>
+        <li><strong>Minimum Cash Out:</strong> Minimum £5 cash out limit. Anything less than a pound or below threshold is not paid out.</li>
+        <li><strong>Cash Out Procedure:</strong> When you cash out, you must sign out and sign in again.</li>
+        <li><strong>Account Inactivity:</strong> If your account is not used for 31 days, your account is automatically deleted and you lose everything.</li>
+        <li><strong>Payout Methods:</strong> Strictly via Amazon gift card, Google Pay, or chosen banking/gift card options. No direct cash handling.</li>
+    </ul>
+
+    <!-- Worker Registration & Session Tracker Section -->
+    <div class="registration-box">
+        <h3>Worker Registration & Session Tracker</h3>
+        <p class="notice-text">
+            <strong>Notice:</strong> 1 hour = £1. Minimum threshold applies; amounts under £1 or below limits are not paid out. 
+            Accounts inactive for 31 days are automatically deleted with all data wiped.
+        </p>
+        
+        <form id="workerRegistrationForm" action="/register-worker" method="POST">
+            <input type="text" name="workerName" placeholder="Your Name or Username" required>
+            <input type="email" name="workerEmail" placeholder="Your Payout Email (Amazon / Google Pay)" required>
+            <select name="payoutMethod">
+                <option value="AmazonGiftCard">Amazon Gift Card</option>
+                <option value="GooglePay">Google Pay</option>
+                <option value="MonzoBank">Monzo / Digital Bank</option>
+            </select>
+            <button type="submit">Join & Start Session Tracker</button>
+        </form>
     </div>
+</div>
 
-    <script>
-        async function fetchLinkCount() {
-            try {
-                const response = await fetch('/api/stats');
-                const data = await response.json();
-                if (data && data.counts) {
-                    const total = Object.values(data.counts).reduce((a, b) => a + b, 0);
-                    document.getElementById('link-counter').textContent = total;
-                }
-            } catch (err) {
-                console.error('Counter fetch error:', err);
-            }
-        }
-
-        fetchLinkCount();
-        setInterval(fetchLinkCount, 5000);
-    </script>
 </body>
 </html>
