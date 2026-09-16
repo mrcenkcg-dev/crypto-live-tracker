@@ -37,37 +37,34 @@ const db = new sqlite3.Database(dbFile, (err) => {
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
 
-        // Create tasks/games table for automated content feed on the second page
-        db.run(`CREATE TABLE IF NOT EXISTS platform_tasks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            category TEXT NOT NULL,
-            title TEXT NOT NULL,
-            reward TEXT NOT NULL,
-            duration TEXT NOT NULL
-        )`, (err) => {
-            if (!err) {
-                // Insert initial default tasks if table is empty
-                db.get(`SELECT COUNT(*) as count FROM platform_tasks`, (err, row) => {
-                    if (row && row.count === 0) {
-                        const defaultTasks = [
-                            ['Games', 'Test Web Game: Cyber Runner', '1 Hour Session', '£1.00'],
-                            ['Games', 'Strategy Game QA Test', '1 Hour Session', '£1.00'],
-                            ['Technology', 'Browser Extension Debugging', '1 Hour Session', '£1.00'],
-                            ['Technology', 'Cloud Server Ping Test', '1 Hour Session', '£1.00'],
-                            ['Art', 'Digital Asset Tagging & Review', '1 Hour Session', '£1.00'],
-                            ['Art', 'UI Color Contrast Verification', '1 Hour Session', '£1.00']
-                        ];
-                        const stmt = db.prepare(`INSERT INTO platform_tasks (category, title, duration, reward) VALUES (?, ?, ?, ?)`);
-                        defaultTasks.forEach(task => stmt.run(task));
-                        stmt.finalize();
-                        console.log('Default automated tasks populated in database.');
-                    }
-                });
-            }
+        // Recreate tasks table to ensure the URL column is fully supported
+        db.run(`DROP TABLE IF EXISTS platform_tasks`, () => {
+            db.run(`CREATE TABLE platform_tasks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                category TEXT NOT NULL,
+                title TEXT NOT NULL,
+                reward TEXT NOT NULL,
+                duration TEXT NOT NULL,
+                url TEXT NOT NULL
+            )`, (err) => {
+                if (!err) {
+                    const defaultTasks = [
+                        ['Games', 'Test Web Game: Cyber Runner', '1 Hour Session', '£1.00', 'https://orteil.dashnet.org/cookieclicker/'],
+                        ['Games', 'Strategy Game QA Test', '1 Hour Session', '£1.00', 'https://tetris.com/play-tetris'],
+                        ['Technology', 'Browser Extension Debugging', '1 Hour Session', '£1.00', 'https://httpbin.org/'],
+                        ['Technology', 'Cloud Server Ping Test', '1 Hour Session', '£1.00', 'https://www.speedtest.net/'],
+                        ['Art', 'Digital Asset Tagging & Review', '1 Hour Session', '£1.00', 'https://unsplash.com/'],
+                        ['Art', 'UI Color Contrast Verification', '1 Hour Session', '£1.00', 'https://coolors.co/']
+                    ];
+                    const stmt = db.prepare(`INSERT INTO platform_tasks (category, title, duration, reward, url) VALUES (?, ?, ?, ?, ?)`);
+                    defaultTasks.forEach(task => stmt.run(task));
+                    stmt.finalize();
+                    console.log('Default automated tasks with URLs populated.');
+                }
+            });
         });
 
         // AUTOMATED BACKGROUND LOOP: Automatically logs activity for all platforms 
-        // so your live counters tick up across the entire network on their own.
         setInterval(() => {
             const channels = ['youtube', 'tiktok', 'instagram', 'facebook'];
             const randomChannel = channels[Math.floor(Math.random() * channels.length)];
