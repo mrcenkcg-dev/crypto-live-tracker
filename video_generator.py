@@ -1,4 +1,5 @@
 import os
+import requests
 from moviepy.editor import TextClip, ColorClip, CompositeVideoClip
 
 def generate_short_video(output_filename="output_short.mp4", text_message="Shoulder to Shoulder"):
@@ -24,7 +25,24 @@ def generate_short_video(output_filename="output_short.mp4", text_message="Shoul
     video.write_videofile(output_path, fps=24, codec='libx264', audio_codec='aac')
     
     print(f"Video successfully created at: {output_path}")
+    
+    # 5. Notify the live Render server to update the counter
+    notify_server("youtube")
+    
     return output_path
+
+def notify_server(channel_name):
+    server_url = "https://mrcenk.onrender.com/api/log"
+    payload = {"channel": channel_name, "ad_count": 1}
+    
+    try:
+        response = requests.post(server_url, json=payload)
+        if response.status_code == 200:
+            print(f"Successfully notified server for {channel_name} short!")
+        else:
+            print(f"Failed to notify server: {response.text}")
+    except Exception as e:
+        print(f"Error connecting to server: {e}")
 
 if __name__ == "__main__":
     generate_short_video()
