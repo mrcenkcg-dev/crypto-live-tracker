@@ -37,10 +37,10 @@ const db = new sqlite3.Database(dbFile, (err) => {
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
 
-        // AUTOMATED BACKGROUND LOOP: Automatically logs activity for YouTube & TikTok 
-        // so your live counter ticks up on its own without needing an external script.
+        // AUTOMATED BACKGROUND LOOP: Automatically logs activity for all four platforms 
+        // so your live counters tick up across the entire network on their own.
         setInterval(() => {
-            const channels = ['youtube', 'tiktok'];
+            const channels = ['youtube', 'tiktok', 'instagram', 'facebook'];
             const randomChannel = channels[Math.floor(Math.random() * channels.length)];
             const query = `INSERT INTO monkey_logs (channel, ad_count) VALUES (?, 1)`;
             
