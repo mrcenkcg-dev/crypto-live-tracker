@@ -1,4 +1,5 @@
 import os
+import time
 import requests
 from moviepy.editor import TextClip, ColorClip, CompositeVideoClip
 
@@ -45,4 +46,13 @@ def notify_server(channel_name):
         print(f"Error connecting to server: {e}")
 
 if __name__ == "__main__":
-    generate_short_video()
+    print("Starting automated hourly video generator script...")
+    while True:
+        try:
+            generate_short_video()
+        except Exception as e:
+            print(f"Error during video generation cycle: {e}")
+            
+        print("Waiting for the next hour...")
+        # Sleep for 1 hour (3600 seconds) before running again
+        time.sleep(3600)
