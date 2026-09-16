@@ -37,7 +37,36 @@ const db = new sqlite3.Database(dbFile, (err) => {
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
 
-        // AUTOMATED BACKGROUND LOOP: Automatically logs activity for all four platforms 
+        // Create tasks/games table for automated content feed on the second page
+        db.run(`CREATE TABLE IF NOT EXISTS platform_tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            category TEXT NOT NULL,
+            title TEXT NOT NULL,
+            reward TEXT NOT NULL,
+            duration TEXT NOT NULL
+        )`, (err) => {
+            if (!err) {
+                // Insert initial default tasks if table is empty
+                db.get(`SELECT COUNT(*) as count FROM platform_tasks`, (err, row) => {
+                    if (row && row.count === 0) {
+                        const defaultTasks = [
+                            ['Games', 'Test Web Game: Cyber Runner', '1 Hour Session', '£1.00'],
+                            ['Games', 'Strategy Game QA Test', '1 Hour Session', '£1.00'],
+                            ['Technology', 'Browser Extension Debugging', '1 Hour Session', '£1.00'],
+                            ['Technology', 'Cloud Server Ping Test', '1 Hour Session', '£1.00'],
+                            ['Art', 'Digital Asset Tagging & Review', '1 Hour Session', '£1.00'],
+                            ['Art', 'UI Color Contrast Verification', '1 Hour Session', '£1.00']
+                        ];
+                        const stmt = db.prepare(`INSERT INTO platform_tasks (category, title, duration, reward) VALUES (?, ?, ?, ?)`);
+                        defaultTasks.forEach(task => stmt.run(task));
+                        stmt.finalize();
+                        console.log('Default automated tasks populated in database.');
+                    }
+                });
+            }
+        });
+
+        // AUTOMATED BACKGROUND LOOP: Automatically logs activity for all platforms 
         // so your live counters tick up across the entire network on their own.
         setInterval(() => {
             const channels = ['youtube', 'tiktok', 'instagram', 'facebook'];
@@ -116,6 +145,17 @@ app.get('/api/stats', (req, res) => {
         });
 
         res.json(stats);
+    });
+});
+
+// API Endpoint: Get automated tasks/games for the second page hub
+app.get('/api/tasks', (req, res) => {
+    const query = `SELECT * FROM platform_tasks`;
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(rows);
     });
 });
 
