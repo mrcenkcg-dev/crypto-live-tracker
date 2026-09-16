@@ -142,5 +142,30 @@
     </div>
 </div>
 
+<script>
+    // Automatically fetch live stats from the backend and update the counter
+    async function fetchStats() {
+        try {
+            const response = await fetch('/api/stats');
+            const stats = await response.json();
+            
+            // Calculate total activity across all channels
+            const totalActivity = (stats.youtube || 0) + 
+                                  (stats.tiktok || 0) + 
+                                  (stats.instagram || 0) + 
+                                  (stats.facebook || 0) + 
+                                  (stats.reddit || 0);
+            
+            document.getElementById('activityCounter').textContent = totalActivity;
+        } catch (error) {
+            console.error('Error fetching activity stats:', error);
+        }
+    }
+
+    // Fetch immediately on load, then poll every 5 seconds
+    fetchStats();
+    setInterval(fetchStats, 5000);
+</script>
+
 </body>
 </html>
