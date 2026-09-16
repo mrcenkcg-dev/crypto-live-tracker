@@ -22,12 +22,12 @@
         }
         h1 {
             color: #1a1a1a;
-            border-bottom: 3px solid #007bff;
+            border-bottom: 3px solid #ff5a5f;
             padding-bottom: 12px;
             margin-top: 0;
         }
         h2 {
-            color: #0056b3;
+            color: #d9383f;
             margin-top: 25px;
             font-size: 20px;
         }
@@ -39,7 +39,7 @@
             padding-left: 20px;
         }
         .counter-box {
-            background: linear-gradient(135deg, #007bff, #0056b3);
+            background: linear-gradient(135deg, #ff5a5f, #d9383f);
             color: white;
             padding: 15px;
             border-radius: 8px;
@@ -47,7 +47,7 @@
             font-weight: bold;
             margin-bottom: 25px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+            box-shadow: 0 2px 8px rgba(255,90,95,0.3);
         }
         .grid-info {
             display: grid;
@@ -63,12 +63,12 @@
         }
         .info-card h3 {
             margin-top: 0;
-            color: #0056b3;
+            color: #d9383f;
             font-size: 16px;
         }
         .registration-box {
-            background: #eef2f7;
-            border: 2px solid #007bff;
+            background: #fff5f5;
+            border: 2px solid #ff5a5f;
             padding: 25px;
             margin-top: 35px;
             border-radius: 8px;
@@ -87,7 +87,7 @@
             font-size: 15px;
         }
         .registration-box button {
-            background: #28a745;
+            background: #ff5a5f;
             color: white;
             padding: 14px;
             border: none;
@@ -98,14 +98,14 @@
             transition: background 0.2s;
         }
         .registration-box button:hover {
-            background: #218838;
+            background: #d9383f;
         }
         .notice-text {
             font-size: 13px;
             color: #444;
             background: #fff;
             padding: 10px;
-            border-left: 4px solid #ffc107;
+            border-left: 4px solid #ff5a5f;
             border-radius: 4px;
         }
         .category-grid {
@@ -116,17 +116,17 @@
         }
         .category-card {
             background: #f8f9fa;
-            border: 2px solid #007bff;
+            border: 2px solid #ff5a5f;
             padding: 25px 15px;
             border-radius: 8px;
             text-align: center;
             cursor: pointer;
             font-weight: bold;
-            color: #0056b3;
+            color: #d9383f;
             transition: all 0.2s;
         }
         .category-card:hover {
-            background: #007bff;
+            background: #ff5a5f;
             color: white;
             transform: translateY(-2px);
         }
@@ -165,7 +165,7 @@
     <div id="pageMain">
         <h1>SHOULDER TO SHOULDER</h1>
         <p><strong>Welcome to the Official Global Micro-Task & Testing Workplace</strong></p>
-        <p>Shoulder to Shoulder is an open, self-service digital platform where international workers complete short testing sessions across games, technology, and creative art tasks. Our automated systems ensure smooth tracking, transparent progression, and reliable rewards.</p>
+        <p>Shoulder to Shoulder is an open, self-service digital platform where international workers complete short testing sessions across games, technology, and creative art tasks. Our automated systems ensure smooth tracking, transparent progression, and reliable Monzo rewards.</p>
 
         <div class="grid-info">
             <div class="info-card">
@@ -200,7 +200,7 @@
         <h2>Payout & Security Terms</h2>
         <ul>
             <li><strong>Minimum Threshold:</strong> Minimum £5.00 cash-out limit required for processing.</li>
-            <li><strong>Payout Methods:</strong> Strictly handled via <strong>Amazon Gift Cards, Google Gift Cards, or Google Pay</strong> (No direct bank cash handling).</li>
+            <li><strong>Payout Methods:</strong> Strictly handled via <strong>Monzo Payout Links & Monzo-to-Monzo Transfers</strong>.</li>
             <li><strong>Account Maintenance:</strong> Accounts inactive for 31 consecutive days are automatically archived to protect platform integrity.</li>
         </ul>
 
@@ -208,16 +208,14 @@
         <div class="registration-box">
             <h3>Join the Workplace & Start Session Tracker</h3>
             <p class="notice-text">
-                <strong>Important:</strong> Enter your correct details below to instantly enter the active task hub. Payouts are distributed securely via Amazon, Google Gift Cards, or Google Pay once the £5 minimum threshold is reached.
+                <strong>Important:</strong> Enter your correct details below to instantly enter the active task hub. Payouts and rewards are distributed securely via <strong>Monzo</strong> once the £5 minimum threshold is reached.
             </p>
             
             <form id="workerRegistrationForm" onsubmit="handleRegistration(event)">
                 <input type="text" id="workerName" placeholder="Your Full Name or Username" required>
-                <input type="email" id="workerEmail" placeholder="Your Payout Email (Amazon / Google Pay)" required>
+                <input type="email" id="workerEmail" placeholder="Your Monzo Linked Email / Details" required>
                 <select id="payoutMethod">
-                    <option value="AmazonGiftCard">Amazon Gift Card</option>
-                    <option value="GoogleGiftCard">Google Gift Card</option>
-                    <option value="GooglePay">Google Pay</option>
+                    <option value="MonzoTransfer">Monzo Direct Transfer / Payout Link</option>
                 </select>
                 <button type="submit">Register & Enter Task Hub 🚀</button>
             </form>
