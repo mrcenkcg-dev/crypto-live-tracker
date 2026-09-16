@@ -5,8 +5,9 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware to parse JSON bodies
+// Middleware to parse JSON and URL-encoded form bodies
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -23,6 +24,15 @@ const db = new sqlite3.Database(dbFile, (err) => {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             channel TEXT NOT NULL,
             ad_count INTEGER DEFAULT 1,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
+
+        // Create workers table for registrations
+        db.run(`CREATE TABLE IF NOT EXISTS workers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            workerName TEXT NOT NULL,
+            workerEmail TEXT NOT NULL,
+            payoutMethod TEXT NOT NULL,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
     }
@@ -47,6 +57,25 @@ app.post('/api/log', (req, res) => {
     });
 });
 
+// API Endpoint: Register Worker from the form
+app.post('/register-worker', (req, res) => {
+    const { workerName, workerEmail, payoutMethod } = req.body;
+
+    if (!workerName || !workerEmail) {
+        return res.status(400).send('Name and Email are required.');
+    }
+
+    const query = `INSERT INTO workers (workerName, workerEmail, payoutMethod) VALUES (?, ?, ?)`;
+    db.run(query, [workerName, workerEmail, payoutMethod || 'AmazonGiftCard'], function(err) {
+        if (err) {
+            console.error('Error saving worker', err.message);
+            return res.status(500).send('Database error during registration.');
+        }
+        // Redirect back to main page or show success message
+        res.redirect('/?registered=true');
+    });
+});
+
 // API Endpoint: Get aggregated stats for the counters
 app.get('/api/stats', (req, res) => {
     const query = `SELECT channel, SUM(ad_count) as total FROM monkey_logs GROUP BY channel`;
@@ -56,7 +85,6 @@ app.get('/api/stats', (req, res) => {
             return res.status(500).json({ error: err.message });
         }
         
-        // Default stats object
         const stats = {
             youtube: 0,
             tiktok: 0,
@@ -65,7 +93,6 @@ app.get('/api/stats', (req, res) => {
             reddit: 0
         };
 
-        // Populate with database totals
         rows.forEach(row => {
             if (stats.hasOwnProperty(row.channel)) {
                 stats[row.channel] = row.total;
