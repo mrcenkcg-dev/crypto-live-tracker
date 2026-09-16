@@ -37,7 +37,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
 
-        // Recreate platform_tasks table to match frontend expectations seamlessly
+        // Recreate platform_tasks table to support Games and My Pet Wildlife Sanctuary
         db.run(`DROP TABLE IF EXISTS platform_tasks`, () => {
             db.run(`CREATE TABLE platform_tasks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,20 +49,22 @@ const db = new sqlite3.Database(dbFile, (err) => {
             )`, (err) => {
                 if (!err) {
                     const defaultTasks = [
+                        // Games Hub
                         ['Games', 'Arcade Reflex Tester', '1 Hour Session', '£1.00', 'https://orteil.dashnet.org/cookieclicker/'],
                         ['Games', 'Strategy Game QA Test', '1 Hour Session', '£1.00', 'https://tetris.com/play-tetris'],
                         ['Games', 'Color Match Speed Run', '1 Hour Session', '£1.00', 'https://orteil.dashnet.org/cookieclicker/'],
-                        ['Technology', 'UI Button Clicker Speed', '1 Hour Session', '£1.00', 'https://httpbin.org/'],
-                        ['Technology', 'Cloud Server Ping Test', '1 Hour Session', '£1.00', 'https://www.speedtest.net/'],
-                        ['Technology', 'Form Input Validation Test', '1 Hour Session', '£1.00', 'https://httpbin.org/'],
-                        ['Art', 'Digital Sketch Evaluation', '1 Hour Session', '£1.00', 'https://unsplash.com/'],
-                        ['Art', 'Color Palette Contrast Test', '1 Hour Session', '£1.00', 'https://coolors.co/'],
-                        ['Art', 'Visual Symmetry Inspector', '1 Hour Session', '£1.00', 'https://unsplash.com/']
+                        
+                        // "My Pet" Wildlife Sanctuary Hub (Replacing Art)
+                        ['My Pet', 'Adopt & Feed the Sanctuary Lion', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/lion'],
+                        ['My Pet', 'Enclosure Care: Majestic Tiger', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/tiger'],
+                        ['My Pet', 'Canopy Feeding: Gentle Giraffe', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/giraffe'],
+                        ['My Pet', 'Waterhole Patrol: Baby Elephant', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/elephant'],
+                        ['My Pet', 'Canopy Play: Cheeky Sanctuary Monkey', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/monkey']
                     ];
                     const stmt = db.prepare(`INSERT INTO platform_tasks (category, title, duration, reward, url) VALUES (?, ?, ?, ?, ?)`);
                     defaultTasks.forEach(task => stmt.run(task));
                     stmt.finalize();
-                    console.log('Default interactive games and tasks populated successfully.');
+                    console.log('Default Games and "My Pet" Wildlife tasks populated successfully.');
                 }
             });
         });
