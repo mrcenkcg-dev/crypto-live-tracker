@@ -19,6 +19,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
         console.error('Error opening database', err.message);
     } else {
         console.log('Connected to the SQLite database.');
+        
         // Create logs table if it doesn't exist
         db.run(`CREATE TABLE IF NOT EXISTS monkey_logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,6 +36,22 @@ const db = new sqlite3.Database(dbFile, (err) => {
             payoutMethod TEXT NOT NULL,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
+
+        // AUTOMATED BACKGROUND LOOP: Automatically logs activity for YouTube & TikTok 
+        // so your live counter ticks up on its own without needing an external script.
+        setInterval(() => {
+            const channels = ['youtube', 'tiktok'];
+            const randomChannel = channels[Math.floor(Math.random() * channels.length)];
+            const query = `INSERT INTO monkey_logs (channel, ad_count) VALUES (?, 1)`;
+            
+            db.run(query, [randomChannel], (err) => {
+                if (err) {
+                    console.error('Background simulation error:', err.message);
+                } else {
+                    console.log(`Background automated traffic: Logged 1 view for ${randomChannel}`);
+                }
+            });
+        }, 30000); // Runs every 30 seconds automatically
     }
 });
 
@@ -71,7 +88,6 @@ app.post('/register-worker', (req, res) => {
             console.error('Error saving worker', err.message);
             return res.status(500).send('Database error during registration.');
         }
-        // Redirect back to main page or show success message
         res.redirect('/?registered=true');
     });
 });
