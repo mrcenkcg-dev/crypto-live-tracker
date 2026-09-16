@@ -79,6 +79,29 @@
             color: #555;
             line-height: 1.5;
         }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .category-card {
+            background: #e9ecef;
+            border: 1px solid #ced4da;
+            padding: 20px;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            color: #0056b3;
+            transition: background 0.2s;
+        }
+        .category-card:hover {
+            background: #dde2e6;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -88,68 +111,115 @@
         Live Link Activity Counter: <span id="activityCounter">0</span>
     </div>
 
-    <h1>SHOULDER TO SHOULDER</h1>
-    <p><strong>Official Business Platform & Operations Agreement</strong></p>
+    <!-- PAGE 1: MAIN REGISTRATION & INFO LOBBY -->
+    <div id="pageMain">
+        <h1>SHOULDER TO SHOULDER</h1>
+        <p><strong>Official Business Platform & Operations Agreement</strong></p>
 
-    <h2>Active Worker Channels & Traffic Engine</h2>
-    <p><strong>Automatic Routing:</strong> Workers signed into the platform are routed directly to active channels to drive engagement and ad views.</p>
-    <ul>
-        <li><strong>YouTube Channel:</strong> @cenkmahmutgokduman2307</li>
-        <li><strong>TikTok Channel:</strong> @mahmut_gokduman7</li>
-        <li><strong>Instagram:</strong> @mahmut_gokduman</li>
-        <li><strong>Facebook Platform:</strong> Facebook Network</li>
-    </ul>
+        <h2>Active Worker Channels & Traffic Engine</h2>
+        <p><strong>Automatic Routing:</strong> Workers signed into the platform are routed directly to active channels to drive engagement and ad views.</p>
+        <ul>
+            <li><strong>YouTube Channel:</strong> @cenkmahmutgokduman2307</li>
+            <li><strong>TikTok Channel:</strong> @mahmut_gokduman7</li>
+            <li><strong>Instagram:</strong> @mahmut_gokduman</li>
+            <li><strong>Facebook Platform:</strong> Facebook Network</li>
+        </ul>
 
-    <h2>Work Rates & Guaranteed Structure</h2>
-    <ul>
-        <li><strong>Hourly Guarantee:</strong> You work 1 hour, you make £1. You work 2 hours, you make 2 pounds.</li>
-        <li><strong>Daily Standard:</strong> 1 hour = £1 | 24 hours = £24.</li>
-    </ul>
+        <h2>Work Rates & Guaranteed Structure</h2>
+        <ul>
+            <li><strong>Hourly Guarantee:</strong> You work 1 hour, you make £1. You work 2 hours, you make 2 pounds.</li>
+            <li><strong>Daily Standard:</strong> 1 hour = £1 | 24 hours = £24.</li>
+        </ul>
 
-    <h2>Milestone Bonus Tiers</h2>
-    <ul>
-        <li><strong>Gold Badge (24 Hours Work):</strong> Receives a £12 bonus.</li>
-        <li><strong>Silver Tier (12 Hours Work):</strong> Receives a £6 bonus.</li>
-        <li><strong>Bronze Tier (6 Hours Work):</strong> Receives a £2 bonus.</li>
-    </ul>
+        <h2>Milestone Bonus Tiers</h2>
+        <ul>
+            <li><strong>Gold Badge (24 Hours Work):</strong> Receives a £12 bonus.</li>
+            <li><strong>Silver Tier (12 Hours Work):</strong> Receives a £6 bonus.</li>
+            <li><strong>Bronze Tier (6 Hours Work):</strong> Receives a £2 bonus.</li>
+        </ul>
 
-    <h2>Payout Policy & Account Terms</h2>
-    <ul>
-        <li><strong>Minimum Cash Out:</strong> Minimum £5 cash out limit. Anything less than a pound or below threshold is not paid out.</li>
-        <li><strong>Cash Out Procedure:</strong> When you cash out, you must sign out and sign in again.</li>
-        <li><strong>Account Inactivity:</strong> If your account is not used for 31 days, your account is automatically deleted and you lose everything.</li>
-        <li><strong>Payout Methods:</strong> Strictly via Amazon gift card, Google Pay, or chosen banking/gift card options. No direct cash handling.</li>
-    </ul>
+        <h2>Payout Policy & Account Terms</h2>
+        <ul>
+            <li><strong>Minimum Cash Out:</strong> Minimum £5 cash out limit. Anything less than a pound or below threshold is not paid out.</li>
+            <li><strong>Cash Out Procedure:</strong> When you cash out, you must sign out and sign in again.</li>
+            <li><strong>Account Inactivity:</strong> If your account is not used for 31 days, your account is automatically deleted and you lose everything.</li>
+            <li><strong>Payout Methods:</strong> Strictly via Amazon gift card, Google gift card, or Google Pay. No direct cash or bank handling.</li>
+        </ul>
 
-    <!-- Worker Registration & Session Tracker Section -->
-    <div class="registration-box">
-        <h3>Worker Registration & Session Tracker</h3>
-        <p class="notice-text">
-            <strong>Notice:</strong> 1 hour = £1. Minimum threshold applies; amounts under £1 or below limits are not paid out. 
-            Accounts inactive for 31 days are automatically deleted with all data wiped.
-        </p>
+        <!-- Worker Registration & Session Tracker Section -->
+        <div class="registration-box">
+            <h3>Worker Registration & Session Tracker</h3>
+            <p class="notice-text">
+                <strong>Notice:</strong> 1 hour = £1. Minimum threshold applies; amounts under £1 or below limits are not paid out. 
+                Accounts inactive for 31 days are automatically deleted with all data wiped. Payouts via Amazon Gift Card, Google Gift Card, or Google Pay only.
+            </p>
+            
+            <form id="workerRegistrationForm" onsubmit="handleRegistration(event)">
+                <input type="text" id="workerName" placeholder="Your Name or Username" required>
+                <input type="email" id="workerEmail" placeholder="Your Payout Email (Amazon / Google Pay)" required>
+                <select id="payoutMethod">
+                    <option value="AmazonGiftCard">Amazon Gift Card</option>
+                    <option value="GoogleGiftCard">Google Gift Card</option>
+                    <option value="GooglePay">Google Pay</option>
+                </select>
+                <button type="submit">Join & Start Session Tracker</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PAGE 2: CATEGORY HUB (Games, Technology, Art) -->
+    <div id="pageCategoryHub" class="hidden">
+        <h1>Worker Hub & Task Categories</h1>
+        <p>Welcome, <strong id="welcomeUser">Worker</strong>! Choose a category below to begin your session, test tasks, and start earning.</p>
         
-        <form id="workerRegistrationForm" action="/register-worker" method="POST">
-            <input type="text" name="workerName" placeholder="Your Name or Username" required>
-            <input type="email" name="workerEmail" placeholder="Your Payout Email (Amazon / Google Pay)" required>
-            <select name="payoutMethod">
-                <option value="AmazonGiftCard">Amazon Gift Card</option>
-                <option value="GooglePay">Google Pay</option>
-                <option value="MonzoBank">Monzo / Digital Bank</option>
-            </select>
-            <button type="submit">Join & Start Session Tracker</button>
-        </form>
+        <h2>Select Your Activity Hub</h2>
+        <div class="category-grid">
+            <div class="category-card" onclick="selectCategory('Games')">
+                🎮 Games Hub
+            </div>
+            <div class="category-card" onclick="selectCategory('Technology')">
+                💻 Technology & Testing
+            </div>
+            <div class="category-card" onclick="selectCategory('Art')">
+                🎨 Art & Creative Tasks
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <button onclick="goBackToMain()" style="background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Log Out / Return to Lobby</button>
+        </div>
     </div>
 </div>
 
 <script>
+    // Handle registration form submit and auto-jump to second page
+    function handleRegistration(event) {
+        event.preventDefault();
+        const name = document.getElementById('workerName').value;
+        
+        // Update welcome message on second page
+        document.getElementById('welcomeUser').textContent = name;
+
+        // Hide Page 1 and show Page 2 automatically
+        document.getElementById('pageMain').classList.add('hidden');
+        document.getElementById('pageCategoryHub').classList.remove('hidden');
+    }
+
+    function selectCategory(categoryName) {
+        alert('You selected: ' + categoryName + '. Starting session timer and loading tasks...');
+    }
+
+    function goBackToMain() {
+        document.getElementById('pageCategoryHub').classList.add('hidden');
+        document.getElementById('pageMain').classList.remove('hidden');
+    }
+
     // Automatically fetch live stats from the backend and update the counter
     async function fetchStats() {
         try {
             const response = await fetch('/api/stats');
             const stats = await response.json();
             
-            // Calculate total activity across all channels
             const totalActivity = (stats.youtube || 0) + 
                                   (stats.tiktok || 0) + 
                                   (stats.instagram || 0) + 
