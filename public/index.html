@@ -266,7 +266,7 @@
                         <strong>${task.title}</strong><br>
                         <small style="color: #666;">Duration: ${task.duration} | Reward: ${task.reward}</small>
                     </div>
-                    <button onclick="startTaskSession('${task.title}')" style="background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Start Task</button>
+                    <button onclick="startTaskSession('${task.title}', '${task.url}')" style="background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Start Task & Open</button>
                 </div>
             `;
         });
@@ -274,8 +274,9 @@
         contentElement.innerHTML = html;
     }
 
-    function startTaskSession(taskTitle) {
-        alert('Starting session for: ' + taskTitle + '. Your 1-hour minimum session timer is now active!');
+    function startTaskSession(taskTitle, taskUrl) {
+        alert('Starting session for: ' + taskTitle + '. Opening game window in a new tab!');
+        window.open(taskUrl, '_blank');
     }
 
     function goBackToMain() {
