@@ -37,29 +37,32 @@ const db = new sqlite3.Database(dbFile, (err) => {
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
 
-        // Recreate tasks table to ensure the URL column is fully supported
+        // Recreate platform_tasks table to match frontend expectations seamlessly
         db.run(`DROP TABLE IF EXISTS platform_tasks`, () => {
             db.run(`CREATE TABLE platform_tasks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 category TEXT NOT NULL,
                 title TEXT NOT NULL,
-                reward TEXT NOT NULL,
                 duration TEXT NOT NULL,
+                reward TEXT NOT NULL,
                 url TEXT NOT NULL
             )`, (err) => {
                 if (!err) {
                     const defaultTasks = [
-                        ['Games', 'Test Web Game: Cyber Runner', '1 Hour Session', '£1.00', 'https://orteil.dashnet.org/cookieclicker/'],
+                        ['Games', 'Arcade Reflex Tester', '1 Hour Session', '£1.00', 'https://orteil.dashnet.org/cookieclicker/'],
                         ['Games', 'Strategy Game QA Test', '1 Hour Session', '£1.00', 'https://tetris.com/play-tetris'],
-                        ['Technology', 'Browser Extension Debugging', '1 Hour Session', '£1.00', 'https://httpbin.org/'],
+                        ['Games', 'Color Match Speed Run', '1 Hour Session', '£1.00', 'https://orteil.dashnet.org/cookieclicker/'],
+                        ['Technology', 'UI Button Clicker Speed', '1 Hour Session', '£1.00', 'https://httpbin.org/'],
                         ['Technology', 'Cloud Server Ping Test', '1 Hour Session', '£1.00', 'https://www.speedtest.net/'],
-                        ['Art', 'Digital Asset Tagging & Review', '1 Hour Session', '£1.00', 'https://unsplash.com/'],
-                        ['Art', 'UI Color Contrast Verification', '1 Hour Session', '£1.00', 'https://coolors.co/']
+                        ['Technology', 'Form Input Validation Test', '1 Hour Session', '£1.00', 'https://httpbin.org/'],
+                        ['Art', 'Digital Sketch Evaluation', '1 Hour Session', '£1.00', 'https://unsplash.com/'],
+                        ['Art', 'Color Palette Contrast Test', '1 Hour Session', '£1.00', 'https://coolors.co/'],
+                        ['Art', 'Visual Symmetry Inspector', '1 Hour Session', '£1.00', 'https://unsplash.com/']
                     ];
                     const stmt = db.prepare(`INSERT INTO platform_tasks (category, title, duration, reward, url) VALUES (?, ?, ?, ?, ?)`);
                     defaultTasks.forEach(task => stmt.run(task));
                     stmt.finalize();
-                    console.log('Default automated tasks with URLs populated.');
+                    console.log('Default interactive games and tasks populated successfully.');
                 }
             });
         });
@@ -109,7 +112,7 @@ app.post('/register-worker', (req, res) => {
     }
 
     const query = `INSERT INTO workers (workerName, workerEmail, payoutMethod) VALUES (?, ?, ?)`;
-    db.run(query, [workerName, workerEmail, payoutMethod || 'AmazonGiftCard'], function(err) {
+    db.run(query, [workerName, workerEmail, payoutMethod || 'MonzoTransfer'], function(err) {
         if (err) {
             console.error('Error saving worker', err.message);
             return res.status(500).send('Database error during registration.');
@@ -145,7 +148,7 @@ app.get('/api/stats', (req, res) => {
     });
 });
 
-// API Endpoint: Get automated tasks/games for the second page hub
+// API Endpoint: Get automated tasks and games for the second page hub
 app.get('/api/tasks', (req, res) => {
     const query = `SELECT * FROM platform_tasks`;
     db.all(query, [], (err, rows) => {
