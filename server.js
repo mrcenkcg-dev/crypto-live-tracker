@@ -8,8 +8,8 @@ const PORT = process.env.PORT || 3000;
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Serve static files from the current directory (for index.html, CSS, etc.)
-app.use(express.static(path.join(__dirname)));
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Initialize SQLite database
 const dbFile = path.join(__dirname, 'shoulder_to_shoulder.db');
@@ -76,9 +76,9 @@ app.get('/api/stats', (req, res) => {
     });
 });
 
-// Root route serves the main platform interface
+// Root route serves the main platform interface from the public folder
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start the server
