@@ -123,30 +123,18 @@ app.post('/register-worker', (req, res) => {
     });
 });
 
-// API Endpoint: Get aggregated stats for the counters
+// API Endpoint: Get real registration count for the counter
 app.get('/api/stats', (req, res) => {
-    const query = `SELECT channel, SUM(ad_count) as total FROM monkey_logs GROUP BY channel`;
+    const query = `SELECT COUNT(*) as totalRegistrations FROM workers`;
     
-    db.all(query, [], (err, rows) => {
+    db.get(query, [], (err, row) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
         
-        const stats = {
-            youtube: 0,
-            tiktok: 0,
-            facebook: 0,
-            instagram: 0,
-            reddit: 0
-        };
-
-        rows.forEach(row => {
-            if (stats.hasOwnProperty(row.channel)) {
-                stats[row.channel] = row.total;
-            }
+        res.json({
+            totalRegistrations: row ? row.totalRegistrations : 0
         });
-
-        res.json(stats);
     });
 });
 
