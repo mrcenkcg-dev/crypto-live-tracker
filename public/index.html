@@ -148,7 +148,6 @@
             align-items: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        /* Fast-action popup banner for high energy momentum */
         #speedPopup {
             position: fixed;
             top: 20px;
@@ -178,9 +177,9 @@
 <div id="speedPopup">⚡ Boom! Task completed in record time! Next item unlocked!</div>
 
 <div class="container">
-    <!-- Live Activity Counter Header -->
+    <!-- Live Registration Counter Header -->
     <div class="counter-box">
-        🌍 Global Platform Activity Counter: <span id="activityCounter">0</span> Interactions Logged
+        🌍 Shoulder to Shoulder Registrations: <span id="activityCounter">0</span> Real Sign-Ups
     </div>
 
     <!-- PAGE 1: PROFESSIONAL LOBBY & WORKPLACE OVERVIEW -->
@@ -277,20 +276,37 @@
 <script>
     let allTasks = [];
 
-    // Handle registration form submit and auto-jump to second page
-    function handleRegistration(event) {
+    // Handle registration form submit, save to database, and auto-jump to second page
+    async function handleRegistration(event) {
         event.preventDefault();
-        const name = document.getElementById('workerName').value;
-        
-        // Update welcome message on second page
-        document.getElementById('welcomeUser').textContent = name;
+        const workerName = document.getElementById('workerName').value;
+        const workerEmail = document.getElementById('workerEmail').value;
+        const payoutMethod = document.getElementById('payoutMethod').value;
 
-        // Hide Page 1 and show Page 2 automatically
-        document.getElementById('pageMain').classList.add('hidden');
-        document.getElementById('pageCategoryHub').classList.remove('hidden');
+        try {
+            const response = await fetch('/register-worker', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ workerName, workerEmail, payoutMethod })
+            });
 
-        // Fetch tasks from backend in advance
-        fetchAllTasks();
+            if (response.ok) {
+                // Update welcome message on second page
+                document.getElementById('welcomeUser').textContent = workerName;
+
+                // Hide Page 1 and show Page 2 automatically
+                document.getElementById('pageMain').classList.add('hidden');
+                document.getElementById('pageCategoryHub').classList.remove('hidden');
+
+                // Fetch tasks and update stats counter immediately
+                fetchAllTasks();
+                fetchStats();
+            } else {
+                alert('Registration failed. Please check your details and try again.');
+            }
+        } catch (error) {
+            console.error('Error during registration submission:', error);
+        }
     }
 
     async function fetchAllTasks() {
@@ -335,7 +351,6 @@
     }
 
     function startTaskSession(taskTitle, taskUrl) {
-        // Trigger high-energy momentum popup feedback
         const popup = document.getElementById('speedPopup');
         popup.style.display = 'block';
         setTimeout(() => {
@@ -351,21 +366,15 @@
         document.getElementById('pageMain').classList.remove('hidden');
     }
 
-    // Automatically fetch live stats from the backend and update the counter
+    // Fetch live registration count from the backend and update the counter
     async function fetchStats() {
         try {
             const response = await fetch('/api/stats');
             const stats = await response.json();
             
-            const totalActivity = (stats.youtube || 0) + 
-                                  (stats.tiktok || 0) + 
-                                  (stats.instagram || 0) + 
-                                  (stats.facebook || 0) + 
-                                  (stats.reddit || 0);
-            
-            document.getElementById('activityCounter').textContent = totalActivity;
+            document.getElementById('activityCounter').textContent = stats.totalRegistrations || 0;
         } catch (error) {
-            console.error('Error fetching activity stats:', error);
+            console.error('Error fetching registration stats:', error);
         }
     }
 
