@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoulder to Shoulder - Global Micro-Task Workplace</title>
+    <title>Shoulder to Shoulder - Waiting Room & 4D Wildlife Preview</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -173,8 +173,7 @@
 </head>
 <body>
 
-<!-- High-Speed Momentum Popup Notification -->
-<div id="speedPopup">⚡ Boom! Task completed in record time! Next item unlocked!</div>
+<div id="speedPopup">⚡ Boom! Preview unlocked successfully!</div>
 
 <div class="container">
     <!-- Live Registration Counter Header -->
@@ -182,35 +181,33 @@
         🌍 Shoulder to Shoulder Registrations: <span id="activityCounter">0</span> Real Sign-Ups
     </div>
 
-    <!-- PAGE 1: PROFESSIONAL LOBBY & WORKPLACE OVERVIEW -->
+    <!-- PAGE 1: WAITING ROOM & PROJECT PREVIEW LOBBY -->
     <div id="pageMain">
         <h1>SHOULDER TO SHOULDER</h1>
-        <p><strong>Welcome to the Official Global Micro-Task & Testing Workplace</strong></p>
-        <p>Shoulder to Shoulder is an open, self-service digital platform where international workers complete hourly testing sessions across games, technology, and wildlife sanctuary care tasks. Earnings accumulate strictly by active session hours on our climbing scale, with secure Monzo payouts.</p>
+        <p><strong>Welcome to the Official Waiting Room & Community Preview</strong></p>
+        <p>Shoulder to Shoulder is the exclusive digital waiting room for our upcoming <strong>4D Wildlife Sanctuary ("My Pet")</strong> project. Register your details to secure your spot, follow the development journey, and gain early access when our interactive wildlife platform launches.</p>
 
         <div class="grid-info">
             <div class="info-card">
-                <h3>📈 The Climbing Hourly Ladder</h3>
+                <h3>🐾 The 4D Wildlife Vision</h3>
                 <ul>
-                    <li><strong>Hour 1:</strong> £1.00</li>
-                    <li><strong>Hour 2:</strong> £2.00</li>
-                    <li><strong>Hour 3:</strong> £3.00</li>
-                    <li><strong>Hour 4:</strong> £4.00</li>
-                    <li><strong>Hour 5+:</strong> £5.00 (Max Daily Cap)</li>
+                    <li><strong>Interactive Habitats:</strong> Experience digital wildlife care like never before.</li>
+                    <li><strong>Early Access:</strong> Registered members get first look at the platform.</li>
+                    <li><strong>Community Growth:</strong> Building together, step by step.</li>
                 </ul>
             </div>
             <div class="info-card">
-                <h3>🏆 Milestone Bonus Tiers</h3>
+                <h3>🚀 Why Join the Waiting Room?</h3>
                 <ul>
-                    <li><strong>Bronze Tier (6 Hrs):</strong> +£2.00 Bonus</li>
-                    <li><strong>Silver Tier (12 Hrs):</strong> +£6.00 Bonus</li>
-                    <li><strong>Gold Badge (24 Hrs):</strong> +£12.00 Bonus</li>
+                    <li><strong>Direct Updates:</strong> Be the first to know when milestones are reached.</li>
+                    <li><strong>Community Count:</strong> Add your voice to the growing global tally.</li>
+                    <li><strong>Exclusive Previews:</strong> Catch early concept drops and updates.</li>
                 </ul>
             </div>
         </div>
 
         <h2>Active Network Channels & Traffic Engine</h2>
-        <p>Platform activity is sustained through active digital traffic streams across global social networks:</p>
+        <p>Follow our journey and project updates across our active digital networks:</p>
         <ul>
             <li><strong>YouTube Channel:</strong> @cenkmahmutgokduman2307</li>
             <li><strong>TikTok Channel:</strong> @mahmut_gokduman7</li>
@@ -218,57 +215,57 @@
             <li><strong>Facebook & Global Web Networks</strong></li>
         </ul>
 
-        <h2>Payout & Security Terms</h2>
+        <h2>Waiting Room Guidelines</h2>
         <ul>
-            <li><strong>Minimum Threshold:</strong> Minimum £5.00 cash-out limit required for processing.</li>
-            <li><strong>Payout Methods:</strong> Strictly handled via <strong>Monzo Payout Links & Monzo-to-Monzo Transfers</strong>.</li>
-            <li><strong>Account Maintenance:</strong> Accounts inactive for 31 consecutive days are automatically archived to protect platform integrity.</li>
+            <li><strong>Status:</strong> This is a conceptual preview platform and waiting room for upcoming releases.</li>
+            <li><strong>Privacy:</strong> Your registration details are kept secure for community announcements.</li>
+            <li><strong>Engagement:</strong> Join the count, explore the previews, and stay connected as we build toward the future.</li>
         </ul>
 
-        <!-- Worker Registration & Session Lobby Form -->
+        <!-- Registration & Waiting Room Form -->
         <div class="registration-box">
-            <h3>Join the Workplace & Start Session Tracker</h3>
+            <h3>Join the Waiting Room & Secure Your Spot</h3>
             <p class="notice-text">
-                <strong>Important:</strong> Enter your correct details below to instantly enter the active task hub. Hourly earnings accumulate on the timer and are distributed securely via <strong>Monzo</strong> once the £5 minimum threshold is reached.
+                <strong>Important:</strong> Enter your details below to register your spot in our community waiting room and unlock access to our preview hubs.
             </p>
             
             <form id="workerRegistrationForm" onsubmit="handleRegistration(event)">
                 <input type="text" id="workerName" placeholder="Your Full Name or Username" required>
-                <input type="email" id="workerEmail" placeholder="Your Monzo Linked Email / Details" required>
-                <select id="payoutMethod">
-                    <option value="MonzoTransfer">Monzo Direct Transfer / Payout Link</option>
+                <input type="email" id="workerEmail" placeholder="Your Email Address" required>
+                <select id="payoutMethod" class="hidden">
+                    <option value="WaitingRoomMember" selected>Waiting Room Member</option>
                 </select>
-                <button type="submit">Register & Enter Task Hub 🚀</button>
+                <button type="submit">Register & Enter Waiting Room 🚀</button>
             </form>
         </div>
     </div>
 
-    <!-- PAGE 2: WORKER HUB & TASK CATEGORIES -->
+    <!-- PAGE 2: PREVIEW HUB & TASK CATEGORIES -->
     <div id="pageCategoryHub" class="hidden">
-        <h1>Worker Hub & Task Categories</h1>
-        <p>Welcome aboard, <strong id="welcomeUser">Worker</strong>! Select an activity hub below to browse available testing tasks while your hourly session timer runs.</p>
+        <h1>Community Preview Hub</h1>
+        <p>Welcome aboard, <strong id="welcomeUser">Member</strong>! Select an activity hub below to explore previews while you check out our roadmap.</p>
         
-        <h2>Select Your Activity Hub</h2>
+        <h2>Select Your Preview Hub</h2>
         <div class="category-grid">
             <div class="category-card" onclick="loadTasks('Games')">
-                🎮 Games Hub
+                🎮 Games Previews
             </div>
             <div class="category-card" onclick="loadTasks('Technology')">
-                💻 Technology & Testing
+                💻 Technology & Concept
             </div>
             <div class="category-card" onclick="loadTasks('My Pet')">
-                🐾 "My Pet" Wildlife Sanctuary
+                🐾 "My Pet" 4D Wildlife Sanctuary
             </div>
         </div>
 
         <!-- Dynamic Task Display Container -->
         <div id="taskDisplayContainer" class="task-list-box hidden">
-            <h3 id="selectedCategoryTitle">Available Testing Tasks</h3>
-            <div id="taskListContent">Loading tasks...</div>
+            <h3 id="selectedCategoryTitle">Available Previews</h3>
+            <div id="taskListContent">Loading previews...</div>
         </div>
 
         <div style="margin-top: 35px; text-align: center;">
-            <button onclick="goBackToMain()" style="background: #6c757d; color: white; padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">Log Out / Return to Lobby</button>
+            <button onclick="goBackToMain()" style="background: #6c757d; color: white; padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">Log Out / Return to Waiting Room</button>
         </div>
     </div>
 </div>
@@ -276,7 +273,6 @@
 <script>
     let allTasks = [];
 
-    // Handle registration form submit, save to database, and auto-jump to second page
     async function handleRegistration(event) {
         event.preventDefault();
         const workerName = document.getElementById('workerName').value;
@@ -291,14 +287,10 @@
             });
 
             if (response.ok) {
-                // Update welcome message on second page
                 document.getElementById('welcomeUser').textContent = workerName;
-
-                // Hide Page 1 and show Page 2 automatically
                 document.getElementById('pageMain').classList.add('hidden');
                 document.getElementById('pageCategoryHub').classList.remove('hidden');
 
-                // Fetch tasks and update stats counter immediately
                 fetchAllTasks();
                 fetchStats();
             } else {
@@ -323,14 +315,13 @@
         const titleElement = document.getElementById('selectedCategoryTitle');
         const contentElement = document.getElementById('taskListContent');
 
-        titleElement.textContent = categoryName + ' - Active Testing Sessions';
+        titleElement.textContent = categoryName + ' - Concept Previews';
         container.classList.remove('hidden');
 
-        // Filter tasks matching the selected category
         const filtered = allTasks.filter(task => task.category.toLowerCase() === categoryName.toLowerCase());
 
         if (filtered.length === 0) {
-            contentElement.innerHTML = '<p>No active tasks found in this category right now. Check back soon!</p>';
+            contentElement.innerHTML = '<p>No previews found in this category right now. Check back soon!</p>';
             return;
         }
 
@@ -340,9 +331,9 @@
                 <div class="task-item">
                     <div>
                         <strong>${task.title}</strong><br>
-                        <small style="color: #666;">Session Activity | Pay governed by Hourly Ladder</small>
+                        <small style="color: #666;">Concept Preview & Vision Item</small>
                     </div>
-                    <button onclick="startTaskSession('${task.title}', '${task.url}')" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Start Session & Open</button>
+                    <button onclick="startTaskSession('${task.title}', '${task.url}')" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Open Preview 🐾</button>
                 </div>
             `;
         });
@@ -366,7 +357,6 @@
         document.getElementById('pageMain').classList.remove('hidden');
     }
 
-    // Fetch live registration count from the backend and update the counter
     async function fetchStats() {
         try {
             const response = await fetch('/api/stats');
@@ -378,7 +368,6 @@
         }
     }
 
-    // Fetch immediately on load, then poll every 5 seconds
     fetchStats();
     setInterval(fetchStats, 5000);
 </script>
