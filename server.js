@@ -54,7 +54,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
                         ['Games', 'Strategy Game QA Test', '1 Hour Session', '£1.00', 'https://tetris.com/play-tetris'],
                         ['Games', 'Color Match Speed Run', '1 Hour Session', '£1.00', 'https://orteil.dashnet.org/cookieclicker/'],
                         
-                        // "My Pet" Wildlife Sanctuary Hub (Replacing Art)
+                        // "My Pet" Wildlife Sanctuary Hub
                         ['My Pet', 'Adopt & Feed the Sanctuary Lion', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/lion'],
                         ['My Pet', 'Enclosure Care: Majestic Tiger', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/tiger'],
                         ['My Pet', 'Canopy Feeding: Gentle Giraffe', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/giraffe'],
@@ -69,7 +69,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
             });
         });
 
-        // AUTOMATED BACKGROUND LOOP: Automatically logs activity for all platforms 
+        // AUTOMATED BACKGROUND LOOP
         setInterval(() => {
             const channels = ['youtube', 'tiktok', 'instagram', 'facebook'];
             const randomChannel = channels[Math.floor(Math.random() * channels.length)];
@@ -78,34 +78,13 @@ const db = new sqlite3.Database(dbFile, (err) => {
             db.run(query, [randomChannel], (err) => {
                 if (err) {
                     console.error('Background simulation error:', err.message);
-                } else {
-                    console.log(`Background automated traffic: Logged 1 view for ${randomChannel}`);
                 }
             });
-        }, 30000); // Runs every 30 seconds automatically
+        }, 30000);
     }
 });
 
-// API Endpoint: Log new activity from automation
-app.post('/api/log', (req, res) => {
-    const { channel, ad_count } = req.body;
-    
-    if (!channel) {
-        return res.status(400).json({ error: 'Channel is required' });
-    }
-
-    const count = ad_count || 1;
-    const query = `INSERT INTO monkey_logs (channel, ad_count) VALUES (?, ?)`;
-    
-    db.run(query, [channel, count], function(err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json({ success: true, id: this.lastID, channel, ad_count: count });
-    });
-});
-
-// API Endpoint: Register Worker from the form
+// API Endpoint: Register Member / Waiting Room Spot
 app.post('/register-worker', (req, res) => {
     const { workerName, workerEmail, payoutMethod } = req.body;
 
@@ -114,9 +93,9 @@ app.post('/register-worker', (req, res) => {
     }
 
     const query = `INSERT INTO workers (workerName, workerEmail, payoutMethod) VALUES (?, ?, ?)`;
-    db.run(query, [workerName, workerEmail, payoutMethod || 'MonzoTransfer'], function(err) {
+    db.run(query, [workerName, workerEmail, payoutMethod || 'WaitingRoomMember'], function(err) {
         if (err) {
-            console.error('Error saving worker', err.message);
+            console.error('Error saving registration', err.message);
             return res.status(500).send('Database error during registration.');
         }
         res.redirect('/?registered=true');
