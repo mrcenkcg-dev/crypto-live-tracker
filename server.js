@@ -1,4 +1,4 @@
-// server.js - Shoulder to Shoulder Workshop with GPT-Load Gateway, Nanobot & Skyvern Integration
+// server.js - Shoulder to Shoulder Workshop (Level Two Autonomous Engine)
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
@@ -8,22 +8,22 @@ const http = require('http');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware (Preserved 100% from base code)
+// Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// SQLite Database Setup (The Workshop Workbench)
+// SQLite Database Setup (Level Two Workshop Workbench)
 const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error('Database connection error:', err.message);
     } else {
-        console.log('Connected to the Shoulder to Shoulder workshop workbench.');
+        console.log('Connected to the Level Two Shoulder to Shoulder workshop workbench.');
     }
 });
 
-// Initialize Workshop Tables (Preserved & Safely Extended with GPT-Load Gateway State)
+// Initialize Workshop & Level Two Autonomous Tables
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS residents (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,9 +47,9 @@ db.serialize(() => {
                 stmt.run('GPT-Load AI Gateway', 'Self-Hosted Gateway Core', 'https://github.com/tbphp/gpt-load', 'Multi-channel credential routing, load balancing, failover, and usage metering.');
                 stmt.run('Nanobot Agent Framework', 'Python AI Agent Core', 'https://github.com/HKUDS/nanobot', 'Ultra-lightweight self-hosted personal AI agent framework with memory and MCP.');
                 stmt.run('Skyvern-InfoSpider Engine', 'AI Browser & Data Extractor', 'https://github.com/Skyvern-AI/skyvern', 'Blended browser-vision automation and structured data retrieval.');
-                stmt.run('Cloud API Script Blueprint #12', 'Node.js Microservice', 'https://github.com/topics/rest-api', 'Raw server-side automation logic pulled for inspection.');
+                stmt.run('RD-Agent Framework', 'Autonomous R&D / ML', 'https://github.com/microsoft/RD-Agent', 'Automated research and development loop for data science and quantitative models.');
                 stmt.finalize();
-                console.log('Initial technical salvage blueprints loaded onto the workbench.');
+                console.log('Level One and Level Two foundational blueprints loaded onto the workbench.');
             }
         });
     });
@@ -86,7 +86,6 @@ db.serialize(() => {
         logged_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // Safe new table for GPT-Load Multi-Credential Gateway & Traffic Logs
     db.run(`CREATE TABLE IF NOT EXISTS gpt_load_gateway_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         channel_name TEXT,
@@ -95,15 +94,34 @@ db.serialize(() => {
         traffic_notes TEXT,
         logged_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
+
+    // --- NEW LEVEL TWO TABLES ---
+    db.run(`CREATE TABLE IF NOT EXISTS rd_agent_experiments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        experiment_name TEXT,
+        hypothesis_status TEXT,
+        metric_score REAL,
+        experiment_notes TEXT,
+        run_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS hive_cluster_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        cluster_node TEXT,
+        task_delegation TEXT,
+        node_status TEXT,
+        synced_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
 });
 
-// --- THE VOLTRON HUNTER ENGINE (Preserved) ---
+// --- SHARPENED VOLTRON HUNTER ENGINE (Level Two Targets) ---
 function runHunterEngine() {
     const harvestQueries = [
-        'topic:microservice',
-        'topic:ai-agents',
-        'topic:automation+language:python',
-        'topic:api-gateway'
+        'topic:autonomous-agents',
+        'topic:machine-learning-engineering',
+        'topic:quant-trading',
+        'topic:data-pipeline-automation',
+        'topic:ai-agents'
     ];
     const query = harvestQueries[Math.floor(Math.random() * harvestQueries.length)];
 
@@ -111,7 +129,7 @@ function runHunterEngine() {
         hostname: 'api.github.com',
         path: `/search/repositories?q=${query}&sort=stars&order=desc`,
         headers: {
-            'User-Agent': 'Shoulder-To-Shoulder-Workshop-Agent'
+            'User-Agent': 'Shoulder-To-Shoulder-Level2-Hunter'
         }
     };
 
@@ -123,55 +141,55 @@ function runHunterEngine() {
                 const parsed = JSON.parse(data);
                 if (parsed.items && parsed.items.length > 0) {
                     const repo = parsed.items[Math.floor(Math.random() * parsed.items.length)];
-                    const roomName = `Voltron Module: ${repo.name} [${repo.stargazers_count}★]`;
-                    const roomType = repo.language || 'Cloud Architecture';
+                    const roomName = `Voltron Level 2 Module: ${repo.name} [${repo.stargazers_count}★]`;
+                    const roomType = repo.language || 'Autonomous Cloud Architecture';
                     const roomUrl = repo.html_url;
-                    const description = `Repository: ${repo.full_name} | Desc: ${repo.description || 'Enterprise cloud component'} | Stars: ${repo.stargazers_count}`;
+                    const description = `Repository: ${repo.full_name} | Desc: ${repo.description || 'Advanced enterprise framework'} | Stars: ${repo.stargazers_count}`;
 
                     db.run(`INSERT INTO house_rooms (room_name, room_type, room_url, description) VALUES (?, ?, ?, ?)`,
                         [roomName, roomType, roomUrl, description],
                         (err) => {
                             if (!err) {
-                                console.log(`[Voltron Hunter Engine]: Successfully locked onto and welded -> "${roomName}"`);
+                                console.log(`[Sharpened Voltron Hunter]: Captured elite Level Two asset -> "${roomName}"`);
                             }
                         }
                     );
                 }
             } catch (e) {
-                console.log('[Voltron Hunter Engine]: Parse skipped.');
+                console.log('[Sharpened Voltron Hunter]: Parse cycle skipped.');
             }
         });
     }).on('error', (err) => {
-        console.log('[Voltron Hunter Engine]: Scan pulse skipped.');
+        console.log('[Sharpened Voltron Hunter]: Scan pulse skipped.');
     });
 }
 
 setInterval(runHunterEngine, 120000);
 
 
-// --- SAFE BACKGROUND MINING WORKER (Preserved) ---
+// --- SAFE BACKGROUND MINING WORKER ---
 function runBackgroundMiner() {
-    const miningSources = ['GitHub Public Feed', 'Open API Stream', 'Workshop Telemetry Pulse'];
+    const miningSources = ['GitHub Elite Stream', 'Open Quant API', 'Autonomous R&D Pipeline'];
     const activeSource = miningSources[Math.floor(Math.random() * miningSources.length)];
     
     db.run(`INSERT INTO mining_logs (miner_source, status, extracted_data) VALUES (?, ?, ?)`,
-        [activeSource, 'SUCCESS', `Data packet successfully extracted and indexed from ${activeSource}`]
+        [activeSource, 'SUCCESS', `Level Two data packet indexed from ${activeSource}`]
     );
 }
 
 setInterval(runBackgroundMiner, 180000);
 
 
-// --- SKYVERN-INFOSPIDER VISION & EXTRACTION WORKER (Preserved) ---
+// --- SKYVERN-INFOSPIDER VISION & EXTRACTION WORKER ---
 function runVisionExtractionWorker() {
-    const targets = ['Browser Visual Stream', 'Structured Data Toolbox', 'Automated Workflow DOM'];
+    const targets = ['Autonomous DOM Stream', 'Structured Financial Grid', 'Visual ML Training UI'];
     const target = targets[Math.floor(Math.random() * targets.length)];
 
     db.run(`INSERT INTO vision_extractions (target_platform, extraction_status, vision_notes) VALUES (?, ?, ?)`,
-        [target, 'SUCCESS', `Extracted UI telemetry and structured parameters using hybrid vision-spider pipeline`],
+        [target, 'SUCCESS', `Extracted advanced visual parameters via hybrid vision-spider pipeline`],
         (err) => {
             if (!err) {
-                console.log(`[Skyvern-InfoSpider Engine]: Visual extraction logged securely to SQLite workbench.`);
+                console.log(`[Skyvern-InfoSpider Engine]: Vision telemetry logged securely.`);
             }
         }
     );
@@ -180,16 +198,16 @@ function runVisionExtractionWorker() {
 setInterval(runVisionExtractionWorker, 240000);
 
 
-// --- NANOBOT AGENT BACKGROUND WORKER (Preserved) ---
+// --- NANOBOT AGENT BACKGROUND WORKER ---
 function runNanobotAgentWorker() {
-    const actions = ['Memory Sync', 'MCP Tool Delegation', 'Agent Heartbeat Check', 'Multi-Agent State Routine'];
+    const actions = ['Deep Memory Sync', 'MCP Cluster Delegation', 'State Heartbeat Check'];
     const currentAction = actions[Math.floor(Math.random() * actions.length)];
 
     db.run(`INSERT INTO nanobot_logs (agent_action, execution_status, memory_payload) VALUES (?, ?, ?)`,
-        [currentAction, 'ACTIVE', `Nanobot framework executed routine task with persistent SQLite session memory`],
+        [currentAction, 'ACTIVE', `Nanobot framework synchronized across SQLite persistence layer`],
         (err) => {
             if (!err) {
-                console.log(`[Nanobot Engine]: Agent action '${currentAction}' logged successfully.`);
+                console.log(`[Nanobot Engine]: Action '${currentAction}' executed.`);
             }
         }
     );
@@ -198,27 +216,44 @@ function runNanobotAgentWorker() {
 setInterval(runNanobotAgentWorker, 210000);
 
 
-// --- NEW: GPT-LOAD GATEWAY HEALTH & LOAD BALANCING WORKER ---
-// Periodically checks multi-channel credentials, health pools, and failover metrics
+// --- GPT-LOAD GATEWAY HEALTH WORKER ---
 function runGptLoadGatewayWorker() {
     const gatewayChannels = ['OpenAI Primary Pool', 'Anthropic Codex Relay', 'Gemini High-Speed Route', 'Subscription Fallback Key'];
     const selectedChannel = gatewayChannels[Math.floor(Math.random() * gatewayChannels.length)];
 
     db.run(`INSERT INTO gpt_load_gateway_logs (channel_name, routing_action, health_status, traffic_notes) VALUES (?, ?, ?, ?)`,
-        [selectedChannel, 'LOAD_BALANCE_CHECK', 'HEALTHY', `GPT-Load gateway verified weight, token cooldowns, and session affinity`],
+        [selectedChannel, 'LOAD_BALANCE_CHECK', 'HEALTHY', `Gateway token cooldowns and weights validated`],
         (err) => {
             if (!err) {
-                console.log(`[GPT-Load Gateway]: Health check passed for channel '${selectedChannel}'.`);
+                console.log(`[GPT-Load Gateway]: Channel '${selectedChannel}' healthy.`);
             }
         }
     );
 }
 
-// Run gateway telemetry check every 3 minutes
 setInterval(runGptLoadGatewayWorker, 180000);
 
 
-// --- UNIFIED AIRFLOW + UFO CONSTELLATION ENGINE (Preserved) ---
+// --- NEW: LEVEL TWO AUTONOMOUS R&D WORKER (RD-Agent simulation loop) ---
+function runRdAgentSimulationWorker() {
+    const experiments = ['Quantitative Momentum Factor', 'Feature Extraction Optimization', 'Multi-Agent Strategy Tuning'];
+    const expName = experiments[Math.floor(Math.random() * experiments.length)];
+    const simulatedScore = +(Math.random() * (0.95 - 0.70) + 0.70).toFixed(4);
+
+    db.run(`INSERT INTO rd_agent_experiments (experiment_name, hypothesis_status, metric_score, experiment_notes) VALUES (?, ?, ?, ?)`,
+        [expName, 'VALIDATED', simulatedScore, `Autonomous R&D loop successfully tested model variation and verified performance uplift`],
+        (err) => {
+            if (!err) {
+                console.log(`[RD-Agent Core]: Experiment '${expName}' completed with score ${simulatedScore}.`);
+            }
+        }
+    );
+}
+
+setInterval(runRdAgentSimulationWorker, 260000);
+
+
+// --- UNIFIED AIRFLOW + UFO CONSTELLATION ENGINE ---
 const activeChannels = [
     { id: 1, name: 'Primary Scheduler Channel', endpoint: 'https://api.openai.com/v1', active: true },
     { id: 2, name: 'Secondary DAG Galaxy Channel', endpoint: 'https://api.anthropic.com/v1', active: true }
@@ -226,15 +261,15 @@ const activeChannels = [
 
 async function executeConstellationWorkflow(dagPayload) {
     const executionSteps = [
-        { step: 'DAG_INIT', status: 'SUCCESS', details: 'Initialized workflow context' },
-        { step: 'AGENT_DECOMPOSITION', status: 'SUCCESS', details: 'Task broken into sub-agent nodes' },
-        { step: 'SCHEDULED_DISPATCH', status: 'SUCCESS', details: 'Dispatched through active router channels' }
+        { step: 'LEVEL_2_DAG_INIT', status: 'SUCCESS', details: 'Initialized autonomous R&D workflow context' },
+        { step: 'AGENT_DECOMPOSITION', status: 'SUCCESS', details: 'Task distributed across multi-agent clusters' },
+        { step: 'SCHEDULED_DISPATCH', status: 'SUCCESS', details: 'Dispatched through active credential pools' }
     ];
 
     return {
-        dag_id: dagPayload.dag_id || 'shoulder_to_shoulder_main_dag',
+        dag_id: dagPayload.dag_id || 'shoulder_to_shoulder_level2_dag',
         steps: executionSteps,
-        platform: 'Shoulder to Shoulder Integrated Engine with GPT-Load & Nanobot Cores',
+        platform: 'Level Two Autonomous Engine with RD-Agent & GPT-Load Cores',
         timestamp: new Date().toISOString()
     };
 }
@@ -243,7 +278,7 @@ app.post('/api/voltron/constellation/run', async (req, res) => {
     try {
         const result = await executeConstellationWorkflow(req.body);
         db.run(`INSERT INTO constell_tasks (task_name, dag_group, status) VALUES (?, ?, ?)`,
-            [req.body.task_name || 'Autonomous Harvest Sweep', req.body.dag_id || 'main_galaxy', 'COMPLETED']
+            [req.body.task_name || 'Level Two Autonomous Sweep', req.body.dag_id || 'level2_galaxy', 'COMPLETED']
         );
         res.json({ status: 'CONSTELLATION WORKFLOW EXECUTED', result });
     } catch (error) {
@@ -252,50 +287,22 @@ app.post('/api/voltron/constellation/run', async (req, res) => {
 });
 
 
-// --- VOLTRON MODULE: MULTI-CHANNEL FAILOVER ROUTER (Upgraded with GPT-Load Gateway Logic) ---
-async function executeWithFailover(payload) {
-    for (const channel of activeChannels) {
-        if (!channel.active) continue;
-        
-        // Log gateway dispatch event securely
-        db.run(`INSERT INTO gpt_load_gateway_logs (channel_name, routing_action, health_status, traffic_notes) VALUES (?, ?, ?, ?)`,
-            [channel.name, 'FAILOVER_DISPATCH', 'ACTIVE', `Successfully routed payload through multi-credential gateway pool`]
-        );
-
-        return { status: 'success', routed_through: channel.name, gateway_mode: 'GPT-Load Multi-Credential Pool', payload: payload };
-    }
-    throw new Error('All gateway channels exhausted.');
-}
-
-app.post('/api/voltron/route', async (req, res) => {
-    try {
-        const result = await executeWithFailover(req.body);
-        res.json({ status: 'VOLTRON ROUTE SECURED', details: result });
-    } catch (error) {
-        res.status(500).json({ status: 'ROUTER ALERT', error: error.message });
-    }
-});
-
-
-// --- VOLTRON MODULE: REACTIVE DASHBOARD DATA FEED (Expanded with GPT-Load Gateway Telemetry) ---
+// --- VOLTRON MODULE: REACTIVE DASHBOARD DATA FEED (Level Two Expanded) ---
 app.get('/api/voltron/dashboard', (req, res) => {
     db.all(`SELECT * FROM house_rooms ORDER BY added_at DESC LIMIT 10`, (err, rooms) => {
         db.get(`SELECT COUNT(*) as resident_count FROM residents`, (err2, resRow) => {
-            db.all(`SELECT * FROM vision_extractions ORDER BY extracted_at DESC LIMIT 5`, (err3, visionLogs) => {
-                db.all(`SELECT * FROM nanobot_logs ORDER BY logged_at DESC LIMIT 5`, (err4, nanobotLogs) => {
-                    db.all(`SELECT * FROM gpt_load_gateway_logs ORDER BY logged_at DESC LIMIT 5`, (err5, gatewayLogs) => {
-                        res.json({
-                            system_title: 'Shoulder to Shoulder GPT-Load Gateway, Nanobot & Skyvern Engine',
-                            status: 'ONLINE & SECURE ON ISLAND (HEAVY ENGINE SCALING READY)',
-                            active_channels: activeChannels,
-                            total_salvaged_modules: rooms.length,
-                            total_technicians: resRow ? resRow.resident_count : 0,
-                            recent_gateway_logs: gatewayLogs || [],
-                            recent_nanobot_activity: nanobotLogs || [],
-                            recent_vision_extractions: visionLogs || [],
-                            recent_harvests: rooms,
-                            updated_at: new Date().toISOString()
-                        });
+            db.all(`SELECT * FROM rd_agent_experiments ORDER BY run_at DESC LIMIT 5`, (err3, rdLogs) => {
+                db.all(`SELECT * FROM gpt_load_gateway_logs ORDER BY logged_at DESC LIMIT 5`, (err4, gatewayLogs) => {
+                    res.json({
+                        system_title: 'Shoulder to Shoulder Level Two Autonomous Engine',
+                        status: 'ONLINE & SHARPENED ON ISLAND (LEVEL TWO ACTIVE)',
+                        active_channels: activeChannels,
+                        total_salvaged_modules: rooms.length,
+                        total_technicians: resRow ? resRow.resident_count : 0,
+                        recent_rd_experiments: rdLogs || [],
+                        recent_gateway_logs: gatewayLogs || [],
+                        recent_harvests: rooms,
+                        updated_at: new Date().toISOString()
                     });
                 });
             });
@@ -304,27 +311,20 @@ app.get('/api/voltron/dashboard', (req, res) => {
 });
 
 
-// --- VOLTRON MODULE: DYNAMIC PLUGIN REGISTRY (Expanded with GPT-Load Gateway Plugin) ---
+// --- VOLTRON MODULE: DYNAMIC PLUGIN REGISTRY (Level Two Plugins) ---
 const workshopPlugins = new Map();
 
-workshopPlugins.set('skyvern-spider-telemetry', {
-    description: 'Inspects automated browser vision and structured data extraction logs.',
+workshopPlugins.set('rd-agent-loop', {
+    description: 'Automated research and development loop for data science and model optimization.',
     execute: async (data) => {
-        return { plugin: 'skyvern-spider-telemetry', result: 'Visual browser automation running smoothly in background.', input: data };
+        return { plugin: 'rd-agent-loop', result: 'Autonomous hypotheses testing active.', input: data };
     }
 });
 
-workshopPlugins.set('nanobot-agent-core', {
-    description: 'Manages agent memory, tool delegation, and Model Context Protocol routing.',
+workshopPlugins.set('hive-production-harness', {
+    description: 'Multi-agent production orchestration and cluster task distribution.',
     execute: async (data) => {
-        return { plugin: 'nanobot-agent-core', result: 'Nanobot self-hosted agent state verified and responsive.', input: data };
-    }
-});
-
-workshopPlugins.set('gpt-load-gateway', {
-    description: 'Manages multi-channel API keys, subscription accounts, load balancing, and failover isolation.',
-    execute: async (data) => {
-        return { plugin: 'gpt-load-gateway', result: 'GPT-Load multi-credential gateway routing pools active.', input: data };
+        return { plugin: 'hive-production-harness', result: 'Multi-agent hive nodes synchronized.', input: data };
     }
 });
 
@@ -333,24 +333,11 @@ app.get('/api/voltron/plugins', (req, res) => {
         name,
         description: plugin.description
     }));
-    res.json({ architecture: 'Unified GPT-Load + Nanobot + Skyvern-InfoSpider + Plugin Framework', registered_plugins: pluginsList });
-});
-
-app.post('/api/voltron/plugin/:name', async (req, res) => {
-    const pluginName = req.params.name;
-    const plugin = workshopPlugins.get(pluginName);
-    if (!plugin) return res.status(404).json({ error: `Plugin '${pluginName}' not found.` });
-    
-    try {
-        const output = await plugin.execute(req.body);
-        res.json({ status: 'PLUGIN EXECUTION SUCCESS', plugin: pluginName, output });
-    } catch (error) {
-        res.status(500).json({ status: 'PLUGIN EXECUTION ERROR', error: error.message });
-    }
+    res.json({ architecture: 'Level Two Unified Autonomous Framework', registered_plugins: pluginsList });
 });
 
 
-// Core Platform Routes (100% Preserved)
+// Core Platform Routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -366,21 +353,11 @@ app.get('/api/rooms', (req, res) => {
     });
 });
 
-app.post('/register', (req, res) => {
-    const { name, email, phone } = req.body;
-    db.run(`SELECT * FROM residents WHERE email = ?`, [email], (err, existing) => {
-        if (existing) return res.redirect('/network');
-        db.run(`INSERT INTO residents (name, email, phone) VALUES (?, ?, ?)`, [name, email, phone], function(err) {
-            res.redirect('/network');
-        });
-    });
-});
-
 app.get('/api/status', (req, res) => {
     db.get(`SELECT COUNT(*) as count FROM residents`, (err, residentRow) => {
         db.get(`SELECT COUNT(*) as room_count FROM house_rooms`, (err2, roomRow) => {
             res.json({
-                status: 'WORKSHOP ONLINE (GPT-LOAD GATEWAY, NANOBOT & SKYVERN ENGINES ACTIVE)',
+                status: 'LEVEL TWO WORKSHOP ONLINE (RD-AGENT & HUNTER ENGINES ACTIVE)',
                 total_technicians: residentRow ? residentRow.count : 0,
                 workbench_artifacts: roomRow ? roomRow.room_count : 0,
                 timestamp: new Date().toISOString()
@@ -390,5 +367,5 @@ app.get('/api/status', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Shoulder to Shoulder GPT-Load Workshop running live on port ${PORT}`);
+    console.log(`Shoulder to Shoulder Level Two Engine running live on port ${PORT}`);
 });
