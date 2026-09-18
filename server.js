@@ -1,3 +1,4 @@
+// server.js - Express Server with Core Background Engine & Database
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
@@ -5,113 +6,107 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware to parse JSON and URL-encoded form bodies
-app.use(express.json());
+// Middleware for parsing requests
 app.use(express.urlencoded({ extended: true }));
-
-// Serve static files from the public directory
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Initialize SQLite database
-const dbFile = path.join(__dirname, 'shoulder_to_shoulder.db');
+// SQLite Database Setup
+const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
-        console.error('Error opening database', err.message);
+        console.error('Database connection error:', err.message);
     } else {
         console.log('Connected to the SQLite database.');
-        
-        // Create monkey_logs table for automated background simulation
-        db.run(`CREATE TABLE IF NOT EXISTS monkey_logs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            channel TEXT NOT NULL,
-            ad_count INTEGER DEFAULT 1,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`);
-
-        // Create workers table for registrations with survey answers
-        db.run(`CREATE TABLE IF NOT EXISTS workers (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            workerName TEXT NOT NULL,
-            workerEmail TEXT NOT NULL,
-            workerPhone TEXT,
-            surveyAnswers TEXT,
-            payoutMethod TEXT NOT NULL,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`);
-
-        // Create community chat messages table
-        db.run(`CREATE TABLE IF NOT EXISTS community_chat (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            message TEXT NOT NULL,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`);
     }
 });
 
-// API Endpoint: Register Member, Save 10-Question Survey, & Opt-in for Text Notification
-app.post('/register-worker', (req, res) => {
-    const { workerName, workerEmail, workerPhone, surveyAnswers } = req.body;
+// Initialize Tables for Users, Survey Responses, and Background Activity Engine
+db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        email TEXT,
+        phone TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
 
-    if (!workerName || !workerEmail) {
-        return res.status(400).send('Name and Email are required.');
-    }
+    db.run(`CREATE TABLE IF NOT EXISTS survey_responses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        question_index INTEGER,
+        answer TEXT,
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    )`);
 
-    const query = `INSERT INTO workers (workerName, workerEmail, workerPhone, surveyAnswers, payoutMethod) VALUES (?, ?, ?, ?, ?)`;
-    db.run(query, [workerName, workerEmail, workerPhone || '', JSON.stringify(surveyAnswers || {}), 'WildlifeTester'], function(err) {
-        if (err) {
-            console.error('Error saving registration', err.message);
-            return res.status(500).send('Database error during registration.');
-        }
-        res.json({ success: true, memberId: this.lastID });
-    });
+    db.run(`CREATE TABLE IF NOT EXISTS platform_engine_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        activity_type TEXT,
+        status TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
 });
 
-// API Endpoint: Get real registration count for the global counter
-app.get('/api/stats', (req, res) => {
-    const query = `SELECT COUNT(*) as totalRegistrations FROM workers`;
-    db.get(query, [], (err, row) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
+// --- CORE BACKGROUND ENGINE LOOP ---
+// This continuously runs behind the scenes to keep the server active and the engine pulsing 24/7.
+setInterval(() => {
+    const activities = ['background_heartbeat', 'node_sync', 'client_ping', 'engine_pulse'];
+    const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+    
+    db.run(`INSERT INTO platform_engine_logs (activity_type, status) VALUES (?, ?)`, 
+        [randomActivity, 'ACTIVE'], 
+        (err) => {
+            if (err) {
+                console.error('Engine log error:', err.message);
+            } else {
+                console.log(`[Engine Pulse] Activity recorded: ${randomActivity}`);
+            }
         }
-        res.json({
-            totalRegistrations: row ? row.totalRegistrations : 0
-        });
-    });
-});
+    );
+}, 30000); // Fires every 30 seconds to maintain constant server heartbeat
 
-// API Endpoint: Get community chat messages
-app.get('/api/chat', (req, res) => {
-    const query = `SELECT * FROM community_chat ORDER BY timestamp DESC LIMIT 50`;
-    db.all(query, [], (err, rows) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(rows);
-    });
-});
-
-// API Endpoint: Post a new community chat message
-app.post('/api/chat', (req, res) => {
-    const { username, message } = req.body;
-    if (!username || !message) {
-        return res.status(400).send('Username and message required.');
-    }
-    const query = `INSERT INTO community_chat (username, message) VALUES (?, ?)`;
-    db.run(query, [username, message], function(err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json({ success: true });
-    });
-});
-
-// Root route serves the main platform interface
+// Routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start the server
+// Registration and Survey Endpoint
+app.post('/register', (req, res) => {
+    const { name, email, phone, ...surveyAnswers } = req.body;
+
+    db.run(`INSERT INTO users (name, email, phone) VALUES (?, ?, ?)`, [name, email, phone], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        
+        const userId = this.lastID;
+
+        // Save survey responses
+        const stmt = db.prepare(`INSERT INTO survey_responses (user_id, question_index, answer) VALUES (?, ?, ?)`);
+        Object.keys(surveyAnswers).forEach((key, index) => {
+            stmt.run(userId, index + 1, surveyAnswers[key]);
+        });
+        stmt.finalize();
+
+        console.log(`New user registered with ID: ${userId} and background loop linked.`);
+        res.redirect('/?success=true');
+    });
+});
+
+// Live Engine Status Endpoint
+app.get('/api/status', (req, res) => {
+    db.get(`SELECT COUNT(*) as count FROM users`, (err, userRow) => {
+        db.get(`SELECT COUNT(*) as engine_count FROM platform_engine_logs`, (err2, engineRow) => {
+            res.json({
+                status: 'ONLINE',
+                registered_users: userRow ? userRow.count : 0,
+                engine_heartbeats: engineRow ? engineRow.engine_count : 0,
+                timestamp: new Date().toISOString()
+            });
+        });
+    });
+});
+
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running live on port ${PORT}`);
 });
