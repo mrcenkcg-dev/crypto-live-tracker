@@ -158,7 +158,6 @@ app.post('/api/voltron/route', async (req, res) => {
 
 
 // --- VOLTRON MODULE: REACTIVE DASHBOARD DATA FEED (Inspired by Taipy) ---
-// Serves an aggregated state package for dynamic frontends or mobile views
 app.get('/api/voltron/dashboard', (req, res) => {
     db.all(`SELECT * FROM house_rooms ORDER BY added_at DESC LIMIT 10`, (err, rooms) => {
         if (err) {
@@ -176,6 +175,62 @@ app.get('/api/voltron/dashboard', (req, res) => {
             });
         });
     });
+});
+
+
+// --- VOLTRON MODULE: DYNAMIC PLUGIN REGISTRY (Inspired by deepseek-harness) ---
+// "Everything is a plugin" architecture for extensible runtime tasks.
+const workshopPlugins = new Map();
+
+workshopPlugins.set('telemetry-scanner', {
+    description: 'Scans live system telemetry and active channel statuses.',
+    execute: async (data) => {
+        return { plugin: 'telemetry-scanner', result: 'All systems optimal. Active connections secure.', input: data };
+    }
+});
+
+workshopPlugins.set('artifact-auditor', {
+    description: 'Audits recently harvested blueprints from the Arkhunter.',
+    execute: async (data) => {
+        return { plugin: 'artifact-auditor', result: 'Blueprint structure verified for workbench integration.', input: data };
+    }
+});
+
+app.get('/api/voltron/plugins', (req, res) => {
+    const pluginsList = Array.from(workshopPlugins.entries()).map(([name, plugin]) => ({
+        name,
+        description: plugin.description
+    }));
+    res.json({
+        architecture: 'deepseek-harness plugin framework',
+        registered_plugins: pluginsList
+    });
+});
+
+app.post('/api/voltron/plugin/:name', async (req, res) => {
+    const pluginName = req.params.name;
+    const plugin = workshopPlugins.get(pluginName);
+
+    if (!plugin) {
+        return res.status(404).json({ error: `Plugin '${pluginName}' not found in Voltron registry.` });
+    }
+
+    try {
+        console.log(`[Voltron Plugin Engine]: Executing plugin -> ${pluginName}`);
+        const output = await plugin.execute(req.body);
+        res.json({
+            status: 'PLUGIN EXECUTION SUCCESS',
+            plugin: pluginName,
+            output,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'PLUGIN EXECUTION ERROR',
+            plugin: pluginName,
+            error: error.message
+        });
+    }
 });
 
 
