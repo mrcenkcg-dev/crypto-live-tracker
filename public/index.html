@@ -44,41 +44,42 @@
         </div>
 
         <div id="spaces-feed">
-            <p style="text-align: center; color: #777;">Loading connected spaces...</p>
+            <p style="text-align: center; color: #777;">Loading connected Lego bricks...</p>
         </div>
     </div>
 
     <script>
-        // Automatically fetch and render all connected spaces onto the wall
-        async function loadSpaces() {
+        // Automatically fetch and render all snapped-in Lego bricks onto the wall
+        async function loadBricks() {
             try {
-                const response = await fetch('/api/spaces');
-                const spaces = await response.json();
+                const response = await fetch('/api/bricks');
+                const bricks = await response.json();
                 
                 const feedContainer = document.getElementById('spaces-feed');
-                if (spaces.length === 0) {
-                    feedContainer.innerHTML = '<p style="text-align: center; color: #777;">No connected spaces found yet.</p>';
+                if (bricks.length === 0) {
+                    feedContainer.innerHTML = '<p style="text-align: center; color: #777;">No Lego bricks snapped into the network yet.</p>';
                     return;
                 }
 
                 feedContainer.innerHTML = '';
-                spaces.forEach(space => {
+                bricks.forEach(brick => {
                     const card = document.createElement('div');
                     card.className = 'space-card';
                     card.innerHTML = `
-                        <span class="badge">${space.category}</span>
-                        <h3>${space.title}</h3>
-                        <p>${space.description}</p>
-                        <a class="action-btn" href="${space.url}" target="_blank">Step Into Space</a>
+                        <span class="badge">${brick.category}</span>
+                        <h3>${brick.title}</h3>
+                        <p>${brick.description}</p>
+                        <a class="action-btn" href="${brick.url}" target="_blank">Step Into Space</a>
                     `;
                     feedContainer.appendChild(card);
                 });
             } catch (err) {
-                console.error('Error loading spaces:', err);
+                console.error('Error loading bricks:', err);
+                document.getElementById('spaces-feed').innerHTML = '<p style="text-align: center; color: #ff5555;">Error connecting to the magnetic core.</p>';
             }
         }
 
-        loadSpaces();
+        loadBricks();
     </script>
 </body>
 </html>
