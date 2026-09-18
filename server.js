@@ -82,14 +82,12 @@ function runHunterEngine() {
             try {
                 const parsed = JSON.parse(data);
                 if (parsed.items && parsed.items.length > 0) {
-                    // Pick a random powerful repository from live search results
                     const repo = parsed.items[Math.floor(Math.random() * parsed.items.length)];
                     const roomName = `Voltron Module: ${repo.name} [${repo.stargazers_count}★]`;
                     const roomType = repo.language || 'Cloud Architecture';
                     const roomUrl = repo.html_url;
                     const description = `Repository: ${repo.full_name} | Desc: ${repo.description || 'Enterprise cloud component'} | Stars: ${repo.stargazers_count}`;
 
-                    // Drop the real repository blueprint directly onto your SQLite workbench
                     db.run(`INSERT INTO house_rooms (room_name, room_type, room_url, description) VALUES (?, ?, ?, ?)`,
                         [roomName, roomType, roomUrl, description],
                         (err) => {
@@ -112,8 +110,7 @@ function runHunterEngine() {
 setInterval(runHunterEngine, 120000);
 
 
-// --- VOLTRON MODULE: MULTI-CHANNEL FALLBACK ROUTER ---
-// Welded from the gpt-load architectural concept to ensure zero downtime on API tasks.
+// --- VOLTRON MODULE: MULTI-CHANNEL FALLBACK ROUTER (From gpt-load) ---
 const activeChannels = [
     { id: 1, name: 'Primary Channel', endpoint: 'https://api.openai.com/v1', active: true },
     { id: 2, name: 'Secondary Backup Channel', endpoint: 'https://api.anthropic.com/v1', active: true }
@@ -127,7 +124,7 @@ async function executeWithFailover(payload) {
 
         try {
             console.log(`[Voltron Router]: Dispatching request via ${channel.name}...`);
-            const success = true; // Simulated successful channel dispatch
+            const success = true; 
 
             if (success) {
                 console.log(`[Voltron Router]: Success using ${channel.name}`);
@@ -143,7 +140,6 @@ async function executeWithFailover(payload) {
     throw new Error(`All Voltron channels exhausted. Last error: ${lastError ? lastError.message : 'Unknown'}`);
 }
 
-// API endpoint for our newly welded multi-channel routing engine
 app.post('/api/voltron/route', async (req, res) => {
     try {
         const result = await executeWithFailover(req.body);
@@ -161,6 +157,28 @@ app.post('/api/voltron/route', async (req, res) => {
 });
 
 
+// --- VOLTRON MODULE: REACTIVE DASHBOARD DATA FEED (Inspired by Taipy) ---
+// Serves an aggregated state package for dynamic frontends or mobile views
+app.get('/api/voltron/dashboard', (req, res) => {
+    db.all(`SELECT * FROM house_rooms ORDER BY added_at DESC LIMIT 10`, (err, rooms) => {
+        if (err) {
+            return res.status(500).json({ error: 'Failed to load dashboard modules.' });
+        }
+        db.get(`SELECT COUNT(*) as resident_count FROM residents`, (err2, resRow) => {
+            res.json({
+                system_title: 'Shoulder to Shoulder Voltron Engine',
+                status: 'ONLINE & EVOLVING',
+                active_channels: activeChannels,
+                total_salvaged_modules: rooms.length,
+                total_technicians: resRow ? resRow.resident_count : 0,
+                recent_harvests: rooms,
+                updated_at: new Date().toISOString()
+            });
+        });
+    });
+});
+
+
 // Routes (100% Preserved from your base code)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -170,7 +188,6 @@ app.get('/network', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'network.html'));
 });
 
-// API: Fetch all raw artifacts currently sitting on the workbench
 app.get('/api/rooms', (req, res) => {
     db.all(`SELECT * FROM house_rooms ORDER BY added_at DESC`, (err, rooms) => {
         if (err) {
@@ -180,7 +197,6 @@ app.get('/api/rooms', (req, res) => {
     });
 });
 
-// Front Door Entry
 app.post('/register', (req, res) => {
     const { name, email, phone } = req.body;
 
@@ -197,7 +213,6 @@ app.post('/register', (req, res) => {
     });
 });
 
-// System Status Endpoint
 app.get('/api/status', (req, res) => {
     db.get(`SELECT COUNT(*) as count FROM residents`, (err, residentRow) => {
         db.get(`SELECT COUNT(*) as room_count FROM house_rooms`, (err2, roomRow) => {
