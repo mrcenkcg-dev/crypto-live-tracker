@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoulder to Shoulder - Waiting Room & 4D Wildlife Preview</title>
+    <title>Shoulder to Shoulder - 4D Wildlife Sanctuary Waiting Room & Testing Hub</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,9 +35,6 @@
             line-height: 1.6;
             font-size: 14px;
         }
-        ul {
-            padding-left: 20px;
-        }
         .counter-box {
             background: linear-gradient(135deg, #ff5a5f, #d9383f);
             color: white;
@@ -49,327 +46,258 @@
             text-align: center;
             box-shadow: 0 2px 8px rgba(255,90,95,0.3);
         }
-        .grid-info {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-top: 15px;
-        }
-        .info-card {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            padding: 15px;
-            border-radius: 6px;
-        }
-        .info-card h3 {
-            margin-top: 0;
-            color: #d9383f;
-            font-size: 16px;
-        }
-        .registration-box {
+        .step-box {
             background: #fff5f5;
             border: 2px solid #ff5a5f;
             padding: 25px;
-            margin-top: 35px;
+            margin-top: 25px;
             border-radius: 8px;
         }
-        .registration-box form {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            max-width: 500px;
-            margin-top: 15px;
-        }
-        .registration-box input, .registration-box select {
+        .step-box input, .step-box select, .step-box textarea {
+            width: 100%;
             padding: 12px;
+            margin: 8px 0 16px 0;
             border: 1px solid #ccc;
             border-radius: 6px;
             font-size: 15px;
+            box-sizing: border-box;
         }
-        .registration-box button {
+        .btn-primary {
             background: #ff5a5f;
             color: white;
-            padding: 14px;
+            padding: 14px 20px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
             font-size: 16px;
+            width: 100%;
             transition: background 0.2s;
         }
-        .registration-box button:hover {
+        .btn-primary:hover {
             background: #d9383f;
         }
-        .notice-text {
-            font-size: 13px;
-            color: #444;
-            background: #fff;
-            padding: 10px;
-            border-left: 4px solid #ff5a5f;
-            border-radius: 4px;
-        }
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .category-card {
-            background: #f8f9fa;
-            border: 2px solid #ff5a5f;
-            padding: 25px 15px;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
+        .survey-question {
+            margin-bottom: 15px;
             font-weight: bold;
-            color: #d9383f;
-            transition: all 0.2s;
+            font-size: 14px;
+            color: #333;
         }
-        .category-card:hover {
-            background: #ff5a5f;
-            color: white;
-            transform: translateY(-2px);
-        }
-        .task-list-box {
-            margin-top: 25px;
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 20px;
+        .chat-container {
+            border: 1px solid #ddd;
             border-radius: 8px;
-        }
-        .task-item {
-            background: white;
+            background: #f9f9f9;
             padding: 15px;
-            margin-bottom: 12px;
+            height: 250px;
+            overflow-y: scroll;
+            margin-bottom: 15px;
+        }
+        .chat-message {
+            background: white;
+            padding: 10px;
             border-radius: 6px;
-            border-left: 4px solid #28a745;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 8px;
+            border-left: 4px solid #ff5a5f;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        #speedPopup {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #28a745, #218838);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            font-weight: bold;
-            z-index: 1000;
-            display: none;
-            animation: bounceIn 0.4s ease;
-        }
-        @keyframes bounceIn {
-            0% { transform: scale(0.7); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
         }
         .hidden {
             display: none;
+        }
+        .download-banner {
+            background: #e2f0cb;
+            border: 2px solid #55a630;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-<div id="speedPopup">⚡ Boom! Preview unlocked successfully!</div>
-
 <div class="container">
-    <!-- Live Registration Counter Header -->
+    <!-- Live Global Registration Counter -->
     <div class="counter-box">
         🌍 Shoulder to Shoulder Registrations: <span id="activityCounter">0</span> Real Sign-Ups
     </div>
 
-    <!-- PAGE 1: WAITING ROOM & PROJECT PREVIEW LOBBY -->
-    <div id="pageMain">
+    <!-- STEP 1 & 2: REGISTRATION & 10 WILDLIFE QUESTIONS -->
+    <div id="sectionRegistration">
         <h1>SHOULDER TO SHOULDER</h1>
-        <p><strong>Welcome to the Official Waiting Room & Community Preview</strong></p>
-        <p>Shoulder to Shoulder is the exclusive digital waiting room for our upcoming <strong>4D Wildlife Sanctuary ("My Pet")</strong> project. Register your details to secure your spot, follow the development journey, and gain early access when our interactive wildlife platform launches.</p>
+        <p><strong>Official Waiting Room & 4D Wildlife Sanctuary Testing Hub</strong></p>
+        <p>Welcome! Register your spot below, answer our 10 quick wildlife expectations questions, download the companion background app, and get ready for your testing text message notification.</p>
 
-        <div class="grid-info">
-            <div class="info-card">
-                <h3>🐾 The 4D Wildlife Vision</h3>
-                <ul>
-                    <li><strong>Interactive Habitats:</strong> Experience digital wildlife care like never before.</li>
-                    <li><strong>Early Access:</strong> Registered members get first look at the platform.</li>
-                    <li><strong>Community Growth:</strong> Building together, step by step.</li>
-                </ul>
-            </div>
-            <div class="info-card">
-                <h3>🚀 Why Join the Waiting Room?</h3>
-                <ul>
-                    <li><strong>Direct Updates:</strong> Be the first to know when milestones are reached.</li>
-                    <li><strong>Community Count:</strong> Add your voice to the growing global tally.</li>
-                    <li><strong>Exclusive Previews:</strong> Catch early concept drops and updates.</li>
-                </ul>
-            </div>
-        </div>
-
-        <h2>Active Network Channels & Traffic Engine</h2>
-        <p>Follow our journey and project updates across our active digital networks:</p>
-        <ul>
-            <li><strong>YouTube Channel:</strong> @cenkmahmutgokduman2307</li>
-            <li><strong>TikTok Channel:</strong> @mahmut_gokduman7</li>
-            <li><strong>Instagram Network:</strong> @mahmut_gokduman</li>
-            <li><strong>Facebook & Global Web Networks</strong></li>
-        </ul>
-
-        <h2>Waiting Room Guidelines</h2>
-        <ul>
-            <li><strong>Status:</strong> This is a conceptual preview platform and waiting room for upcoming releases.</li>
-            <li><strong>Privacy:</strong> Your registration details are kept secure for community announcements.</li>
-            <li><strong>Engagement:</strong> Join the count, explore the previews, and stay connected as we build toward the future.</li>
-        </ul>
-
-        <!-- Registration & Waiting Room Form -->
-        <div class="registration-box">
-            <h3>Join the Waiting Room & Secure Your Spot</h3>
-            <p class="notice-text">
-                <strong>Important:</strong> Enter your details below to register your spot in our community waiting room and unlock access to our preview hubs.
-            </p>
+        <div class="step-box">
+            <h3>Step 1: Register Your Details & Phone Number</h3>
+            <p><small>We need your mobile number so you can receive the instant SMS text message when testing starts!</small></p>
             
-            <form id="workerRegistrationForm" onsubmit="handleRegistration(event)">
-                <input type="text" id="workerName" placeholder="Your Full Name or Username" required>
-                <input type="email" id="workerEmail" placeholder="Your Email Address" required>
-                <select id="payoutMethod" class="hidden">
-                    <option value="WaitingRoomMember" selected>Waiting Room Member</option>
-                </select>
-                <button type="submit">Register & Enter Waiting Room 🚀</button>
+            <form id="registrationForm" onsubmit="submitRegistration(event)">
+                <label>Your Full Name:</label>
+                <input type="text" id="workerName" placeholder="e.g. Cenk Gokduman" required>
+                
+                <label>Email Address:</label>
+                <input type="email" id="workerEmail" placeholder="your@email.com" required>
+                
+                <label>Mobile Number (For SMS Test Notification):</label>
+                <input type="tel" id="workerPhone" placeholder="+44 7000 000000" required>
+
+                <h3>Step 2: 10-Question Wildlife Sanctuary Expectation Survey</h3>
+                <div class="survey-question">1. Which animal habitat excites you the most in 4D?</div>
+                <input type="text" class="survey-ans" placeholder="e.g., Lions, Elephants, Giraffes..." required>
+
+                <div class="survey-question">2. How often do you expect to interact with your digital pet daily?</div>
+                <input type="text" class="survey-ans" placeholder="e.g., 30 mins to 1 hour" required>
+
+                <div class="survey-question">3. What kind of weather simulation do you want in the sanctuary?</div>
+                <input type="text" class="survey-ans" placeholder="e.g., Rain, Savannah sun, Night cycles" required>
+
+                <div class="survey-question">4. Would you like feeding notifications sent directly to your phone?</div>
+                <input type="text" class="survey-ans" placeholder="e.g., Yes, absolutely" required>
+
+                <div class="survey-question">5. What feature makes a wildlife game truly immersive for you?</div>
+                <input type="text" class="survey-ans" placeholder="e.g., Realistic sounds and 4D movement" required>
+
+                <div class="survey-question">6. How should rewards work when you care for your animals?</div>
+                <input type="text" class="survey-ans" placeholder="e.g., Sanctuary coins and rank upgrades" required>
+
+                <div class="survey-question">7. Would you invite friends to visit your digital wildlife enclosure?</div>
+                <input type="text" class="survey-ans" placeholder="e.g., Yes, love community features" required>
+
+                <div class="survey-question">8. What is your preferred time of day to test games?</div>
+                <input type="text" class="survey-ans" placeholder="e.g., Evenings or weekends" required>
+
+                <div class="survey-question">9. Do you prefer mobile push alerts or SMS text updates?</div>
+                <input type="text" class="survey-ans" placeholder="e.g., SMS text messages" required>
+
+                <div class="survey-question">10. Any special animal species you want added to future expansions?</div>
+                <input type="text" class="survey-ans" placeholder="e.g., Exotic birds and river creatures" required>
+
+                <button type="submit" class="btn-primary">Complete Registration & Unlock App Download 🚀</button>
             </form>
         </div>
     </div>
 
-    <!-- PAGE 2: PREVIEW HUB & TASK CATEGORIES -->
-    <div id="pageCategoryHub" class="hidden">
-        <h1>Community Preview Hub</h1>
-        <p>Welcome aboard, <strong id="welcomeUser">Member</strong>! Select an activity hub below to explore previews while you check out our roadmap.</p>
-        
-        <h2>Select Your Preview Hub</h2>
-        <div class="category-grid">
-            <div class="category-card" onclick="loadTasks('Games')">
-                🎮 Games Previews
-            </div>
-            <div class="category-card" onclick="loadTasks('Technology')">
-                💻 Technology & Concept
-            </div>
-            <div class="category-card" onclick="loadTasks('My Pet')">
-                🐾 "My Pet" 4D Wildlife Sanctuary
-            </div>
+    <!-- STEP 3 & 4: APP DOWNLOAD & COMMUNITY CHAT -->
+    <div id="sectionHub" class="hidden">
+        <h1>Community Testing & Live Hub</h1>
+        <p>Welcome aboard, <strong id="displayName">Tester</strong>! You are officially locked into the waiting list.</p>
+
+        <div class="download-banner">
+            <h3>📱 Step 3: Download Companion App & Background Runner</h3>
+            <p>Download our lightweight preview client below. It will stay active in your phone background so you are instantly connected when testing begins.</p>
+            <button onclick="simulateAppDownload()" class="btn-primary" style="background: #28a745; max-width: 300px; margin: 0 auto;">Download Background App (.apk / PWA) 📥</button>
+            <p id="downloadStatus" style="margin-top: 10px; font-weight: bold; color: #2e7d32;"></p>
         </div>
 
-        <!-- Dynamic Task Display Container -->
-        <div id="taskDisplayContainer" class="task-list-box hidden">
-            <h3 id="selectedCategoryTitle">Available Previews</h3>
-            <div id="taskListContent">Loading previews...</div>
-        </div>
+        <div class="step-box" style="margin-top: 25px;">
+            <h3>Step 4: Community Chat & Expectations Exchange</h3>
+            <p>Talk with other testers right here! Share what you expect from the 4D wildlife sanctuary while waiting for your test text message.</p>
+            
+            <div id="chatBox" class="chat-container">
+                Loading messages...
+            </div>
 
-        <div style="margin-top: 35px; text-align: center;">
-            <button onclick="goBackToMain()" style="background: #6c757d; color: white; padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">Log Out / Return to Waiting Room</button>
+            <input type="text" id="chatMessageInput" placeholder="Type your message about what you expect from the wildlife app...">
+            <button onclick="sendChatMessage()" class="btn-primary">Send to Community Chat 💬</button>
         </div>
     </div>
 </div>
 
 <script>
-    let allTasks = [];
+    let registeredUser = '';
 
-    async function handleRegistration(event) {
+    async function submitRegistration(event) {
         event.preventDefault();
         const workerName = document.getElementById('workerName').value;
         const workerEmail = document.getElementById('workerEmail').value;
-        const payoutMethod = document.getElementById('payoutMethod').value;
+        const workerPhone = document.getElementById('workerPhone').value;
+
+        const surveyFields = document.querySelectorAll('.survey-ans');
+        const surveyAnswers = {};
+        surveyFields.forEach((field, index) => {
+            surveyAnswers[`q${index + 1}`] = field.value;
+        });
 
         try {
             const response = await fetch('/register-worker', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ workerName, workerEmail, payoutMethod })
+                body: JSON.stringify({ workerName, workerEmail, workerPhone, surveyAnswers })
             });
 
             if (response.ok) {
-                document.getElementById('welcomeUser').textContent = workerName;
-                document.getElementById('pageMain').classList.add('hidden');
-                document.getElementById('pageCategoryHub').classList.remove('hidden');
-
-                fetchAllTasks();
+                registeredUser = workerName;
+                document.getElementById('displayName').textContent = workerName;
+                document.getElementById('sectionRegistration').classList.add('hidden');
+                document.getElementById('sectionHub').classList.remove('hidden');
+                fetchChatMessages();
                 fetchStats();
             } else {
-                alert('Registration failed. Please check your details and try again.');
+                alert('Registration failed. Please try again.');
             }
-        } catch (error) {
-            console.error('Error during registration submission:', error);
+        } catch (err) {
+            console.error('Registration error:', err);
         }
     }
 
-    async function fetchAllTasks() {
+    function simulateAppDownload() {
+        const status = document.getElementById('downloadStatus');
+        status.textContent = '📥 App downloaded successfully! Background runner active. Waiting for SMS test alert...';
+        alert('App downloaded! It will remain running in your phone background waiting for your test text message notification.');
+    }
+
+    async function fetchChatMessages() {
         try {
-            const response = await fetch('/api/tasks');
-            allTasks = await response.json();
-        } catch (error) {
-            console.error('Error fetching tasks from server:', error);
+            const res = await fetch('/api/chat');
+            const messages = await res.json();
+            const chatBox = document.getElementById('chatBox');
+            
+            if (messages.length === 0) {
+                chatBox.innerHTML = '<p>No messages yet. Be the first to start the conversation!</p>';
+                return;
+            }
+
+            let html = '';
+            messages.forEach(msg => {
+                html += `<div class="chat-message"><strong>${msg.username}:</strong> ${msg.message} <br><small style="color:#888;">${msg.timestamp}</small></div>`;
+            });
+            chatBox.innerHTML = html;
+        } catch (err) {
+            console.error('Error fetching chat:', err);
         }
     }
 
-    function loadTasks(categoryName) {
-        const container = document.getElementById('taskDisplayContainer');
-        const titleElement = document.getElementById('selectedCategoryTitle');
-        const contentElement = document.getElementById('taskListContent');
+    async function sendChatMessage() {
+        const input = document.getElementById('chatMessageInput');
+        const message = input.value.trim();
+        if (!message) return;
 
-        titleElement.textContent = categoryName + ' - Concept Previews';
-        container.classList.remove('hidden');
-
-        const filtered = allTasks.filter(task => task.category.toLowerCase() === categoryName.toLowerCase());
-
-        if (filtered.length === 0) {
-            contentElement.innerHTML = '<p>No previews found in this category right now. Check back soon!</p>';
-            return;
+        try {
+            await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: registeredUser || 'Tester', message })
+            });
+            input.value = '';
+            fetchChatMessages();
+        } catch (err) {
+            console.error('Error sending message:', err);
         }
-
-        let html = '';
-        filtered.forEach(task => {
-            html += `
-                <div class="task-item">
-                    <div>
-                        <strong>${task.title}</strong><br>
-                        <small style="color: #666;">Concept Preview & Vision Item</small>
-                    </div>
-                    <button onclick="startTaskSession('${task.title}', '${task.url}')" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Open Preview 🐾</button>
-                </div>
-            `;
-        });
-
-        contentElement.innerHTML = html;
-    }
-
-    function startTaskSession(taskTitle, taskUrl) {
-        const popup = document.getElementById('speedPopup');
-        popup.style.display = 'block';
-        setTimeout(() => {
-            popup.style.display = 'none';
-        }, 3500);
-
-        window.open(taskUrl, '_blank');
-    }
-
-    function goBackToMain() {
-        document.getElementById('taskDisplayContainer').classList.add('hidden');
-        document.getElementById('pageCategoryHub').classList.add('hidden');
-        document.getElementById('pageMain').classList.remove('hidden');
     }
 
     async function fetchStats() {
         try {
             const response = await fetch('/api/stats');
             const stats = await response.json();
-            
             document.getElementById('activityCounter').textContent = stats.totalRegistrations || 0;
         } catch (error) {
-            console.error('Error fetching registration stats:', error);
+            console.error('Error fetching stats:', error);
         }
     }
 
     fetchStats();
     setInterval(fetchStats, 5000);
+    setInterval(fetchChatMessages, 5000);
 </script>
 
 </body>
