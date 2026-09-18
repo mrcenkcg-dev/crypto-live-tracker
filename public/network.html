@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoulder to Shoulder - Network Wall</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #0f0f0f; color: #fff; margin: 0; padding: 20px; }
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 { color: #4CAF50; margin: 0; font-size: 28px; }
+        header p { color: #aaa; font-size: 14px; }
+        .feed-container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
+        .space-card { background: #181818; border: 1px solid #333; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: relative; }
+        .badge { display: inline-block; background: #222; border: 1px solid #4CAF50; color: #4CAF50; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-bottom: 10px; }
+        .space-card h3 { margin: 0 0 10px 0; color: #fff; font-size: 18px; }
+        .space-card p { color: #aaa; font-size: 14px; margin: 0 0 15px 0; }
+        .action-btn { display: inline-block; background: #4CAF50; color: white; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 14px; }
+        .action-btn:hover { background: #45a049; }
+        .back-link { display: block; text-align: center; margin-top: 30px; color: #888; text-decoration: none; font-size: 13px; }
+        .back-link:hover { color: #fff; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>The House Network Wall</h1>
+        <p>Real-time spaces harvested and connected by your 24/7 background engine.</p>
+    </header>
+
+    <div class="feed-container" id="spaces-feed">
+        <p style="text-align: center; color: #777;">Loading connected rooms from the house...</p>
+    </div>
+
+    <a href="/" class="back-link">&larr; Back to Front Door</a>
+
+    <script>
+        async function loadHouseRooms() {
+            try {
+                const response = await fetch('/api/rooms');
+                const rooms = await response.json();
+                
+                const feedContainer = document.getElementById('spaces-feed');
+                if (rooms.length === 0) {
+                    feedContainer.innerHTML = '<p style="text-align: center; color: #777;">No rooms connected to the house yet.</p>';
+                    return;
+                }
+
+                feedContainer.innerHTML = '';
+                rooms.forEach(room => {
+                    const card = document.createElement('div');
+                    card.className = 'space-card';
+                    card.innerHTML = `
+                        <span class="badge">${room.room_type}</span>
+                        <h3>${room.room_name}</h3>
+                        <p>${room.description}</p>
+                        <a class="action-btn" href="${room.room_url}" target="_blank">Enter Room</a>
+                    `;
+                    feedContainer.appendChild(card);
+                });
+            } catch (err) {
+                console.error('Error loading rooms:', err);
+                document.getElementById('spaces-feed').innerHTML = '<p style="text-align: center; color: #f44336;">Error loading connected rooms.</p>';
+            }
+        }
+
+        loadHouseRooms();
+    </script>
+
+</body>
+</html>
