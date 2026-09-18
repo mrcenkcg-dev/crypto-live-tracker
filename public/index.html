@@ -17,6 +17,8 @@
         button { padding: 14px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         button:hover { background: #1d4ed8; }
         .bridge-section { margin-top: 30px; padding: 20px; background: #0f172a; border-radius: 8px; border: 1px dashed #38bdf8; text-align: center; }
+        .bridge-btn { display: inline-block; background: #16a34a; color: white; padding: 14px 28px; border-radius: 6px; font-size: 18px; font-weight: bold; text-decoration: none; margin-top: 10px; transition: background 0.2s; }
+        .bridge-btn:hover { background: #15803d; }
     </style>
 </head>
 <body>
@@ -51,7 +53,7 @@
         <div class="bridge-section">
             <h3>Background Connection Bridge</h3>
             <p style="color: #cbd5e1; font-size: 14px;">Once registered, your device links directly into the server loop to keep the system active 24/7.</p>
-            <button onclick="triggerBackgroundBridge()" style="background: #16a34a;">Activate Background Bridge Client</button>
+            <a href="/bridge.html" class="bridge-btn">Activate Background Bridge Client</a>
         </div>
     </div>
 
@@ -66,10 +68,6 @@
             } catch (e) {
                 console.error('Error fetching status:', e);
             }
-        }
-
-        function triggerBackgroundBridge() {
-            alert('Background bridge link initialized! Your connection loop is now active on the system network.');
         }
 
         setInterval(updateStats, 5000);
