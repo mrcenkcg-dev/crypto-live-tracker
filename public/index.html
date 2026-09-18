@@ -3,83 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoulder to Shoulder - Unforgotten Network</title>
+    <title>Shoulder to Shoulder - The House</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #0f0f0f; color: #fff; margin: 0; padding: 0; }
-        .top-nav { background: #1a1a1a; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
-        .top-nav h2 { margin: 0; color: #4CAF50; font-size: 20px; }
-        .nav-links { display: flex; gap: 15px; align-items: center; }
-        .nav-links a { color: #ccc; text-decoration: none; font-weight: bold; padding: 6px 12px; border-radius: 4px; background: #222; font-size: 14px; }
-        .nav-links a:hover { background: #4CAF50; color: #fff; }
-        .status-badge { background: #111; border: 1px solid #4CAF50; color: #4CAF50; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        
-        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
-        .header-banner { background: #181818; border: 1px solid #333; padding: 25px; border-radius: 8px; margin-bottom: 25px; text-align: center; }
-        .header-banner h1 { margin-top: 0; color: #fff; }
-        .header-banner p { color: #aaa; margin-bottom: 0; }
-        
-        .space-card { background: #181818; border: 1px solid #333; padding: 20px; margin-bottom: 20px; border-radius: 8px; transition: border-color 0.2s; }
-        .space-card:hover { border-color: #4CAF50; }
-        .space-card h3 { margin-top: 0; color: #fff; }
-        .space-card p { color: #aaa; }
-        .badge { background: #333; padding: 4px 8px; font-size: 11px; border-radius: 4px; color: #4CAF50; font-weight: bold; text-transform: uppercase; }
-        .action-btn { display: inline-block; background: #4CAF50; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: bold; }
-        .action-btn:hover { background: #45a049; }
+        body { font-family: Arial, sans-serif; background: #0f0f0f; color: #fff; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .house-card { background: #181818; border: 1px solid #333; padding: 40px; border-radius: 10px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .house-card h1 { color: #4CAF50; margin-top: 0; font-size: 24px; }
+        .house-card p { color: #aaa; font-size: 14px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; color: #ccc; font-size: 12px; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; background: #222; border: 1px solid #444; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        .form-group input:focus { border-color: #4CAF50; outline: none; }
+        .enter-btn { width: 100%; background: #4CAF50; color: white; padding: 12px; border: none; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .enter-btn:hover { background: #45a049; }
+        .status-badge { display: inline-block; background: #111; border: 1px solid #4CAF50; color: #4CAF50; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <div class="top-nav">
-        <h2>Shoulder to Shoulder</h2>
-        <div class="nav-links">
-            <span class="status-badge" id="engine-status">24/7 Engine: ACTIVE</span>
-            <a href="/">Home</a>
-        </div>
+    <div class="house-card">
+        <div class="status-badge">24/7 Hunter Engine: ACTIVE</div>
+        <h1>Shoulder to Shoulder</h1>
+        <p>Step through the front door into the shared house where forgotten spaces, chat lines, games, and tech hubs are brought home.</p>
+        
+        <form action="/register" method="POST">
+            <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name" required placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number (Optional)</label>
+                <input type="text" id="phone" name="phone" placeholder="Enter your phone">
+            </div>
+            <button type="submit" class="enter-btn">Step Inside the House</button>
+        </form>
     </div>
 
-    <div class="container">
-        <div class="header-banner">
-            <h1>The Unforgotten Network Wall</h1>
-            <p>All empty spaces, chat lines, games, and platforms linked together in one shared global feed running 24/7.</p>
-        </div>
-
-        <div id="spaces-feed">
-            <p style="text-align: center; color: #777;">Loading connected Lego bricks...</p>
-        </div>
-    </div>
-
-    <script>
-        // Automatically fetch and render all snapped-in Lego bricks onto the wall
-        async function loadBricks() {
-            try {
-                const response = await fetch('/api/bricks');
-                const bricks = await response.json();
-                
-                const feedContainer = document.getElementById('spaces-feed');
-                if (bricks.length === 0) {
-                    feedContainer.innerHTML = '<p style="text-align: center; color: #777;">No Lego bricks snapped into the network yet.</p>';
-                    return;
-                }
-
-                feedContainer.innerHTML = '';
-                bricks.forEach(brick => {
-                    const card = document.createElement('div');
-                    card.className = 'space-card';
-                    card.innerHTML = `
-                        <span class="badge">${brick.category}</span>
-                        <h3>${brick.title}</h3>
-                        <p>${brick.description}</p>
-                        <a class="action-btn" href="${brick.url}" target="_blank">Step Into Space</a>
-                    `;
-                    feedContainer.appendChild(card);
-                });
-            } catch (err) {
-                console.error('Error loading bricks:', err);
-                document.getElementById('spaces-feed').innerHTML = '<p style="text-align: center; color: #ff5555;">Error connecting to the magnetic core.</p>';
-            }
-        }
-
-        loadBricks();
-    </script>
 </body>
 </html>
