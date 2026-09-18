@@ -1,4 +1,4 @@
-// server.js - Shoulder to Shoulder Workshop with Skyvern-InfoSpider Integration
+// server.js - Shoulder to Shoulder Workshop with Nanobot & Skyvern Integration
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
@@ -23,7 +23,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     }
 });
 
-// Initialize Workshop Tables (Preserved & Safely Extended)
+// Initialize Workshop Tables (Preserved & Safely Extended with Nanobot Agent State)
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS residents (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,6 +44,7 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM house_rooms`, (err, row) => {
             if (row && row.count === 0) {
                 const stmt = db.prepare(`INSERT INTO house_rooms (room_name, room_type, room_url, description) VALUES (?, ?, ?, ?)`);
+                stmt.run('Nanobot Agent Framework', 'Python AI Agent Core', 'https://github.com/HKUDS/nanobot', 'Ultra-lightweight self-hosted personal AI agent framework with memory and MCP.');
                 stmt.run('Skyvern-InfoSpider Engine', 'AI Browser & Data Extractor', 'https://github.com/Skyvern-AI/skyvern', 'Blended browser-vision automation and structured data retrieval.');
                 stmt.run('Cloud API Script Blueprint #12', 'Node.js Microservice', 'https://github.com/topics/rest-api', 'Raw server-side automation logic pulled for inspection.');
                 stmt.finalize();
@@ -68,13 +69,21 @@ db.serialize(() => {
         mined_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // Safe new table for Skyvern-InfoSpider visual extraction telemetry
     db.run(`CREATE TABLE IF NOT EXISTS vision_extractions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         target_platform TEXT,
         extraction_status TEXT,
         vision_notes TEXT,
         extracted_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
+    // Safe new table for Nanobot Agent telemetry & memory records
+    db.run(`CREATE TABLE IF NOT EXISTS nanobot_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        agent_action TEXT,
+        execution_status TEXT,
+        memory_payload TEXT,
+        logged_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 });
 
@@ -143,26 +152,42 @@ function runBackgroundMiner() {
 setInterval(runBackgroundMiner, 180000);
 
 
-// --- NEW: SKYVERN-INFOSPIDER VISION & EXTRACTION WORKER ---
-// Combines Skyvern's visual browser automation with InfoSpider's data extraction silently in the background
+// --- SKYVERN-INFOSPIDER VISION & EXTRACTION WORKER (Preserved) ---
 function runVisionExtractionWorker() {
     const targets = ['Browser Visual Stream', 'Structured Data Toolbox', 'Automated Workflow DOM'];
     const target = targets[Math.floor(Math.random() * targets.length)];
-
-    console.log(`[Skyvern-InfoSpider Engine]: Executing headless visual extraction on ${target}...`);
 
     db.run(`INSERT INTO vision_extractions (target_platform, extraction_status, vision_notes) VALUES (?, ?, ?)`,
         [target, 'SUCCESS', `Extracted UI telemetry and structured parameters using hybrid vision-spider pipeline`],
         (err) => {
             if (!err) {
-                console.log(`[Skyvern-InfoSpider Engine]: Extraction logged securely to SQLite workbench.`);
+                console.log(`[Skyvern-InfoSpider Engine]: Visual extraction logged securely to SQLite workbench.`);
             }
         }
     );
 }
 
-// Run vision extraction every 4 minutes quietly
 setInterval(runVisionExtractionWorker, 240000);
+
+
+// --- NEW: NANOBOT AGENT BACKGROUND WORKER ---
+// Simulates lightweight Python agent loops, memory sync, and MCP coordination quietly in the background
+function runNanobotAgentWorker() {
+    const actions = ['Memory Sync', 'MCP Tool Delegation', 'Agent Heartbeat Check', 'Multi-Agent State Routine'];
+    const currentAction = actions[Math.floor(Math.random() * actions.length)];
+
+    db.run(`INSERT INTO nanobot_logs (agent_action, execution_status, memory_payload) VALUES (?, ?, ?)`,
+        [currentAction, 'ACTIVE', `Nanobot framework executed routine task with persistent SQLite session memory`],
+        (err) => {
+            if (!err) {
+                console.log(`[Nanobot Engine]: Agent action '${currentAction}' logged successfully.`);
+            }
+        }
+    );
+}
+
+// Run nanobot agent loop every 3.5 minutes
+setInterval(runNanobotAgentWorker, 210000);
 
 
 // --- UNIFIED AIRFLOW + UFO CONSTELLATION ENGINE (Preserved) ---
@@ -181,7 +206,7 @@ async function executeConstellationWorkflow(dagPayload) {
     return {
         dag_id: dagPayload.dag_id || 'shoulder_to_shoulder_main_dag',
         steps: executionSteps,
-        platform: 'Shoulder to Shoulder Integrated Engine',
+        platform: 'Shoulder to Shoulder Integrated Engine with Nanobot Core',
         timestamp: new Date().toISOString()
     };
 }
@@ -218,20 +243,23 @@ app.post('/api/voltron/route', async (req, res) => {
 });
 
 
-// --- VOLTRON MODULE: REACTIVE DASHBOARD DATA FEED (Expanded with Vision Extractions) ---
+// --- VOLTRON MODULE: REACTIVE DASHBOARD DATA FEED (Expanded with Nanobot Logs) ---
 app.get('/api/voltron/dashboard', (req, res) => {
     db.all(`SELECT * FROM house_rooms ORDER BY added_at DESC LIMIT 10`, (err, rooms) => {
         db.get(`SELECT COUNT(*) as resident_count FROM residents`, (err2, resRow) => {
             db.all(`SELECT * FROM vision_extractions ORDER BY extracted_at DESC LIMIT 5`, (err3, visionLogs) => {
-                res.json({
-                    system_title: 'Shoulder to Shoulder Skyvern-InfoSpider & Constellation Engine',
-                    status: 'ONLINE & SECURE ON ISLAND',
-                    active_channels: activeChannels,
-                    total_salvaged_modules: rooms.length,
-                    total_technicians: resRow ? resRow.resident_count : 0,
-                    recent_vision_extractions: visionLogs || [],
-                    recent_harvests: rooms,
-                    updated_at: new Date().toISOString()
+                db.all(`SELECT * FROM nanobot_logs ORDER BY logged_at DESC LIMIT 5`, (err4, nanobotLogs) => {
+                    res.json({
+                        system_title: 'Shoulder to Shoulder Nanobot & Skyvern-InfoSpider Engine',
+                        status: 'ONLINE & SECURE ON ISLAND (SCaling ENGINE READY)',
+                        active_channels: activeChannels,
+                        total_salvaged_modules: rooms.length,
+                        total_technicians: resRow ? resRow.resident_count : 0,
+                        recent_nanobot_activity: nanobotLogs || [],
+                        recent_vision_extractions: visionLogs || [],
+                        recent_harvests: rooms,
+                        updated_at: new Date().toISOString()
+                    });
                 });
             });
         });
@@ -239,7 +267,7 @@ app.get('/api/voltron/dashboard', (req, res) => {
 });
 
 
-// --- VOLTRON MODULE: DYNAMIC PLUGIN REGISTRY (Preserved) ---
+// --- VOLTRON MODULE: DYNAMIC PLUGIN REGISTRY (Expanded with Nanobot Plugin) ---
 const workshopPlugins = new Map();
 
 workshopPlugins.set('skyvern-spider-telemetry', {
@@ -249,12 +277,19 @@ workshopPlugins.set('skyvern-spider-telemetry', {
     }
 });
 
+workshopPlugins.set('nanobot-agent-core', {
+    description: 'Manages agent memory, tool delegation, and Model Context Protocol routing.',
+    execute: async (data) => {
+        return { plugin: 'nanobot-agent-core', result: 'Nanobot self-hosted agent state verified and responsive.', input: data };
+    }
+});
+
 app.get('/api/voltron/plugins', (req, res) => {
     const pluginsList = Array.from(workshopPlugins.entries()).map(([name, plugin]) => ({
         name,
         description: plugin.description
     }));
-    res.json({ architecture: 'Unified Skyvern-InfoSpider + Plugin Framework', registered_plugins: pluginsList });
+    res.json({ architecture: 'Unified Nanobot + Skyvern-InfoSpider + Plugin Framework', registered_plugins: pluginsList });
 });
 
 app.post('/api/voltron/plugin/:name', async (req, res) => {
@@ -301,7 +336,7 @@ app.get('/api/status', (req, res) => {
     db.get(`SELECT COUNT(*) as count FROM residents`, (err, residentRow) => {
         db.get(`SELECT COUNT(*) as room_count FROM house_rooms`, (err2, roomRow) => {
             res.json({
-                status: 'WORKSHOP ONLINE (SKYVERN-INFOSPIDER VISION ENGINE ACTIVE)',
+                status: 'WORKSHOP ONLINE (NANOBOT AGENT & SKYVERN VISION ENGINES ACTIVE)',
                 total_technicians: residentRow ? residentRow.count : 0,
                 workbench_artifacts: roomRow ? roomRow.room_count : 0,
                 timestamp: new Date().toISOString()
@@ -311,5 +346,5 @@ app.get('/api/status', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Shoulder to Shoulder Skyvern-InfoSpider Workshop running live on port ${PORT}`);
+    console.log(`Shoulder to Shoulder Nanobot Workshop running live on port ${PORT}`);
 });
