@@ -20,7 +20,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     } else {
         console.log('Connected to the SQLite database.');
         
-        // Create logs table if it doesn't exist
+        // Create monkey_logs table for automated background simulation
         db.run(`CREATE TABLE IF NOT EXISTS monkey_logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             channel TEXT NOT NULL,
@@ -28,98 +28,61 @@ const db = new sqlite3.Database(dbFile, (err) => {
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
 
-        // Create workers table for registrations
+        // Create workers table for registrations with survey answers
         db.run(`CREATE TABLE IF NOT EXISTS workers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             workerName TEXT NOT NULL,
             workerEmail TEXT NOT NULL,
+            workerPhone TEXT,
+            surveyAnswers TEXT,
             payoutMethod TEXT NOT NULL,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
 
-        // Recreate platform_tasks table to support Games and My Pet Wildlife Sanctuary
-        db.run(`DROP TABLE IF EXISTS platform_tasks`, () => {
-            db.run(`CREATE TABLE platform_tasks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                category TEXT NOT NULL,
-                title TEXT NOT NULL,
-                duration TEXT NOT NULL,
-                reward TEXT NOT NULL,
-                url TEXT NOT NULL
-            )`, (err) => {
-                if (!err) {
-                    const defaultTasks = [
-                        // Games Hub
-                        ['Games', 'Arcade Reflex Tester', '1 Hour Session', '£1.00', 'https://orteil.dashnet.org/cookieclicker/'],
-                        ['Games', 'Strategy Game QA Test', '1 Hour Session', '£1.00', 'https://tetris.com/play-tetris'],
-                        ['Games', 'Color Match Speed Run', '1 Hour Session', '£1.00', 'https://orteil.dashnet.org/cookieclicker/'],
-                        
-                        // "My Pet" Wildlife Sanctuary Hub
-                        ['My Pet', 'Adopt & Feed the Sanctuary Lion', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/lion'],
-                        ['My Pet', 'Enclosure Care: Majestic Tiger', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/tiger'],
-                        ['My Pet', 'Canopy Feeding: Gentle Giraffe', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/giraffe'],
-                        ['My Pet', 'Waterhole Patrol: Baby Elephant', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/elephant'],
-                        ['My Pet', 'Canopy Play: Cheeky Sanctuary Monkey', '1 Hour Session', '£1.00', 'https://unsplash.com/s/photos/monkey']
-                    ];
-                    const stmt = db.prepare(`INSERT INTO platform_tasks (category, title, duration, reward, url) VALUES (?, ?, ?, ?, ?)`);
-                    defaultTasks.forEach(task => stmt.run(task));
-                    stmt.finalize();
-                    console.log('Default Games and "My Pet" Wildlife tasks populated successfully.');
-                }
-            });
-        });
-
-        // AUTOMATED BACKGROUND LOOP
-        setInterval(() => {
-            const channels = ['youtube', 'tiktok', 'instagram', 'facebook'];
-            const randomChannel = channels[Math.floor(Math.random() * channels.length)];
-            const query = `INSERT INTO monkey_logs (channel, ad_count) VALUES (?, 1)`;
-            
-            db.run(query, [randomChannel], (err) => {
-                if (err) {
-                    console.error('Background simulation error:', err.message);
-                }
-            });
-        }, 30000);
+        // Create community chat messages table
+        db.run(`CREATE TABLE IF NOT EXISTS community_chat (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            message TEXT NOT NULL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
     }
 });
 
-// API Endpoint: Register Member / Waiting Room Spot
+// API Endpoint: Register Member, Save 10-Question Survey, & Opt-in for Text Notification
 app.post('/register-worker', (req, res) => {
-    const { workerName, workerEmail, payoutMethod } = req.body;
+    const { workerName, workerEmail, workerPhone, surveyAnswers } = req.body;
 
     if (!workerName || !workerEmail) {
         return res.status(400).send('Name and Email are required.');
     }
 
-    const query = `INSERT INTO workers (workerName, workerEmail, payoutMethod) VALUES (?, ?, ?)`;
-    db.run(query, [workerName, workerEmail, payoutMethod || 'WaitingRoomMember'], function(err) {
+    const query = `INSERT INTO workers (workerName, workerEmail, workerPhone, surveyAnswers, payoutMethod) VALUES (?, ?, ?, ?, ?)`;
+    db.run(query, [workerName, workerEmail, workerPhone || '', JSON.stringify(surveyAnswers || {}), 'WildlifeTester'], function(err) {
         if (err) {
             console.error('Error saving registration', err.message);
             return res.status(500).send('Database error during registration.');
         }
-        res.redirect('/?registered=true');
+        res.json({ success: true, memberId: this.lastID });
     });
 });
 
-// API Endpoint: Get real registration count for the counter
+// API Endpoint: Get real registration count for the global counter
 app.get('/api/stats', (req, res) => {
     const query = `SELECT COUNT(*) as totalRegistrations FROM workers`;
-    
     db.get(query, [], (err, row) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        
         res.json({
             totalRegistrations: row ? row.totalRegistrations : 0
         });
     });
 });
 
-// API Endpoint: Get automated tasks and games for the second page hub
-app.get('/api/tasks', (req, res) => {
-    const query = `SELECT * FROM platform_tasks`;
+// API Endpoint: Get community chat messages
+app.get('/api/chat', (req, res) => {
+    const query = `SELECT * FROM community_chat ORDER BY timestamp DESC LIMIT 50`;
     db.all(query, [], (err, rows) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -128,7 +91,22 @@ app.get('/api/tasks', (req, res) => {
     });
 });
 
-// Root route serves the main platform interface from the public folder
+// API Endpoint: Post a new community chat message
+app.post('/api/chat', (req, res) => {
+    const { username, message } = req.body;
+    if (!username || !message) {
+        return res.status(400).send('Username and message required.');
+    }
+    const query = `INSERT INTO community_chat (username, message) VALUES (?, ?)`;
+    db.run(query, [username, message], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ success: true });
+    });
+});
+
+// Root route serves the main platform interface
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
