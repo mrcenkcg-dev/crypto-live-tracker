@@ -1,77 +1,84 @@
-<!-- public/index.html - Platform Interface & Background Client Bridge -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4D Wildlife Sanctuary - Live Platform</title>
+    <title>Shoulder to Shoulder - Unforgotten Network</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        h1 { color: #38bdf8; text-align: center; }
-        .stats-box { display: flex; justify-content: space-around; background: #0f172a; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #334155; }
-        .stat-item { text-align: center; }
-        .stat-value { font-size: 24px; font-weight: bold; color: #4ade80; }
-        form { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-        input, textarea { padding: 12px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 16px; }
-        button { padding: 14px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-        button:hover { background: #1d4ed8; }
-        .bridge-section { margin-top: 30px; padding: 20px; background: #0f172a; border-radius: 8px; border: 1px dashed #38bdf8; text-align: center; }
-        .bridge-btn { display: inline-block; background: #16a34a; color: white; padding: 14px 28px; border-radius: 6px; font-size: 18px; font-weight: bold; text-decoration: none; margin-top: 10px; transition: background 0.2s; }
-        .bridge-btn:hover { background: #15803d; }
+        body { font-family: Arial, sans-serif; background: #0f0f0f; color: #fff; margin: 0; padding: 0; }
+        .top-nav { background: #1a1a1a; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+        .top-nav h2 { margin: 0; color: #4CAF50; font-size: 20px; }
+        .nav-links { display: flex; gap: 15px; align-items: center; }
+        .nav-links a { color: #ccc; text-decoration: none; font-weight: bold; padding: 6px 12px; border-radius: 4px; background: #222; font-size: 14px; }
+        .nav-links a:hover { background: #4CAF50; color: #fff; }
+        .status-badge { background: #111; border: 1px solid #4CAF50; color: #4CAF50; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        
+        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+        .header-banner { background: #181818; border: 1px solid #333; padding: 25px; border-radius: 8px; margin-bottom: 25px; text-align: center; }
+        .header-banner h1 { margin-top: 0; color: #fff; }
+        .header-banner p { color: #aaa; margin-bottom: 0; }
+        
+        .space-card { background: #181818; border: 1px solid #333; padding: 20px; margin-bottom: 20px; border-radius: 8px; transition: border-color 0.2s; }
+        .space-card:hover { border-color: #4CAF50; }
+        .space-card h3 { margin-top: 0; color: #fff; }
+        .space-card p { color: #aaa; }
+        .badge { background: #333; padding: 4px 8px; font-size: 11px; border-radius: 4px; color: #4CAF50; font-weight: bold; text-transform: uppercase; }
+        .action-btn { display: inline-block; background: #4CAF50; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; margin-top: 10px; font-weight: bold; }
+        .action-btn:hover { background: #45a049; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>4D Wildlife Sanctuary</h1>
-        <p style="text-align: center; color: #94a3b8;">Exclusive First 300 Testers Waiting Room & Background Engine Hub</p>
 
-        <div class="stats-box">
-            <div class="stat-item">
-                <div>Registered Users</div>
-                <div class="stat-value" id="userCount">Loading...</div>
-            </div>
-            <div class="stat-item">
-                <div>Engine Heartbeats</div>
-                <div class="stat-value" id="engineCount">Loading...</div>
-            </div>
+    <div class="top-nav">
+        <h2>Shoulder to Shoulder</h2>
+        <div class="nav-links">
+            <span class="status-badge" id="engine-status">24/7 Engine: ACTIVE</span>
+            <a href="/">Home</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header-banner">
+            <h1>The Unforgotten Network Wall</h1>
+            <p>All empty spaces, chat lines, games, and platforms linked together in one shared global feed running 24/7.</p>
         </div>
 
-        <form action="/register" method="POST">
-            <h3>Step 1: Secure Your Registration</h3>
-            <input type="text" name="name" placeholder="Your Full Name" required>
-            <input type="email" name="email" placeholder="Your Email Address" required>
-            <input type="text" name="phone" placeholder="Your Mobile Phone Number" required>
-
-            <h3>Step 2: Wildlife Sanctuary Survey (10 Questions Preview)</h3>
-            <textarea name="q1" placeholder="1. What is your primary goal for joining the wildlife sanctuary project?" rows="2" required></textarea>
-            <textarea name="q2" placeholder="2. How do you plan to maintain your background connection active?" rows="2" required></textarea>
-            
-            <button type="submit">Register & Launch Background Bridge</button>
-        </form>
-
-        <div class="bridge-section">
-            <h3>Background Connection Bridge</h3>
-            <p style="color: #cbd5e1; font-size: 14px;">Once registered, your device links directly into the server loop to keep the system active 24/7.</p>
-            <a href="/bridge.html" class="bridge-btn">Activate Background Bridge Client</a>
+        <div id="spaces-feed">
+            <p style="text-align: center; color: #777;">Loading connected spaces...</p>
         </div>
     </div>
 
     <script>
-        // Fetch live server stats
-        async function updateStats() {
+        // Automatically fetch and render all connected spaces onto the wall
+        async function loadSpaces() {
             try {
-                const response = await fetch('/api/status');
-                const data = await response.json();
-                document.getElementById('userCount').innerText = data.registered_users;
-                document.getElementById('engineCount').innerText = data.engine_heartbeats;
-            } catch (e) {
-                console.error('Error fetching status:', e);
+                const response = await fetch('/api/spaces');
+                const spaces = await response.json();
+                
+                const feedContainer = document.getElementById('spaces-feed');
+                if (spaces.length === 0) {
+                    feedContainer.innerHTML = '<p style="text-align: center; color: #777;">No connected spaces found yet.</p>';
+                    return;
+                }
+
+                feedContainer.innerHTML = '';
+                spaces.forEach(space => {
+                    const card = document.createElement('div');
+                    card.className = 'space-card';
+                    card.innerHTML = `
+                        <span class="badge">${space.category}</span>
+                        <h3>${space.title}</h3>
+                        <p>${space.description}</p>
+                        <a class="action-btn" href="${space.url}" target="_blank">Step Into Space</a>
+                    `;
+                    feedContainer.appendChild(card);
+                });
+            } catch (err) {
+                console.error('Error loading spaces:', err);
             }
         }
 
-        setInterval(updateStats, 5000);
-        updateStats();
+        loadSpaces();
     </script>
 </body>
 </html>
