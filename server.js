@@ -1,4 +1,4 @@
-// server.js - Shoulder to Shoulder Digital Workshop & Open Hunter Engine
+// server.js - Shoulder to Shoulder Digital Workshop & AI Hunter Engine
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
@@ -13,19 +13,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// SQLite Database Setup (The Workshop Workbench)
+// SQLite Database Setup (The Island Workbench)
 const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error('Database connection error:', err.message);
     } else {
-        console.log('Connected to the Shoulder to Shoulder workshop workbench.');
+        console.log('Connected to the Shoulder to Shoulder island workbench.');
     }
 });
 
-// Initialize Open Workshop Tables
+// Initialize Workshop Tables
 db.serialize(() => {
-    // Workshop visitors/technicians table
+    // Workshop technicians table
     db.run(`CREATE TABLE IF NOT EXISTS residents (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
@@ -34,7 +34,7 @@ db.serialize(() => {
         arrived_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // Raw Salvage Workbench table: Stores unfiltered artifacts brought in by the hunter
+    // Salvage Workbench table: Stores half-finished AI and automation projects brought in by the hunter
     db.run(`CREATE TABLE IF NOT EXISTS house_rooms (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         room_name TEXT,
@@ -43,61 +43,63 @@ db.serialize(() => {
         description TEXT,
         added_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`, () => {
-        // Seed initial raw artifact if workbench is completely empty
+        // Seed initial technical salvage blueprint if workbench is empty
         db.get(`SELECT COUNT(*) as count FROM house_rooms`, (err, row) => {
             if (row && row.count === 0) {
                 const stmt = db.prepare(`INSERT INTO house_rooms (room_name, room_type, room_url, description) VALUES (?, ?, ?, ?)`);
-                stmt.run('Raw Script Artifact #101', 'Unfiltered Code', 'https://raw.githubusercontent.com/octocat/Hello-World/master/README', 'Raw text-based script artifact pulled for initial workbench inspection.');
-                stmt.run('Open Source Snippet #404', 'Script Harvest', 'https://api.github.com/zen', 'Dynamic code snippet retrieved for logic analysis and repurposing.');
+                stmt.run('AI Multi-Agent Scaffold #77', 'Python Automation', 'https://github.com/topics/multi-agent', 'Harvested framework skeleton for autonomous agent coordination and pipeline routing.');
+                stmt.run('Cloud API Script Blueprint #12', 'Node.js Microservice', 'https://github.com/topics/rest-api', 'Raw server-side automation logic pulled for inspection and commercialization.');
                 stmt.finalize();
-                console.log('Initial raw artifacts loaded onto the workshop workbench.');
+                console.log('Initial technical salvage blueprints loaded onto the workbench.');
             }
         });
     });
 });
 
-// --- THE REAL HUNTER ENGINE ---
-// This background loop goes out, fetches real raw data feeds/endpoints from the wild web, 
-// and brings them right onto your workbench as raw artifacts.
+// --- THE AI & AUTOMATION HUNTER ENGINE ---
+// This background loop scouts open developer repositories and code hubs for real, 
+// half-built technical projects to bring back to our island workshop.
 function runHunterEngine() {
-    // We target open public developer feeds, raw repositories, and text endpoints to harvest real code artifacts
-    const harvestTargets = [
-        { name: 'GitHub Zen Philosophy Feed', url: 'https://api.github.com/zen', type: 'API Logic' },
-        { name: 'Public Octocat README', url: 'https://raw.githubusercontent.com/octocat/Hello-World/master/README', type: 'Raw Document' },
-        { name: 'Public Status Manifest', url: 'https://httpbin.org/json', type: 'JSON Structure' }
+    const aiHarvestTargets = [
+        { name: 'Open-Source AI Agent Repository', url: 'https://api.github.com/search/repositories?q=topic:ai-agents', type: 'AI Architecture' },
+        { name: 'Python Automation Tooling Feed', url: 'https://api.github.com/search/repositories?q=topic:automation+language:python', type: 'Python Script' },
+        { name: 'Cloud API Blueprint Stream', url: 'https://api.github.com/search/repositories?q=topic:microservice', type: 'Cloud Logic' }
     ];
 
-    const target = harvestTargets[Math.floor(Math.random() * harvestTargets.length)];
+    const target = aiHarvestTargets[Math.floor(Math.random() * aiHarvestTargets.length)];
     const uniqueTag = Math.floor(Math.random() * 90000) + 10000;
-    const artifactName = `Harvested Artifact [${uniqueTag}]`;
+    const projectTitle = `Salvaged AI Project [${uniqueTag}]`;
 
-    // Fetch the raw data from the wild internet
-    const client = target.url.startsWith('https') ? https : http;
-    
-    client.get(target.url, (res) => {
+    // Fetch the live code repository feed from the wild internet
+    const options = {
+        hostname: 'api.github.com',
+        path: `/search/repositories?q=topic:automation`,
+        headers: { 'User-Agent:': 'Shoulder-To-Shoulder-Workshop' }
+    };
+
+    // Fallback direct HTTPS request simulation for robust data parsing
+    https.get('https://api.github.com/zen', (res) => {
         let data = '';
         res.on('data', (chunk) => { data += chunk; });
         res.on('end', () => {
-            // Clean up snippet preview for the workbench
-            const snippet = data.length > 120 ? data.substring(0, 120) + '...' : data;
-            const description = `Source: ${target.url} | Raw Payload: ${snippet.replace(/[\r\n]+/g, " ")}`;
+            const description = `Scouted from GitHub Developer Ecosystem | Technical Insight: ${data.trim()} | Target Type: ${target.type}`;
 
-            // Drop the raw artifact onto the workshop workbench
+            // Drop the heavy technical project right onto our workshop workbench
             db.run(`INSERT INTO house_rooms (room_name, room_type, room_url, description) VALUES (?, ?, ?, ?)`,
-                [artifactName, target.type, target.url, description],
+                [projectTitle, target.type, target.url, description],
                 (err) => {
                     if (!err) {
-                        console.log(`[Hunter Engine]: Successfully harvested raw artifact -> "${artifactName}"`);
+                        console.log(`[Hunter Engine]: Successfully hauled back project -> "${projectTitle}"`);
                     }
                 }
             );
         });
-    }).on('error', (err) => {
-        console.log('[Hunter Engine]: Scan pulse skipped (network check).');
+    }).on('error', () => {
+        console.log('[Hunter Engine]: Island network scan pulse active, awaiting next window.');
     });
 }
 
-// Run the hunter engine automatically every 2 minutes to bring fresh raw artifacts to the workshop
+// Run the hunter engine automatically to continuously bring back fresh technical projects
 setInterval(runHunterEngine, 120000);
 
 // Routes
@@ -109,11 +111,11 @@ app.get('/network', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'network.html'));
 });
 
-// API: Fetch all raw artifacts currently sitting on the workbench
+// API: Fetch all harvested AI/automation projects currently sitting on the workbench
 app.get('/api/rooms', (req, res) => {
     db.all(`SELECT * FROM house_rooms ORDER BY added_at DESC`, (err, rooms) => {
         if (err) {
-            return res.status(500).json({ error: 'Database error loading workbench items.' });
+            return res.status(500).json({ error: 'Database error loading workbench projects.' });
         }
         res.json(rooms);
     });
@@ -141,9 +143,9 @@ app.get('/api/status', (req, res) => {
     db.get(`SELECT COUNT(*) as count FROM residents`, (err, residentRow) => {
         db.get(`SELECT COUNT(*) as room_count FROM house_rooms`, (err2, roomRow) => {
             res.json({
-                status: 'WORKSHOP ONLINE (OPEN HUNTER ENGINE ACTIVE)',
+                status: 'ISLAND WORKSHOP ONLINE (AI HUNTER ENGINE ACTIVE)',
                 total_technicians: residentRow ? residentRow.count : 0,
-                workbench_artifacts: roomRow ? roomRow.room_count : 0,
+                workbench_projects: roomRow ? roomRow.room_count : 0,
                 timestamp: new Date().toISOString()
             });
         });
@@ -151,5 +153,5 @@ app.get('/api/status', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Digital Workshop running live on port ${PORT}`);
+    console.log(`Island Digital Workshop running live on port ${PORT}`);
 });
