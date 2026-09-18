@@ -1,304 +1,79 @@
+<!-- public/index.html - Platform Interface & Background Client Bridge -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoulder to Shoulder - 4D Wildlife Sanctuary Waiting Room & Testing Hub</title>
+    <title>4D Wildlife Sanctuary - Live Platform</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 850px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 35px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-        h1 {
-            color: #1a1a1a;
-            border-bottom: 3px solid #ff5a5f;
-            padding-bottom: 12px;
-            margin-top: 0;
-        }
-        h2 {
-            color: #d9383f;
-            margin-top: 25px;
-            font-size: 20px;
-        }
-        p, li {
-            line-height: 1.6;
-            font-size: 14px;
-        }
-        .counter-box {
-            background: linear-gradient(135deg, #ff5a5f, #d9383f);
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 25px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(255,90,95,0.3);
-        }
-        .step-box {
-            background: #fff5f5;
-            border: 2px solid #ff5a5f;
-            padding: 25px;
-            margin-top: 25px;
-            border-radius: 8px;
-        }
-        .step-box input, .step-box select, .step-box textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0 16px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 15px;
-            box-sizing: border-box;
-        }
-        .btn-primary {
-            background: #ff5a5f;
-            color: white;
-            padding: 14px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            width: 100%;
-            transition: background 0.2s;
-        }
-        .btn-primary:hover {
-            background: #d9383f;
-        }
-        .survey-question {
-            margin-bottom: 15px;
-            font-weight: bold;
-            font-size: 14px;
-            color: #333;
-        }
-        .chat-container {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background: #f9f9f9;
-            padding: 15px;
-            height: 250px;
-            overflow-y: scroll;
-            margin-bottom: 15px;
-        }
-        .chat-message {
-            background: white;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            border-left: 4px solid #ff5a5f;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .hidden {
-            display: none;
-        }
-        .download-banner {
-            background: #e2f0cb;
-            border: 2px solid #55a630;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            margin-top: 20px;
-        }
+        body { font-family: Arial, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        h1 { color: #38bdf8; text-align: center; }
+        .stats-box { display: flex; justify-content: space-around; background: #0f172a; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #334155; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #4ade80; }
+        form { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        input, textarea { padding: 12px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 16px; }
+        button { padding: 14px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #1d4ed8; }
+        .bridge-section { margin-top: 30px; padding: 20px; background: #0f172a; border-radius: 8px; border: 1px dashed #38bdf8; text-align: center; }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>4D Wildlife Sanctuary</h1>
+        <p style="text-align: center; color: #94a3b8;">Exclusive First 300 Testers Waiting Room & Background Engine Hub</p>
 
-<div class="container">
-    <!-- Live Global Registration Counter -->
-    <div class="counter-box">
-        🌍 Shoulder to Shoulder Registrations: <span id="activityCounter">0</span> Real Sign-Ups
-    </div>
-
-    <!-- STEP 1 & 2: REGISTRATION & 10 WILDLIFE QUESTIONS -->
-    <div id="sectionRegistration">
-        <h1>SHOULDER TO SHOULDER</h1>
-        <p><strong>Official Waiting Room & 4D Wildlife Sanctuary Testing Hub</strong></p>
-        <p>Welcome! Register your spot below, answer our 10 quick wildlife expectations questions, download the companion background app, and get ready for your testing text message notification.</p>
-
-        <div class="step-box">
-            <h3>Step 1: Register Your Details & Phone Number</h3>
-            <p><small>We need your mobile number so you can receive the instant SMS text message when testing starts!</small></p>
-            
-            <form id="registrationForm" onsubmit="submitRegistration(event)">
-                <label>Your Full Name:</label>
-                <input type="text" id="workerName" placeholder="e.g. Cenk Gokduman" required>
-                
-                <label>Email Address:</label>
-                <input type="email" id="workerEmail" placeholder="your@email.com" required>
-                
-                <label>Mobile Number (For SMS Test Notification):</label>
-                <input type="tel" id="workerPhone" placeholder="+44 7000 000000" required>
-
-                <h3>Step 2: 10-Question Wildlife Sanctuary Expectation Survey</h3>
-                <div class="survey-question">1. Which animal habitat excites you the most in 4D?</div>
-                <input type="text" class="survey-ans" placeholder="e.g., Lions, Elephants, Giraffes..." required>
-
-                <div class="survey-question">2. How often do you expect to interact with your digital pet daily?</div>
-                <input type="text" class="survey-ans" placeholder="e.g., 30 mins to 1 hour" required>
-
-                <div class="survey-question">3. What kind of weather simulation do you want in the sanctuary?</div>
-                <input type="text" class="survey-ans" placeholder="e.g., Rain, Savannah sun, Night cycles" required>
-
-                <div class="survey-question">4. Would you like feeding notifications sent directly to your phone?</div>
-                <input type="text" class="survey-ans" placeholder="e.g., Yes, absolutely" required>
-
-                <div class="survey-question">5. What feature makes a wildlife game truly immersive for you?</div>
-                <input type="text" class="survey-ans" placeholder="e.g., Realistic sounds and 4D movement" required>
-
-                <div class="survey-question">6. How should rewards work when you care for your animals?</div>
-                <input type="text" class="survey-ans" placeholder="e.g., Sanctuary coins and rank upgrades" required>
-
-                <div class="survey-question">7. Would you invite friends to visit your digital wildlife enclosure?</div>
-                <input type="text" class="survey-ans" placeholder="e.g., Yes, love community features" required>
-
-                <div class="survey-question">8. What is your preferred time of day to test games?</div>
-                <input type="text" class="survey-ans" placeholder="e.g., Evenings or weekends" required>
-
-                <div class="survey-question">9. Do you prefer mobile push alerts or SMS text updates?</div>
-                <input type="text" class="survey-ans" placeholder="e.g., SMS text messages" required>
-
-                <div class="survey-question">10. Any special animal species you want added to future expansions?</div>
-                <input type="text" class="survey-ans" placeholder="e.g., Exotic birds and river creatures" required>
-
-                <button type="submit" class="btn-primary">Complete Registration & Unlock App Download 🚀</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- STEP 3 & 4: APP DOWNLOAD & COMMUNITY CHAT -->
-    <div id="sectionHub" class="hidden">
-        <h1>Community Testing & Live Hub</h1>
-        <p>Welcome aboard, <strong id="displayName">Tester</strong>! You are officially locked into the waiting list.</p>
-
-        <div class="download-banner">
-            <h3>📱 Step 3: Download Companion App & Background Runner</h3>
-            <p>Download our lightweight preview client below. It will stay active in your phone background so you are instantly connected when testing begins.</p>
-            <button onclick="simulateAppDownload()" class="btn-primary" style="background: #28a745; max-width: 300px; margin: 0 auto;">Download Background App (.apk / PWA) 📥</button>
-            <p id="downloadStatus" style="margin-top: 10px; font-weight: bold; color: #2e7d32;"></p>
-        </div>
-
-        <div class="step-box" style="margin-top: 25px;">
-            <h3>Step 4: Community Chat & Expectations Exchange</h3>
-            <p>Talk with other testers right here! Share what you expect from the 4D wildlife sanctuary while waiting for your test text message.</p>
-            
-            <div id="chatBox" class="chat-container">
-                Loading messages...
+        <div class="stats-box">
+            <div class="stat-item">
+                <div>Registered Users</div>
+                <div class="stat-value" id="userCount">Loading...</div>
             </div>
+            <div class="stat-item">
+                <div>Engine Heartbeats</div>
+                <div class="stat-value" id="engineCount">Loading...</div>
+            </div>
+        </div>
 
-            <input type="text" id="chatMessageInput" placeholder="Type your message about what you expect from the wildlife app...">
-            <button onclick="sendChatMessage()" class="btn-primary">Send to Community Chat 💬</button>
+        <form action="/register" method="POST">
+            <h3>Step 1: Secure Your Registration</h3>
+            <input type="text" name="name" placeholder="Your Full Name" required>
+            <input type="email" name="email" placeholder="Your Email Address" required>
+            <input type="text" name="phone" placeholder="Your Mobile Phone Number" required>
+
+            <h3>Step 2: Wildlife Sanctuary Survey (10 Questions Preview)</h3>
+            <textarea name="q1" placeholder="1. What is your primary goal for joining the wildlife sanctuary project?" rows="2" required></textarea>
+            <textarea name="q2" placeholder="2. How do you plan to maintain your background connection active?" rows="2" required></textarea>
+            
+            <button type="submit">Register & Launch Background Bridge</button>
+        </form>
+
+        <div class="bridge-section">
+            <h3>Background Connection Bridge</h3>
+            <p style="color: #cbd5e1; font-size: 14px;">Once registered, your device links directly into the server loop to keep the system active 24/7.</p>
+            <button onclick="triggerBackgroundBridge()" style="background: #16a34a;">Activate Background Bridge Client</button>
         </div>
     </div>
-</div>
 
-<script>
-    let registeredUser = '';
-
-    async function submitRegistration(event) {
-        event.preventDefault();
-        const workerName = document.getElementById('workerName').value;
-        const workerEmail = document.getElementById('workerEmail').value;
-        const workerPhone = document.getElementById('workerPhone').value;
-
-        const surveyFields = document.querySelectorAll('.survey-ans');
-        const surveyAnswers = {};
-        surveyFields.forEach((field, index) => {
-            surveyAnswers[`q${index + 1}`] = field.value;
-        });
-
-        try {
-            const response = await fetch('/register-worker', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ workerName, workerEmail, workerPhone, surveyAnswers })
-            });
-
-            if (response.ok) {
-                registeredUser = workerName;
-                document.getElementById('displayName').textContent = workerName;
-                document.getElementById('sectionRegistration').classList.add('hidden');
-                document.getElementById('sectionHub').classList.remove('hidden');
-                fetchChatMessages();
-                fetchStats();
-            } else {
-                alert('Registration failed. Please try again.');
+    <script>
+        // Fetch live server stats
+        async function updateStats() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                document.getElementById('userCount').innerText = data.registered_users;
+                document.getElementById('engineCount').innerText = data.engine_heartbeats;
+            } catch (e) {
+                console.error('Error fetching status:', e);
             }
-        } catch (err) {
-            console.error('Registration error:', err);
         }
-    }
 
-    function simulateAppDownload() {
-        const status = document.getElementById('downloadStatus');
-        status.textContent = '📥 App downloaded successfully! Background runner active. Waiting for SMS test alert...';
-        alert('App downloaded! It will remain running in your phone background waiting for your test text message notification.');
-    }
-
-    async function fetchChatMessages() {
-        try {
-            const res = await fetch('/api/chat');
-            const messages = await res.json();
-            const chatBox = document.getElementById('chatBox');
-            
-            if (messages.length === 0) {
-                chatBox.innerHTML = '<p>No messages yet. Be the first to start the conversation!</p>';
-                return;
-            }
-
-            let html = '';
-            messages.forEach(msg => {
-                html += `<div class="chat-message"><strong>${msg.username}:</strong> ${msg.message} <br><small style="color:#888;">${msg.timestamp}</small></div>`;
-            });
-            chatBox.innerHTML = html;
-        } catch (err) {
-            console.error('Error fetching chat:', err);
+        function triggerBackgroundBridge() {
+            alert('Background bridge link initialized! Your connection loop is now active on the system network.');
         }
-    }
 
-    async function sendChatMessage() {
-        const input = document.getElementById('chatMessageInput');
-        const message = input.value.trim();
-        if (!message) return;
-
-        try {
-            await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: registeredUser || 'Tester', message })
-            });
-            input.value = '';
-            fetchChatMessages();
-        } catch (err) {
-            console.error('Error sending message:', err);
-        }
-    }
-
-    async function fetchStats() {
-        try {
-            const response = await fetch('/api/stats');
-            const stats = await response.json();
-            document.getElementById('activityCounter').textContent = stats.totalRegistrations || 0;
-        } catch (error) {
-            console.error('Error fetching stats:', error);
-        }
-    }
-
-    fetchStats();
-    setInterval(fetchStats, 5000);
-    setInterval(fetchChatMessages, 5000);
-</script>
-
+        setInterval(updateStats, 5000);
+        updateStats();
+    </script>
 </body>
 </html>
