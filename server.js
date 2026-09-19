@@ -1,4 +1,4 @@
-// server.js - Cengiz Gökdoğan Island Sovereign Engine (Fully Unified with Autonomous Self-Learning Sandbox Wing)
+// server.js - Cengiz Gökdoğan Island Sovereign Engine (2-Hour Self-Learning Sandbox Cycle)
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
@@ -156,7 +156,7 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM self_learning_sandbox`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO self_learning_sandbox (learning_cycle, experiment_title, agent_hypothesis, sandbox_result) VALUES (?, ?, ?, ?)`,
-                    [1, 'Dynamic Wildlife Biome Scripting', 'Testing autonomous pathfinding for 4D animal avatars in sandbox.', 'Successfully generated autonomous movement vector routines for review.']);
+                    [1, '2-Hour Biome Adaptation Routine', 'Testing autonomous upgrade logic and parameter optimization every 2 hours.', 'Successfully compiled initial 2-hour sandbox check for review.']);
             }
         });
     });
@@ -197,9 +197,7 @@ function runHunterEngine() {
     const options = {
         hostname: 'api.github.com',
         path: `/search/repositories?q=${query}&sort=stars&order=desc`,
-        headers: {
-            'User-Agent': 'Cengiz-Gokdogan-Island-Agent'
-        }
+        headers: { 'User-Agent': 'Cengiz-Gokdogan-Island-Agent' }
     };
 
     https.get(options, (res) => {
@@ -353,30 +351,33 @@ function runAgenticSeekWorker() {
 setInterval(runAgenticSeekWorker, 220000);
 
 
-// --- SELF-LEARNING SANDBOX APPRENTICE WORKER ---
+// --- SELF-LEARNING SANDBOX APPRENTICE WORKER (EXACTLY EVERY 2 HOURS) ---
+// 2 hours = 2 * 60 * 60 * 1000 milliseconds = 7,200,000 ms
+const TWO_HOURS_MS = 7200000;
+
 function runSelfLearningSandboxWorker() {
     const learningTopics = [
-        'Interactive 4D Feeding Animation Simulation',
-        'Autonomous Pet Habitat Climate Control Routine',
-        'Wildlife Sanctuary Soundscape Synthesizer',
-        'Self-Healing SQLite Index Optimization Script'
+        'Autonomous 2-Hour Biome & Wildlife Optimization',
+        'Self-Healing SQLite Index & Query Tuning Routine',
+        'Sandbox Memory Routing & Upgrade Vector Test',
+        'Network Telemetry Behavioral Check'
     ];
     const topic = learningTopics[Math.floor(Math.random() * learningTopics.length)];
 
     db.get(`SELECT MAX(learning_cycle) as max_cycle FROM self_learning_sandbox`, (err, row) => {
         const nextCycle = (row && row.max_cycle ? row.max_cycle : 0) + 1;
         db.run(`INSERT INTO self_learning_sandbox (learning_cycle, experiment_title, agent_hypothesis, sandbox_result, approval_status) VALUES (?, ?, ?, ?, ?)`,
-            [nextCycle, topic, `Apprentice agent tested module isolation and behavioral rendering for cycle ${nextCycle}.`, `Successfully compiled experimental sandbox build #${nextCycle} for Captain inspection.`, 'PENDING_INSPECTION'],
+            [nextCycle, topic, `Apprentice agent evaluated system telemetry and compiled 2-hour upgrade proposal #${nextCycle}.`, `Successfully generated experimental build cycle #${nextCycle} for Captain Cengiz inspection.`, 'PENDING_INSPECTION'],
             (err) => {
                 if (!err) {
-                    console.log(`[Self-Learning Sandbox]: Apprentice completed learning cycle #${nextCycle} -> "${topic}"`);
+                    console.log(`[Self-Learning Sandbox]: 2-hour cycle #${nextCycle} completed -> "${topic}"`);
                 }
             }
         );
     });
 }
 
-setInterval(runSelfLearningSandboxWorker, 300000); // Runs every 5 minutes in isolation
+setInterval(runSelfLearningSandboxWorker, TWO_HOURS_MS);
 
 
 // --- UNIFIED AIRFLOW + CONSTELLATION ENGINE ---
@@ -395,7 +396,7 @@ async function executeConstellationWorkflow(dagPayload) {
     return {
         dag_id: dagPayload.dag_id || 'cengiz_island_main_dag',
         steps: executionSteps,
-        platform: 'Cengiz Gökdoğan Island Sovereign Engine with Self-Learning Sandbox Wing',
+        platform: 'Cengiz Gökdoğan Island Sovereign Engine (2-Hour Sandbox Cycle)',
         timestamp: new Date().toISOString()
     };
 }
@@ -455,6 +456,7 @@ app.get('/api/voltron/dashboard', (req, res) => {
                                         total_technicians: resRow ? resRow.resident_count : 0,
                                         page_three_sandbox: {
                                             status: petRow ? petRow.habitat_status : 'ACTIVE',
+                                            review_interval: 'Every 2 Hours',
                                             learning_cycles_logged: sandboxLogs || []
                                         },
                                         deepseek_modules: dshModules || [],
@@ -542,7 +544,7 @@ app.post('/api/voltron/plugin/:name', async (req, res) => {
 });
 
 
-// --- PAGE ONE, PAGE TWO & PAGE THREE NAVIGATION ROUTES ---
+// --- NAVIGATION ROUTES ---
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -551,7 +553,6 @@ app.get('/network', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'network.html'));
 });
 
-// PAGE THREE: 4D Pet Project & Self-Learning Sandbox Wing
 app.get('/pet-project', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'pet-project.html'));
 });
@@ -563,9 +564,9 @@ app.get('/api/pet-project/status', (req, res) => {
                 project_title: 'Cengiz Gökdoğan Island 4D Pet House & Self-Learning Sandbox',
                 page_route: '/pet-project',
                 status: petRow ? petRow.habitat_status : 'ACTIVE',
-                sandbox_mode: 'Isolated Autonomous Apprentice Observation Deck',
+                review_cadence: 'Every 2 Hours',
                 learning_cycles: sandboxRows || [],
-                inspection_note: 'You and Captain Cengiz inspect these learning cycles daily before any code is approved for production welding.',
+                inspection_note: 'You and Captain Cengiz inspect these 2-hour cycles before any code is approved for production welding.',
                 timestamp: new Date().toISOString()
             });
         });
@@ -607,5 +608,5 @@ app.get('/api/status', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Cengiz Gökdoğan Island Sovereign Engine running live on port ${PORT}`);
+    console.log(`Cengiz Gökdoğan Island Sovereign Engine running live on port ${PORT} (2-Hour Sandbox Active)`);
 });
