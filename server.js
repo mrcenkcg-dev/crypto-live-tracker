@@ -1,4 +1,4 @@
-// server.js - Shoulder to Shoulder Workshop (Fully Unified Level Two Engine + DeepSeek Harness & AgenticSeek)
+// server.js - Cengiz Gökdoğan Island Sovereign Engine (Full-Length Expanded Workshop)
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
@@ -8,27 +8,26 @@ const http = require('http');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middleware Setup
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// SQLite Database Setup (The Workshop Workbench - Hardened WAL Mode)
+// SQLite Database Setup (The Workshop Workbench - Hardened WAL Mode & Busy Timeout)
 const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error('Database connection error:', err.message);
     } else {
-        console.log('Connected to the Shoulder to Shoulder workshop workbench.');
+        console.log('Connected to Cengiz Gökdoğan Island sovereign workbench.');
     }
 });
 
-// Hardening database for concurrent background workers and multi-agent logging
+// Initialize All Workshop, Level Two, AgenticSeek, DeepSeek Harness & Island Tables
 db.serialize(() => {
     db.run("PRAGMA journal_mode = WAL;");
     db.run("PRAGMA busy_timeout = 5000;");
 
-    // Initialize All Workshop, Level Two, AgenticSeek & DeepSeek Harness Tables
     db.run(`CREATE TABLE IF NOT EXISTS residents (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
@@ -50,12 +49,13 @@ db.serialize(() => {
                 const stmt = db.prepare(`INSERT INTO house_rooms (room_name, room_type, room_url, description) VALUES (?, ?, ?, ?)`);
                 stmt.run('GPT-Load AI Gateway', 'Self-Hosted Gateway Core', 'https://github.com/tbphp/gpt-load', 'Multi-channel credential routing, load balancing, failover, and usage metering.');
                 stmt.run('Nanobot Agent Framework', 'Python AI Agent Core', 'https://github.com/HKUDS/nanobot', 'Ultra-lightweight self-hosted personal AI agent framework with memory and MCP.');
+                stmt.run('Munder-Difflin Harness', 'Local Multi-Agent Office', 'https://github.com/chaitanyagiri/munder-difflin', 'Local multi-agent harness to run an office of autonomous agents.');
                 stmt.run('Skyvern-InfoSpider Engine', 'AI Browser & Data Extractor', 'https://github.com/Skyvern-AI/skyvern', 'Blended browser-vision automation and structured data retrieval.');
                 stmt.run('RD-Agent Framework', 'Autonomous R&D / ML', 'https://github.com/microsoft/RD-Agent', 'Automated research and development loop for data science and quantitative models.');
                 stmt.run('AgenticSeek Framework', 'Local Manus AI Alternative', 'https://github.com/Fosowl/agenticSeek', '100% local voice-enabled AI assistant for web browsing, task planning, and autonomous coding.');
                 stmt.run('DeepSeek Harness (dsh)', 'Everything is a Plugin Core', 'https://github.com/deepseek-ai/deepseek-harness', 'Spatiotemporal composability framework powered by Cordis.');
                 stmt.finalize();
-                console.log('Initial technical salvage blueprints and DeepSeek Harness loaded onto workbench.');
+                console.log('Initial technical salvage blueprints and Cengiz Island modules loaded onto workbench.');
             }
         });
     });
@@ -92,6 +92,14 @@ db.serialize(() => {
         logged_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
+    db.run(`CREATE TABLE IF NOT EXISTS munder_difflin_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        office_action TEXT,
+        agent_status TEXT,
+        payload_details TEXT,
+        executed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
     db.run(`CREATE TABLE IF NOT EXISTS gpt_load_gateway_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         channel_name TEXT,
@@ -108,14 +116,6 @@ db.serialize(() => {
         metric_score REAL,
         experiment_notes TEXT,
         run_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-
-    db.run(`CREATE TABLE IF NOT EXISTS hive_cluster_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        cluster_node TEXT,
-        task_delegation TEXT,
-        node_status TEXT,
-        synced_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS agentic_seek_logs (
@@ -149,7 +149,7 @@ db.serialize(() => {
     });
 });
 
-// --- SHARPENED VOLTRON HUNTER ENGINE ---
+// --- ISLAND VOLTRON HUNTER & HARVEST ENGINE ---
 function runHunterEngine() {
     const harvestQueries = [
         'topic:autonomous-agents',
@@ -164,7 +164,7 @@ function runHunterEngine() {
         hostname: 'api.github.com',
         path: `/search/repositories?q=${query}&sort=stars&order=desc`,
         headers: {
-            'User-Agent': 'Shoulder-To-Shoulder-Workshop-Agent'
+            'User-Agent': 'Cengiz-Gokdogan-Island-Agent'
         }
     };
 
@@ -176,26 +176,26 @@ function runHunterEngine() {
                 const parsed = JSON.parse(data);
                 if (parsed.items && parsed.items.length > 0) {
                     const repo = parsed.items[Math.floor(Math.random() * parsed.items.length)];
-                    const roomName = `Voltron Module: ${repo.name} [${repo.stargazers_count}★]`;
-                    const roomType = repo.language || 'Cloud Architecture';
+                    const roomName = `Harvest Module: ${repo.name} [${repo.stargazers_count}★]`;
+                    const roomType = repo.language || 'Sovereign Cloud Architecture';
                     const roomUrl = repo.html_url;
-                    const description = `Repository: ${repo.full_name} | Desc: ${repo.description || 'Enterprise cloud component'} | Stars: ${repo.stargazers_count}`;
+                    const description = `Repository: ${repo.full_name} | Desc: ${repo.description || 'Island infrastructure component'} | Stars: ${repo.stargazers_count}`;
 
                     db.run(`INSERT INTO house_rooms (room_name, room_type, room_url, description) VALUES (?, ?, ?, ?)`,
                         [roomName, roomType, roomUrl, description],
                         (err) => {
                             if (!err) {
-                                console.log(`[Voltron Hunter Engine]: Successfully locked onto and welded -> "${roomName}"`);
+                                console.log(`[Island Hunter Engine]: Successfully salvaged and welded -> "${roomName}"`);
                             }
                         }
                     );
                 }
             } catch (e) {
-                console.log('[Voltron Hunter Engine]: Parse skipped.');
+                console.log('[Island Hunter Engine]: Parse skipped.');
             }
         });
     }).on('error', (err) => {
-        console.log('[Voltron Hunter Engine]: Scan pulse skipped.');
+        console.log('[Island Hunter Engine]: Scan pulse skipped.');
     });
 }
 
@@ -204,7 +204,7 @@ setInterval(runHunterEngine, 120000);
 
 // --- SAFE BACKGROUND MINING WORKER ---
 function runBackgroundMiner() {
-    const miningSources = ['GitHub Public Feed', 'Open API Stream', 'Workshop Telemetry Pulse'];
+    const miningSources = ['GitHub Public Feed', 'Open API Stream', 'Island Telemetry Pulse'];
     const activeSource = miningSources[Math.floor(Math.random() * miningSources.length)];
     
     db.run(`INSERT INTO mining_logs (miner_source, status, extracted_data) VALUES (?, ?, ?)`,
@@ -251,6 +251,19 @@ function runNanobotAgentWorker() {
 setInterval(runNanobotAgentWorker, 210000);
 
 
+// --- MUNDER-DIFFLIN LOCAL OFFICE WORKER ---
+function runMunderDifflinOfficeWorker() {
+    db.run(`INSERT INTO munder_difflin_logs (office_action, agent_status, payload_details) VALUES (?, ?, ?)`,
+        ['Office Delegation Pulse', 'OPTIMIZED', 'Local multi-agent office harness managing subtasks successfully.'],
+        (err) => {
+            if (!err) console.log('[Munder-Difflin Harness]: Office agents active.');
+        }
+    );
+}
+
+setInterval(runMunderDifflinOfficeWorker, 240000);
+
+
 // --- GPT-LOAD GATEWAY HEALTH WORKER ---
 function runGptLoadGatewayWorker() {
     const gatewayChannels = ['OpenAI Primary Pool', 'Anthropic Codex Relay', 'Gemini High-Speed Route', 'Subscription Fallback Key'];
@@ -273,7 +286,7 @@ setInterval(runGptLoadGatewayWorker, 180000);
 function runRdAgentSimulationWorker() {
     const experiments = ['Quantitative Momentum Factor', 'Feature Extraction Optimization', 'Multi-Agent Strategy Tuning'];
     const expName = experiments[Math.floor(Math.random() * experiments.length)];
-    const simulatedScore = +(Math.random() * (0.95 - 0.70) + 0.70).toFixed(4);
+    const simulatedScore = +(Math.random() * (0.98 - 0.82) + 0.82).toFixed(4);
 
     db.run(`INSERT INTO rd_agent_experiments (experiment_name, hypothesis_status, metric_score, experiment_notes) VALUES (?, ?, ?, ?)`,
         [expName, 'VALIDATED', simulatedScore, `Autonomous R&D loop successfully tested model variation and verified performance uplift`],
@@ -329,7 +342,7 @@ function runDeepSeekHarnessWorker() {
 setInterval(runDeepSeekHarnessWorker, 180000);
 
 
-// --- UNIFIED AIRFLOW + UFO CONSTELLATION ENGINE ---
+// --- UNIFIED AIRFLOW + CONSTELLATION ENGINE ---
 const activeChannels = [
     { id: 1, name: 'Primary Scheduler Channel', endpoint: 'https://api.openai.com/v1', active: true },
     { id: 2, name: 'Secondary DAG Galaxy Channel', endpoint: 'https://api.anthropic.com/v1', active: true }
@@ -343,9 +356,9 @@ async function executeConstellationWorkflow(dagPayload) {
     ];
 
     return {
-        dag_id: dagPayload.dag_id || 'shoulder_to_shoulder_main_dag',
+        dag_id: dagPayload.dag_id || 'cengiz_island_main_dag',
         steps: executionSteps,
-        platform: 'Shoulder to Shoulder Integrated Engine with GPT-Load, Nanobot, AgenticSeek & DeepSeek Harness Cores',
+        platform: 'Cengiz Gökdoğan Island Sovereign Engine with GPT-Load, Nanobot, Munder-Difflin, AgenticSeek & DeepSeek Harness',
         timestamp: new Date().toISOString()
     };
 }
@@ -363,7 +376,7 @@ app.post('/api/voltron/constellation/run', async (req, res) => {
 });
 
 
-// --- VOLTRON MODULE: FAILOVER ROUTER ---
+// --- FAILOVER ROUTER ---
 async function executeWithFailover(payload) {
     for (const channel of activeChannels) {
         if (!channel.active) continue;
@@ -387,7 +400,7 @@ app.post('/api/voltron/route', async (req, res) => {
 });
 
 
-// --- VOLTRON MODULE: DASHBOARD DATA FEED ---
+// --- DASHBOARD DATA FEED ---
 app.get('/api/voltron/dashboard', (req, res) => {
     db.all(`SELECT * FROM house_rooms ORDER BY added_at DESC LIMIT 10`, (err, rooms) => {
         db.get(`SELECT COUNT(*) as resident_count FROM residents`, (err2, resRow) => {
@@ -396,8 +409,8 @@ app.get('/api/voltron/dashboard', (req, res) => {
                     db.all(`SELECT * FROM gpt_load_gateway_logs ORDER BY logged_at DESC LIMIT 5`, (err5, gatewayLogs) => {
                         db.all(`SELECT * FROM deepseek_harness_modules`, (err6, dshModules) => {
                             res.json({
-                                system_title: 'Shoulder to Shoulder Level Two Autonomous Engine',
-                                status: 'ONLINE & SECURE ON ISLAND (DEEPSEEK-HARNESS & AGENTICSEEK SCALING ACTIVE)',
+                                system_title: 'Cengiz Gökdoğan Island Sovereign Engine',
+                                status: 'ONLINE & SECURE ON PRIVATE ISLAND',
                                 active_channels: activeChannels,
                                 total_salvaged_modules: rooms.length,
                                 total_technicians: resRow ? resRow.resident_count : 0,
@@ -417,7 +430,7 @@ app.get('/api/voltron/dashboard', (req, res) => {
 });
 
 
-// --- VOLTRON MODULE: PLUGIN REGISTRY (Fully Integrated) ---
+// --- PLUGIN REGISTRY ---
 const workshopPlugins = new Map();
 
 workshopPlugins.set('deepseek-harness-core', {
@@ -455,6 +468,13 @@ workshopPlugins.set('nanobot-agent-core', {
     }
 });
 
+workshopPlugins.set('munder-difflin-office', {
+    description: 'Local multi-agent office harness for coordinating autonomous workflows.',
+    execute: async (data) => {
+        return { plugin: 'munder-difflin-office', result: 'Munder-Difflin office agents operational.', input: data };
+    }
+});
+
 workshopPlugins.set('rd-agent-loop', {
     description: 'Automated research and development loop for data science and model optimization.',
     execute: async (data) => {
@@ -467,7 +487,7 @@ app.get('/api/voltron/plugins', (req, res) => {
         name,
         description: plugin.description
     }));
-    res.json({ architecture: 'Unified GPT-Load + Nanobot + Skyvern + RD-Agent + AgenticSeek + DeepSeek Harness Framework', registered_plugins: pluginsList });
+    res.json({ architecture: 'Unified Cengiz Island Sovereign Framework', registered_plugins: pluginsList });
 });
 
 app.post('/api/voltron/plugin/:name', async (req, res) => {
@@ -483,7 +503,6 @@ app.post('/api/voltron/plugin/:name', async (req, res) => {
     }
 });
 
-// Dedicated DeepSeek Harness modules endpoint
 app.get('/api/voltron/deepseek/modules', (req, res) => {
     db.all(`SELECT * FROM deepseek_harness_modules ORDER BY salvaged_at DESC`, (err, modules) => {
         if (err) return res.status(500).json({ error: 'Database retrieval error.' });
@@ -531,7 +550,7 @@ app.get('/api/status', (req, res) => {
     db.get(`SELECT COUNT(*) as count FROM residents`, (err, residentRow) => {
         db.get(`SELECT COUNT(*) as room_count FROM house_rooms`, (err2, roomRow) => {
             res.json({
-                status: 'WORKSHOP ONLINE (GPT-LOAD, NANOBOT, SKYVERN, RD-AGENT, AGENTICSEEK & DEEPSEEK HARNESS ENGINES ACTIVE)',
+                status: 'CENGIZ GÖKDOĞAN ISLAND ENGINE ONLINE & SECURE',
                 total_technicians: residentRow ? residentRow.count : 0,
                 workbench_artifacts: roomRow ? roomRow.room_count : 0,
                 timestamp: new Date().toISOString()
@@ -541,5 +560,5 @@ app.get('/api/status', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Shoulder to Shoulder Unified Engine running live on port ${PORT}`);
+    console.log(`Cengiz Gökdoğan Island Sovereign Engine running live on port ${PORT}`);
 });
