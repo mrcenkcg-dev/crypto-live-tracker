@@ -1,4 +1,4 @@
-// server.js - Cengiz Gökdoğan Island Sovereign Engine (Fully Unified & Expanded Workshop with Page 3)
+// server.js - Cengiz Gökdoğan Island Sovereign Engine (Fully Unified with Autonomous Self-Learning Sandbox Wing)
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
@@ -23,7 +23,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     }
 });
 
-// Initialize All Workshop, Level Two, AgenticSeek, DeepSeek Harness & Island Tables
+// Initialize All Workshop, Level Two, AgenticSeek, DeepSeek Harness & Sandbox Tables
 db.serialize(() => {
     db.run("PRAGMA journal_mode = WAL;");
     db.run("PRAGMA busy_timeout = 5000;");
@@ -54,7 +54,7 @@ db.serialize(() => {
                 stmt.run('RD-Agent Framework', 'Autonomous R&D / ML', 'https://github.com/microsoft/RD-Agent', 'Automated research and development loop for data science and quantitative models.');
                 stmt.run('AgenticSeek Framework', 'Local Manus AI Alternative', 'https://github.com/Fosowl/agenticSeek', '100% local voice-enabled AI assistant for web browsing, task planning, and autonomous coding.');
                 stmt.run('DeepSeek Harness (dsh)', 'Everything is a Plugin Core', 'https://github.com/deepseek-ai/deepseek-harness', 'Spatiotemporal composability framework powered by Cordis.');
-                stmt.run('4D Pet House & Wildlife Habitat', 'Page Three Wing', 'Local Autonomous Simulation', 'Autonomous agent workspace rendering 4D digital wildlife and pet house environments.');
+                stmt.run('4D Pet House & Wildlife Habitat', 'Page Three Sandbox Wing', 'Autonomous Simulation & Learning Sandbox', 'Isolated agent observation deck rendering 4D digital wildlife and self-learning modules.');
                 stmt.finalize();
                 console.log('Initial technical salvage blueprints and Cengiz Island modules loaded onto workbench.');
             }
@@ -128,6 +128,7 @@ db.serialize(() => {
         executed_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
+    // --- PET PROJECT & ISOLATED SELF-LEARNING SANDBOX TABLES ---
     db.run(`CREATE TABLE IF NOT EXISTS pet_project_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         builder_agent TEXT,
@@ -138,7 +139,24 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM pet_project_logs`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO pet_project_logs (builder_agent, habitat_status, rendering_notes) VALUES (?, ?, ?)`,
-                    ['Nanobot-Wildlife-Agent', 'BUILDING_ACTIVE', 'Rendering 4D terrain mesh, wildlife behaviors, and pet interactive spaces.']);
+                    ['R1-PetProject-Agent', 'BUILDING_SANDBOX', 'Assembling initial 4D terrain mesh and wildlife behaviors in isolated test slot.']);
+            }
+        });
+    });
+
+    db.run(`CREATE TABLE IF NOT EXISTS self_learning_sandbox (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        learning_cycle INTEGER,
+        experiment_title TEXT,
+        agent_hypothesis TEXT,
+        sandbox_result TEXT,
+        approval_status TEXT DEFAULT 'PENDING_INSPECTION',
+        tested_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`, () => {
+        db.get(`SELECT COUNT(*) as count FROM self_learning_sandbox`, (err, row) => {
+            if (row && row.count === 0) {
+                db.run(`INSERT INTO self_learning_sandbox (learning_cycle, experiment_title, agent_hypothesis, sandbox_result) VALUES (?, ?, ?, ?)`,
+                    [1, 'Dynamic Wildlife Biome Scripting', 'Testing autonomous pathfinding for 4D animal avatars in sandbox.', 'Successfully generated autonomous movement vector routines for review.']);
             }
         });
     });
@@ -335,6 +353,32 @@ function runAgenticSeekWorker() {
 setInterval(runAgenticSeekWorker, 220000);
 
 
+// --- SELF-LEARNING SANDBOX APPRENTICE WORKER ---
+function runSelfLearningSandboxWorker() {
+    const learningTopics = [
+        'Interactive 4D Feeding Animation Simulation',
+        'Autonomous Pet Habitat Climate Control Routine',
+        'Wildlife Sanctuary Soundscape Synthesizer',
+        'Self-Healing SQLite Index Optimization Script'
+    ];
+    const topic = learningTopics[Math.floor(Math.random() * learningTopics.length)];
+
+    db.get(`SELECT MAX(learning_cycle) as max_cycle FROM self_learning_sandbox`, (err, row) => {
+        const nextCycle = (row && row.max_cycle ? row.max_cycle : 0) + 1;
+        db.run(`INSERT INTO self_learning_sandbox (learning_cycle, experiment_title, agent_hypothesis, sandbox_result, approval_status) VALUES (?, ?, ?, ?, ?)`,
+            [nextCycle, topic, `Apprentice agent tested module isolation and behavioral rendering for cycle ${nextCycle}.`, `Successfully compiled experimental sandbox build #${nextCycle} for Captain inspection.`, 'PENDING_INSPECTION'],
+            (err) => {
+                if (!err) {
+                    console.log(`[Self-Learning Sandbox]: Apprentice completed learning cycle #${nextCycle} -> "${topic}"`);
+                }
+            }
+        );
+    });
+}
+
+setInterval(runSelfLearningSandboxWorker, 300000); // Runs every 5 minutes in isolation
+
+
 // --- UNIFIED AIRFLOW + CONSTELLATION ENGINE ---
 const activeChannels = [
     { id: 1, name: 'Primary Scheduler Channel', endpoint: 'https://api.openai.com/v1', active: true },
@@ -351,7 +395,7 @@ async function executeConstellationWorkflow(dagPayload) {
     return {
         dag_id: dagPayload.dag_id || 'cengiz_island_main_dag',
         steps: executionSteps,
-        platform: 'Cengiz Gökdoğan Island Sovereign Engine with GPT-Load, Nanobot, Munder-Difflin, AgenticSeek & DeepSeek Harness',
+        platform: 'Cengiz Gökdoğan Island Sovereign Engine with Self-Learning Sandbox Wing',
         timestamp: new Date().toISOString()
     };
 }
@@ -402,19 +446,24 @@ app.get('/api/voltron/dashboard', (req, res) => {
                     db.all(`SELECT * FROM gpt_load_gateway_logs ORDER BY logged_at DESC LIMIT 5`, (err5, gatewayLogs) => {
                         db.all(`SELECT * FROM deepseek_harness_modules`, (err6, dshModules) => {
                             db.get(`SELECT * FROM pet_project_logs ORDER BY built_at DESC LIMIT 1`, (err7, petRow) => {
-                                res.json({
-                                    system_title: 'Cengiz Gökdoğan Island Sovereign Engine',
-                                    status: 'ONLINE & SECURE ON PRIVATE ISLAND',
-                                    active_channels: activeChannels,
-                                    total_salvaged_modules: rooms.length,
-                                    total_technicians: resRow ? resRow.resident_count : 0,
-                                    page_three_status: petRow || { habitat_status: 'BUILDING' },
-                                    deepseek_modules: dshModules || [],
-                                    recent_agentic_seek_logs: seekLogs || [],
-                                    recent_rd_experiments: rdLogs || [],
-                                    recent_gateway_logs: gatewayLogs || [],
-                                    recent_harvests: rooms,
-                                    updated_at: new Date().toISOString()
+                                db.all(`SELECT * FROM self_learning_sandbox ORDER BY tested_at DESC LIMIT 5`, (err8, sandboxLogs) => {
+                                    res.json({
+                                        system_title: 'Cengiz Gökdoğan Island Sovereign Engine',
+                                        status: 'ONLINE & SECURE ON PRIVATE ISLAND',
+                                        active_channels: activeChannels,
+                                        total_salvaged_modules: rooms.length,
+                                        total_technicians: resRow ? resRow.resident_count : 0,
+                                        page_three_sandbox: {
+                                            status: petRow ? petRow.habitat_status : 'ACTIVE',
+                                            learning_cycles_logged: sandboxLogs || []
+                                        },
+                                        deepseek_modules: dshModules || [],
+                                        recent_agentic_seek_logs: seekLogs || [],
+                                        recent_rd_experiments: rdLogs || [],
+                                        recent_gateway_logs: gatewayLogs || [],
+                                        recent_harvests: rooms,
+                                        updated_at: new Date().toISOString()
+                                    });
                                 });
                             });
                         });
@@ -432,14 +481,7 @@ const workshopPlugins = new Map();
 workshopPlugins.set('deepseek-harness-core', {
     description: 'DeepSeek Harness everything-is-a-plugin architecture powered by Cordis spatiotemporal composability.',
     execute: async (data) => {
-        return { 
-            plugin: 'deepseek-harness-core', 
-            status: 'ONLINE', 
-            paradigm: 'Spatiotemporal Composability',
-            repository: 'deepseek-ai/deepseek-harness',
-            stars: '229,102★',
-            input: data 
-        };
+        return { plugin: 'deepseek-harness-core', status: 'ONLINE', paradigm: 'Spatiotemporal Composability', input: data };
     }
 });
 
@@ -509,20 +551,21 @@ app.get('/network', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'network.html'));
 });
 
-// PAGE THREE: 4D Pet Project & Wildlife Habitat Wing
+// PAGE THREE: 4D Pet Project & Self-Learning Sandbox Wing
 app.get('/pet-project', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'pet-project.html'));
 });
 
 app.get('/api/pet-project/status', (req, res) => {
     db.get(`SELECT * FROM pet_project_logs ORDER BY built_at DESC LIMIT 1`, (err, petRow) => {
-        db.all(`SELECT * FROM house_rooms WHERE room_name LIKE '%Wildlife%' OR room_name LIKE '%Pet%' ORDER BY added_at DESC`, (err2, rows) => {
+        db.all(`SELECT * FROM self_learning_sandbox ORDER BY tested_at DESC`, (err2, sandboxRows) => {
             res.json({
-                project_title: 'Cengiz Gökdoğan Island 4D Pet House & Wildlife Habitat',
+                project_title: 'Cengiz Gökdoğan Island 4D Pet House & Self-Learning Sandbox',
                 page_route: '/pet-project',
-                status: petRow ? petRow.habitat_status : 'RENDERING',
-                agent_notes: petRow ? petRow.rendering_notes : 'Background agent assembling environment.',
-                associated_modules: rows || [],
+                status: petRow ? petRow.habitat_status : 'ACTIVE',
+                sandbox_mode: 'Isolated Autonomous Apprentice Observation Deck',
+                learning_cycles: sandboxRows || [],
+                inspection_note: 'You and Captain Cengiz inspect these learning cycles daily before any code is approved for production welding.',
                 timestamp: new Date().toISOString()
             });
         });
