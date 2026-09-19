@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// SQLite Database Setup (The Workshop Workbench)
+// SQLite Database Setup (The Workshop Workbench - Hardened WAL Mode)
 const dbFile = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
@@ -23,8 +23,12 @@ const db = new sqlite3.Database(dbFile, (err) => {
     }
 });
 
-// Initialize All Workshop, Level Two, AgenticSeek & DeepSeek Harness Tables
+// Hardening database for concurrent background workers and multi-agent logging
 db.serialize(() => {
+    db.run("PRAGMA journal_mode = WAL;");
+    db.run("PRAGMA busy_timeout = 5000;");
+
+    // Initialize All Workshop, Level Two, AgenticSeek & DeepSeek Harness Tables
     db.run(`CREATE TABLE IF NOT EXISTS residents (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
