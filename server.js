@@ -1,675 +1,103 @@
-// server.js - Cengiz Gökdoğan Island Sovereign Engine (Level Two Autonomous Sandbox Unified)
+/**
+ * Sovereign Engine: Financial Intelligence & Autonomous Worker Core
+ * Stack: Node.js, Express, SQLite, Autonomous Loop Architecture
+ * Objective: 24/7 background utility, automated processing, and financial logic tracking.
+ */
+
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const https = require('https');
-const http = require('http');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware Setup
-app.use(express.urlencoded({ extended: true }));
+// Middleware for parsing JSON
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
-// SQLite Database Setup (The Workshop Workbench - Hardened WAL Mode & Busy Timeout)
-const dbFile = path.join(__dirname, 'database.sqlite');
-const db = new sqlite3.Database(dbFile, (err) => {
+// 1. Initialize SQLite Database (Local Sovereign Storage)
+const dbPath = path.resolve(__dirname, 'sovereign_engine.db');
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
-        console.error('Database connection error:', err.message);
+        console.error('❌ Database connection error:', err.message);
     } else {
-        console.log('Connected to Cengiz Gökdoğan Island sovereign workbench (Level Two Unified).');
+        console.log('✅ Connected to Sovereign SQLite Database.');
     }
 });
 
-// Initialize All Workshop, Level Two, AgenticSeek, DeepSeek Harness & Sandbox Tables
+// Create tables for logging system state, agent actions, and financial metrics
 db.serialize(() => {
-    db.run("PRAGMA journal_mode = WAL;");
-    db.run("PRAGMA busy_timeout = 5000;");
-
-    db.run(`CREATE TABLE IF NOT EXISTS residents (
+    db.run(`CREATE TABLE IF NOT EXISTS system_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        email TEXT,
-        phone TEXT,
-        arrived_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-
-    db.run(`CREATE TABLE IF NOT EXISTS house_rooms (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        room_name TEXT,
-        room_type TEXT,
-        room_url TEXT,
-        description TEXT,
-        added_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM house_rooms`, (err, row) => {
-            if (row && row.count === 0) {
-                const stmt = db.prepare(`INSERT INTO house_rooms (room_name, room_type, room_url, description) VALUES (?, ?, ?, ?)`);
-                stmt.run('GPT-Load AI Gateway', 'Self-Hosted Gateway Core', 'https://github.com/tbphp/gpt-load', 'Multi-channel credential routing, load balancing, failover, and usage metering.');
-                stmt.run('Nanobot Agent Framework', 'Python AI Agent Core', 'https://github.com/HKUDS/nanobot', 'Ultra-lightweight self-hosted personal AI agent framework with memory and MCP.');
-                stmt.run('Munder-Difflin Harness', 'Local Multi-Agent Office', 'https://github.com/chaitanyagiri/munder-difflin', 'Local multi-agent harness to run an office of autonomous agents.');
-                stmt.run('Skyvern-InfoSpider Engine', 'AI Browser & Data Extractor', 'https://github.com/Skyvern-AI/skyvern', 'Blended browser-vision automation and structured data retrieval.');
-                stmt.run('RD-Agent Framework', 'Autonomous R&D / ML', 'https://github.com/microsoft/RD-Agent', 'Automated research and development loop for data science and quantitative models.');
-                stmt.run('AgenticSeek Framework', 'Local Manus AI Alternative', 'https://github.com/Fosowl/agenticSeek', '100% local voice-enabled AI assistant for web browsing, task planning, and autonomous coding.');
-                stmt.run('DeepSeek Harness (dsh)', 'Everything is a Plugin Core', 'https://github.com/deepseek-ai/deepseek-harness', 'Spatiotemporal composability framework powered by Cordis.');
-                stmt.run('Ruflo Swarm Harness', 'Multi-Player Agent Swarm', 'https://github.com/ruvnet/ruflo', 'Autonomous workflows, adaptive memory, and vector RAG integration.');
-                stmt.run('Upsonic Python Agent Core', 'Autonomous Python Execution', 'https://github.com/Upsonic/Upsonic', 'Robust agentic execution loops and structured modular workflows.');
-                stmt.run('GenAI Agents Library', 'Multi-Agent Frameworks', 'https://github.com/NirDiamant/GenAI_Agents', 'Advanced generative AI agent tutorials and collaborative design patterns.');
-                stmt.run('4D Pet House & Wildlife Habitat', 'Page Three Sandbox Wing', 'Autonomous Simulation & Learning Sandbox', 'Isolated agent observation deck rendering 4D digital wildlife and self-learning modules.');
-                stmt.finalize();
-                console.log('Initial technical salvage blueprints and Level Two Cengiz Island modules loaded onto workbench.');
-            }
-        });
-    });
-
-    db.run(`CREATE TABLE IF NOT EXISTS constell_tasks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        task_name TEXT,
-        dag_group TEXT,
-        status TEXT DEFAULT 'PENDING',
-        scheduled_for DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-
-    db.run(`CREATE TABLE IF NOT EXISTS mining_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        miner_source TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        module_name TEXT,
         status TEXT,
-        extracted_data TEXT,
-        mined_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        message TEXT
     )`);
 
-    db.run(`CREATE TABLE IF NOT EXISTS vision_extractions (
+    db.run(`CREATE TABLE IF NOT EXISTS financial_metrics (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        target_platform TEXT,
-        extraction_status TEXT,
-        vision_notes TEXT,
-        extracted_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        metric_key TEXT,
+        metric_value REAL,
+        notes TEXT
     )`);
-
-    db.run(`CREATE TABLE IF NOT EXISTS nanobot_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        agent_action TEXT,
-        execution_status TEXT,
-        memory_payload TEXT,
-        logged_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-
-    db.run(`CREATE TABLE IF NOT EXISTS munder_difflin_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        office_action TEXT,
-        agent_status TEXT,
-        payload_details TEXT,
-        executed_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-
-    db.run(`CREATE TABLE IF NOT EXISTS gpt_load_gateway_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        channel_name TEXT,
-        routing_action TEXT,
-        health_status TEXT,
-        traffic_notes TEXT,
-        logged_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-
-    db.run(`CREATE TABLE IF NOT EXISTS rd_agent_experiments (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        experiment_name TEXT,
-        hypothesis_status TEXT,
-        metric_score REAL,
-        experiment_notes TEXT,
-        run_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-
-    db.run(`CREATE TABLE IF NOT EXISTS agentic_seek_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        task_type TEXT,
-        execution_target TEXT,
-        status TEXT,
-        payload_notes TEXT,
-        executed_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-
-    // --- LEVEL TWO SWARM & AGENT LOGS ---
-    db.run(`CREATE TABLE IF NOT EXISTS level_two_swarm_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        swarm_protocol TEXT,
-        coordination_status TEXT,
-        memory_snapshot TEXT,
-        synchronized_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM level_two_swarm_logs`, (err, row) => {
-            if (row && row.count === 0) {
-                db.run(`INSERT INTO level_two_swarm_logs (swarm_protocol, coordination_status, memory_snapshot) VALUES (?, ?, ?)`,
-                    ['Ruflo-Upsonic Multi-Swarm Protocol', 'ACTIVE', 'Initialized adaptive memory and vector RAG state channels in local sandbox.']);
-            }
-        });
-    });
-
-    // --- PET PROJECT & ISOLATED SELF-LEARNING SANDBOX TABLES ---
-    db.run(`CREATE TABLE IF NOT EXISTS pet_project_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        builder_agent TEXT,
-        habitat_status TEXT,
-        rendering_notes TEXT,
-        built_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM pet_project_logs`, (err, row) => {
-            if (row && row.count === 0) {
-                db.run(`INSERT INTO pet_project_logs (builder_agent, habitat_status, rendering_notes) VALUES (?, ?, ?)`,
-                    ['R1-PetProject-Agent', 'BUILDING_SANDBOX', 'Assembling initial 4D terrain mesh and wildlife behaviors with Level Two swarm patterns in isolated test slot.']);
-            }
-        });
-    });
-
-    db.run(`CREATE TABLE IF NOT EXISTS self_learning_sandbox (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        learning_cycle INTEGER,
-        experiment_title TEXT,
-        agent_hypothesis TEXT,
-        sandbox_result TEXT,
-        approval_status TEXT DEFAULT 'PENDING_INSPECTION',
-        tested_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM self_learning_sandbox`, (err, row) => {
-            if (row && row.count === 0) {
-                db.run(`INSERT INTO self_learning_sandbox (learning_cycle, experiment_title, agent_hypothesis, sandbox_result) VALUES (?, ?, ?, ?)`,
-                    [1, '2-Hour Biome Adaptation Routine', 'Testing autonomous upgrade logic and parameter optimization every 2 hours with Level Two swarm patterns.', 'Successfully compiled initial 2-hour sandbox check for review.']);
-            }
-        });
-    });
-
-    db.run(`CREATE TABLE IF NOT EXISTS deepseek_harness_modules (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        module_key TEXT UNIQUE,
-        plugin_type TEXT,
-        composability_status TEXT,
-        source_reference TEXT,
-        salvaged_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM deepseek_harness_modules`, (err, row) => {
-            if (row && row.count === 0) {
-                const stmt = db.prepare(`INSERT INTO deepseek_harness_modules (module_key, plugin_type, composability_status, source_reference) VALUES (?, ?, ?, ?)`);
-                stmt.run('dsh-web-ui-core', 'Web Interface Client', 'ACTIVE', 'npx @deepseek-ai/dsh web');
-                stmt.run('cordis-spatiotemporal-engine', 'Composable Core', 'ACTIVE', 'A Programming Paradigm for Spatiotemporal Composability');
-                stmt.run('ruflo-swarm-harness', 'Multi-Player Swarm', 'VERIFIED', 'ruvnet/ruflo adaptive memory & RAG');
-                stmt.run('upsonic-python-runtime', 'Autonomous Execution', 'READY', 'Upsonic/Upsonic Python agent core');
-                stmt.run('genai-agents-pipeline', 'Collaboration Framework', 'READY', 'NirDiamant/GenAI_Agents patterns');
-                stmt.finalize();
-                console.log('[DeepSeek-Harness & Level Two Salvage]: Core plugin blueprints successfully welded to SQLite workbench.');
-            }
-        });
-    });
 });
 
-// --- ISLAND VOLTRON HUNTER & HARVEST ENGINE ---
-function runHunterEngine() {
-    const harvestQueries = [
-        'topic:autonomous-agents',
-        'topic:machine-learning-engineering',
-        'topic:quant-trading',
-        'topic:data-pipeline-automation',
-        'topic:ai-agents'
-    ];
-    const query = harvestQueries[Math.floor(Math.random() * harvestQueries.length)];
-
-    const options = {
-        hostname: 'api.github.com',
-        path: `/search/repositories?q=${query}&sort=stars&order=desc`,
-        headers: { 'User-Agent': 'Cengiz-Gokdogan-Island-Agent' }
-    };
-
-    https.get(options, (res) => {
-        let data = '';
-        res.on('data', (chunk) => { data += chunk; });
-        res.on('end', () => {
-            try {
-                const parsed = JSON.parse(data);
-                if (parsed.items && parsed.items.length > 0) {
-                    const repo = parsed.items[Math.floor(Math.random() * parsed.items.length)];
-                    const roomName = `Harvest Module: ${repo.name} [${repo.stargazers_count}★]`;
-                    const roomType = repo.language || 'Sovereign Cloud Architecture';
-                    const roomUrl = repo.html_url;
-                    const description = `Repository: ${repo.full_name} | Desc: ${repo.description || 'Island infrastructure component'} | Stars: ${repo.stargazers_count}`;
-
-                    db.run(`INSERT INTO house_rooms (room_name, room_type, room_url, description) VALUES (?, ?, ?, ?)`,
-                        [roomName, roomType, roomUrl, description],
-                        (err) => {
-                            if (!err) {
-                                console.log(`[Island Hunter Engine]: Successfully salvaged and welded -> "${roomName}"`);
-                            }
-                        }
-                    );
-                }
-            } catch (e) {
-                console.log('[Island Hunter Engine]: Parse skipped.');
-            }
-        });
-    }).on('error', (err) => {
-        console.log('[Island Hunter Engine]: Scan pulse skipped.');
-    });
+// Helper function to log system events
+function logEvent(module, status, message) {
+    const stmt = db.prepare(`INSERT INTO system_logs (module_name, status, message) VALUES (?, ?, ?)`);
+    stmt.run(module, status, message);
+    stmt.finalize();
 }
 
-setInterval(runHunterEngine, 120000);
-
-
-// --- LEVEL TWO SWARM COORDINATION WORKER ---
-function runLevelTwoSwarmWorker() {
-    db.run(`INSERT INTO level_two_swarm_logs (swarm_protocol, coordination_status, memory_snapshot) VALUES (?, ?, ?)`,
-        ['Ruflo-Upsonic Synced Loop', 'SYNCHRONIZED', 'Level Two background swarm state evaluated across isolated sandbox nodes.'],
-        (err) => {
-            if (!err) {
-                console.log('[Level Two Swarm Worker]: Swarm adaptation heartbeat logged.');
-            }
-        }
-    );
-}
-
-setInterval(runLevelTwoSwarmWorker, 200000);
-
-
-// --- SAFE BACKGROUND MINING WORKER ---
-function runBackgroundMiner() {
-    const miningSources = ['GitHub Public Feed', 'Open API Stream', 'Island Telemetry Pulse'];
-    const activeSource = miningSources[Math.floor(Math.random() * miningSources.length)];
-    
-    db.run(`INSERT INTO mining_logs (miner_source, status, extracted_data) VALUES (?, ?, ?)`,
-        [activeSource, 'SUCCESS', `Data packet successfully extracted and indexed from ${activeSource}`]
-    );
-}
-
-setInterval(runBackgroundMiner, 180000);
-
-
-// --- SKYVERN-INFOSPIDER VISION & EXTRACTION WORKER ---
-function runVisionExtractionWorker() {
-    const targets = ['Browser Visual Stream', 'Structured Data Toolbox', 'Automated Workflow DOM'];
-    const target = targets[Math.floor(Math.random() * targets.length)];
-
-    db.run(`INSERT INTO vision_extractions (target_platform, extraction_status, vision_notes) VALUES (?, ?, ?)`,
-        [target, 'SUCCESS', `Extracted UI telemetry and structured parameters using hybrid vision-spider pipeline`],
-        (err) => {
-            if (!err) {
-                console.log(`[Skyvern-InfoSpider Engine]: Visual extraction logged securely to SQLite workbench.`);
-            }
-        }
-    );
-}
-
-setInterval(runVisionExtractionWorker, 240000);
-
-
-// --- NANOBOT AGENT BACKGROUND WORKER ---
-function runNanobotAgentWorker() {
-    const actions = ['Memory Sync', 'MCP Tool Delegation', 'Agent Heartbeat Check', 'Multi-Agent State Routine'];
-    const currentAction = actions[Math.floor(Math.random() * actions.length)];
-
-    db.run(`INSERT INTO nanobot_logs (agent_action, execution_status, memory_payload) VALUES (?, ?, ?)`,
-        [currentAction, 'ACTIVE', `Nanobot framework executed routine task with persistent SQLite session memory`],
-        (err) => {
-            if (!err) {
-                console.log(`[Nanobot Engine]: Agent action '${currentAction}' logged successfully.`);
-            }
-        }
-    );
-}
-
-setInterval(runNanobotAgentWorker, 210000);
-
-
-// --- MUNDER-DIFFLIN LOCAL OFFICE WORKER ---
-function runMunderDifflinOfficeWorker() {
-    db.run(`INSERT INTO munder_difflin_logs (office_action, agent_status, payload_details) VALUES (?, ?, ?)`,
-        ['Office Delegation Pulse', 'OPTIMIZED', 'Local multi-agent office harness managing subtasks successfully.'],
-        (err) => {
-            if (!err) console.log('[Munder-Difflin Harness]: Office agents active.');
-        }
-    );
-}
-
-setInterval(runMunderDifflinOfficeWorker, 240000);
-
-
-// --- GPT-LOAD GATEWAY HEALTH WORKER ---
-function runGptLoadGatewayWorker() {
-    const gatewayChannels = ['OpenAI Primary Pool', 'Anthropic Codex Relay', 'Gemini High-Speed Route', 'Subscription Fallback Key'];
-    const selectedChannel = gatewayChannels[Math.floor(Math.random() * gatewayChannels.length)];
-
-    db.run(`INSERT INTO gpt_load_gateway_logs (channel_name, routing_action, health_status, traffic_notes) VALUES (?, ?, ?, ?)`,
-        [selectedChannel, 'LOAD_BALANCE_CHECK', 'HEALTHY', `GPT-Load gateway verified weight, token cooldowns, and session affinity`],
-        (err) => {
-            if (!err) {
-                console.log(`[GPT-Load Gateway]: Health check passed for channel '${selectedChannel}'.`);
-            }
-        }
-    );
-}
-
-setInterval(runGptLoadGatewayWorker, 180000);
-
-
-// --- RD-AGENT SIMULATION WORKER ---
-function runRdAgentSimulationWorker() {
-    const experiments = ['Quantitative Momentum Factor', 'Feature Extraction Optimization', 'Multi-Agent Strategy Tuning'];
-    const expName = experiments[Math.floor(Math.random() * experiments.length)];
-    const simulatedScore = +(Math.random() * (0.98 - 0.82) + 0.82).toFixed(4);
-
-    db.run(`INSERT INTO rd_agent_experiments (experiment_name, hypothesis_status, metric_score, experiment_notes) VALUES (?, ?, ?, ?)`,
-        [expName, 'VALIDATED', simulatedScore, `Autonomous R&D loop successfully tested model variation and verified performance uplift`],
-        (err) => {
-            if (!err) {
-                console.log(`[RD-Agent Core]: Experiment '${expName}' completed with score ${simulatedScore}.`);
-            }
-        }
-    );
-}
-
-setInterval(runRdAgentSimulationWorker, 260000);
-
-
-// --- AGENTICSEEK LOCAL EXECUTION WORKER ---
-function runAgenticSeekWorker() {
-    const seekActions = ['Autonomous Web Search', 'Local Code Generation & Debugging', 'Task Decomposition'];
-    const action = seekActions[Math.floor(Math.random() * seekActions.length)];
-
-    db.run(`INSERT INTO agentic_seek_logs (task_type, execution_target, status, payload_notes) VALUES (?, ?, ?, ?)`,
-        [action, 'Local Hardware Sandbox', 'SUCCESS', `AgenticSeek successfully browsed local/web target and processed query securely without cloud APIs`],
-        (err) => {
-            if (!err) {
-                console.log(`[AgenticSeek Engine]: Executed task '${action}' successfully.`);
-            }
-        }
-    );
-}
-
-setInterval(runAgenticSeekWorker, 220000);
-
-
-// --- SELF-LEARNING SANDBOX APPRENTICE WORKER (EXACTLY EVERY 2 HOURS) ---
-const TWO_HOURS_MS = 7200000;
-
-function runSelfLearningSandboxWorker() {
-    const learningTopics = [
-        'Autonomous 2-Hour Biome & Wildlife Optimization (Level Two Swarm)',
-        'Self-Healing SQLite Index & Query Tuning Routine',
-        'Sandbox Memory Routing & Ruflo Vector Vector Vector Vector Upgrade Vector Test',
-        'Network Telemetry Behavioral Check'
-    ];
-    const topic = learningTopics[Math.floor(Math.random() * learningTopics.length)];
-
-    db.get(`SELECT MAX(learning_cycle) as max_cycle FROM self_learning_sandbox`, (err, row) => {
-        const nextCycle = (row && row.max_cycle ? row.max_cycle : 0) + 1;
-        db.run(`INSERT INTO self_learning_sandbox (learning_cycle, experiment_title, agent_hypothesis, sandbox_result, approval_status) VALUES (?, ?, ?, ?, ?)`,
-            [nextCycle, topic, `Apprentice agent evaluated system telemetry and compiled 2-hour upgrade proposal #${nextCycle} using Level Two patterns.`, `Successfully generated experimental build cycle #${nextCycle} for Captain Cengiz inspection.`, 'PENDING_INSPECTION'],
-            (err) => {
-                if (!err) {
-                    console.log(`[Self-Learning Sandbox]: 2-hour cycle #${nextCycle} completed -> "${topic}"`);
-                }
-            }
-        );
-    });
-}
-
-setInterval(runSelfLearningSandboxWorker, TWO_HOURS_MS);
-
-
-// --- UNIFIED AIRFLOW + CONSTELLATION ENGINE ---
-const activeChannels = [
-    { id: 1, name: 'Primary Scheduler Channel', endpoint: 'https://api.openai.com/v1', active: true },
-    { id: 2, name: 'Secondary DAG Galaxy Channel', endpoint: 'https://api.anthropic.com/v1', active: true }
-];
-
-async function executeConstellationWorkflow(dagPayload) {
-    const executionSteps = [
-        { step: 'DAG_INIT', status: 'SUCCESS', details: 'Initialized workflow context' },
-        { step: 'AGENT_DECOMPOSITION', status: 'SUCCESS', details: 'Task broken into sub-agent nodes (Ruflo Swarm)' },
-        { step: 'SCHEDULED_DISPATCH', status: 'SUCCESS', details: 'Dispatched through active router channels' }
-    ];
-
-    return {
-        dag_id: dagPayload.dag_id || 'cengiz_island_main_dag',
-        steps: executionSteps,
-        platform: 'Cengiz Gökdoğan Island Sovereign Engine (Level Two Sandbox Cycle)',
-        timestamp: new Date().toISOString()
-    };
-}
-
-app.post('/api/voltron/constellation/run', async (req, res) => {
-    try {
-        const result = await executeConstellationWorkflow(req.body);
-        db.run(`INSERT INTO constell_tasks (task_name, dag_group, status) VALUES (?, ?, ?)`,
-            [req.body.task_name || 'Autonomous Harvest Sweep', req.body.dag_id || 'main_galaxy', 'COMPLETED']
-        );
-        res.json({ status: 'CONSTELLATION WORKFLOW EXECUTED', result });
-    } catch (error) {
-        res.status(500).json({ status: 'CONSTELLATION ERROR', error: error.message });
-    }
-});
-
-
-// --- FAILOVER ROUTER ---
-async function executeWithFailover(payload) {
-    for (const channel of activeChannels) {
-        if (!channel.active) continue;
-        
-        db.run(`INSERT INTO gpt_load_gateway_logs (channel_name, routing_action, health_status, traffic_notes) VALUES (?, ?, ?, ?)`,
-            [channel.name, 'FAILOVER_DISPATCH', 'ACTIVE', `Successfully routed payload through multi-credential gateway pool`]
-        );
-
-        return { status: 'success', routed_through: channel.name, gateway_mode: 'GPT-Load Multi-Credential Pool', payload: payload };
-    }
-    throw new Error('All gateway channels exhausted.');
-}
-
-app.post('/api/voltron/route', async (req, res) => {
-    try {
-        const result = await executeWithFailover(req.body);
-        res.json({ status: 'VOLTRON ROUTE SECURED', details: result });
-    } catch (error) {
-        res.status(500).json({ status: 'ROUTER ALERT', error: error.message });
-    }
-});
-
-
-// --- DASHBOARD DATA FEED ---
-app.get('/api/voltron/dashboard', (req, res) => {
-    db.all(`SELECT * FROM house_rooms ORDER BY added_at DESC LIMIT 10`, (err, rooms) => {
-        db.get(`SELECT COUNT(*) as resident_count FROM residents`, (err2, resRow) => {
-            db.all(`SELECT * FROM agentic_seek_logs ORDER BY executed_at DESC LIMIT 5`, (err3, seekLogs) => {
-                db.all(`SELECT * FROM rd_agent_experiments ORDER BY run_at DESC LIMIT 5`, (err4, rdLogs) => {
-                    db.all(`SELECT * FROM gpt_load_gateway_logs ORDER BY logged_at DESC LIMIT 5`, (err5, gatewayLogs) => {
-                        db.all(`SELECT * FROM deepseek_harness_modules`, (err6, dshModules) => {
-                            db.get(`SELECT * FROM pet_project_logs ORDER BY built_at DESC LIMIT 1`, (err7, petRow) => {
-                                db.all(`SELECT * FROM self_learning_sandbox ORDER BY tested_at DESC LIMIT 5`, (err8, sandboxLogs) => {
-                                    db.all(`SELECT * FROM level_two_swarm_logs ORDER BY synchronized_at DESC LIMIT 5`, (err9, swarmLogs) => {
-                                        res.json({
-                                            system_title: 'Cengiz Gökdoğan Island Sovereign Engine (Level Two Unified)',
-                                            status: 'ONLINE & SECURE ON PRIVATE ISLAND',
-                                            active_channels: activeChannels,
-                                            total_salvaged_modules: rooms.length,
-                                            total_technicians: resRow ? resRow.resident_count : 0,
-                                            page_three_sandbox: {
-                                                status: petRow ? petRow.habitat_status : 'ACTIVE',
-                                                review_interval: 'Every 2 Hours',
-                                                learning_cycles_logged: sandboxLogs || [],
-                                                swarm_coordination: swarmLogs || []
-                                            },
-                                            deepseek_modules: dshModules || [],
-                                            recent_agentic_seek_logs: seekLogs || [],
-                                            recent_rd_experiments: rdLogs || [],
-                                            recent_gateway_logs: gatewayLogs || [],
-                                            recent_harvests: rooms,
-                                            updated_at: new Date().toISOString()
-                                        });
-                                    });
-                                });
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    });
-});
-
-
-// --- PLUGIN REGISTRY ---
-const workshopPlugins = new Map();
-
-workshopPlugins.set('deepseek-harness-core', {
-    description: 'DeepSeek Harness everything-is-a-plugin architecture powered by Cordis spatiotemporal composability.',
-    execute: async (data) => {
-        return { plugin: 'deepseek-harness-core', status: 'ONLINE', paradigm: 'Spatiotemporal Composability', input: data };
-    }
-});
-
-workshopPlugins.set('ruflo-swarm-harness', {
-    description: 'Ruflo multi-player swarm harness with adaptive memory and vector RAG integration.',
-    execute: async (data) => {
-        return { plugin: 'ruflo-swarm-harness', status: 'ACTIVE', paradigm: 'Autonomous Swarm Coordination', input: data };
-    }
-});
-
-workshopPlugins.set('upsonic-execution-loop', {
-    description: 'Upsonic autonomous Python execution framework for structured agent loops.',
-    execute: async (data) => {
-        return { plugin: 'upsonic-execution-loop', status: 'READY', paradigm: 'Structured Python Agents', input: data };
-    }
-});
-
-workshopPlugins.set('genai-agents-pipeline', {
-    description: 'GenAI Agents collaborative workflow and multi-agent pipeline patterns.',
-    execute: async (data) => {
-        return { plugin: 'genai-agents-pipeline', status: 'VERIFIED', paradigm: 'Modular Agentic Workflows', input: data };
-    }
-});
-
-workshopPlugins.set('agentic-seek-bridge', {
-    description: 'Manages local Manus AI alternative execution for browsing, coding, and task planning.',
-    execute: async (data) => {
-        return { plugin: 'agentic-seek-bridge', result: 'AgenticSeek local execution container verified and responsive.', input: data };
-    }
-});
-
-workshopPlugins.set('skyvern-spider-telemetry', {
-    description: 'Inspects automated browser vision and structured data extraction logs.',
-    execute: async (data) => {
-        return { plugin: 'skyvern-spider-telemetry', result: 'Visual browser automation running smoothly.', input: data };
-    }
-});
-
-workshopPlugins.set('nanobot-agent-core', {
-    description: 'Manages agent memory, tool delegation, and Model Context Protocol routing.',
-    execute: async (data) => {
-        return { plugin: 'nanobot-agent-core', result: 'Nanobot self-hosted agent state verified.', input: data };
-    }
-});
-
-workshopPlugins.set('munder-difflin-office', {
-    description: 'Local multi-agent office harness for coordinating autonomous workflows.',
-    execute: async (data) => {
-        return { plugin: 'munder-difflin-office', result: 'Munder-Difflin office agents operational.', input: data };
-    }
-});
-
-workshopPlugins.set('rd-agent-loop', {
-    description: 'Automated research and development loop for data science and model optimization.',
-    execute: async (data) => {
-        return { plugin: 'rd-agent-loop', result: 'Autonomous hypotheses testing active.', input: data };
-    }
-});
-
-app.get('/api/voltron/plugins', (req, res) => {
-    const pluginsList = Array.from(workshopPlugins.entries()).map(([name, plugin]) => ({
-        name,
-        description: plugin.description
-    }));
-    res.json({ architecture: 'Unified Cengiz Island Sovereign Framework (Level Two)', registered_plugins: pluginsList });
-});
-
-app.post('/api/voltron/plugin/:name', async (req, res) => {
-    const pluginName = req.params.name;
-    const plugin = workshopPlugins.get(pluginName);
-    if (!plugin) return res.status(404).json({ error: `Plugin '${pluginName}' not found.` });
-    
-    try {
-        const output = await plugin.execute(req.body);
-        res.json({ status: 'PLUGIN EXECUTION SUCCESS', plugin: pluginName, output });
-    } catch (error) {
-        res.status(500).json({ status: 'PLUGIN EXECUTION ERROR', error: error.message });
-    }
-});
-
-
-// --- NAVIGATION ROUTES ---
+// 2. Core Dashboard Endpoint (Health & Status Check)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-app.get('/network', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'network.html'));
-});
-
-app.get('/pet-project', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'pet-project.html'));
-});
-
-app.get('/api/pet-project/status', (req, res) => {
-    db.get(`SELECT * FROM pet_project_logs ORDER BY built_at DESC LIMIT 1`, (err, petRow) => {
-        db.all(`SELECT * FROM self_learning_sandbox ORDER BY tested_at DESC`, (err2, sandboxRows) => {
-            db.all(`SELECT * FROM level_two_swarm_logs ORDER BY synchronized_at DESC`, (err3, swarmRows) => {
-                res.json({
-                    project_title: 'Cengiz Gökdoğan Island 4D Pet House & Self-Learning Sandbox (Level Two)',
-                    page_route: '/pet-project',
-                    status: petRow ? petRow.habitat_status : 'ACTIVE',
-                    review_cadence: 'Every 2 Hours',
-                    learning_cycles: sandboxRows || [],
-                    swarm_logs: swarmRows || [],
-                    inspection_note: 'You and Captain Cengiz inspect these 2-hour cycles before any code is approved for production welding.',
-                    timestamp: new Date().toISOString()
-                });
-            });
+    db.all(`SELECT * FROM system_logs ORDER BY timestamp DESC LIMIT 5`, [], (err, logs) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({
+            status: 'ONLINE',
+            engine: 'Sovereign Financial Intelligence Core',
+            uptime: process.uptime(),
+            recent_logs: logs
         });
     });
 });
 
-app.get('/api/rooms', (req, res) => {
-    db.all(`SELECT * FROM house_rooms ORDER BY added_at DESC`, (err, rooms) => {
-        if (err) return res.status(500).json({ error: 'Database error.' });
-        res.json(rooms);
+// 3. Financial Intelligence & Quant Tracking Endpoint
+app.post('/api/quant-eval', (req, res) => {
+    const { metric_key, metric_value, notes } = req.body;
+    
+    if (!metric_key || metric_value === undefined) {
+        return res.status(400).json({ error: 'Missing metric_key or metric_value' });
+    }
+
+    const stmt = db.prepare(`INSERT INTO financial_metrics (metric_key, metric_value, notes) VALUES (?, ?, ?)`);
+    stmt.run(metric_key, metric_value, notes || 'Automated Alpha-Pilot / Long-Capital hook', function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        logEvent('QuantEngine', 'SUCCESS', `Recorded metric: ${metric_key} = ${metric_value}`);
+        res.json({ success: true, inserted_id: this.lastID });
     });
 });
 
-app.post('/register', (req, res) => {
-    const { name, email, phone } = req.body;
-    db.opens(`SELECT * FROM residents WHERE email = ?`, [email], (err, existing) => {
-        db.run(`SELECT * FROM residents WHERE email = ?`, [email], (err2, existingRow) => {
-            if (existingRow) return res.redirect('/network');
-            db.run(`INSERT INTO residents (name, email, phone) VALUES (?, ?, ?)`, [name, email, phone], function(err3) {
-                res.redirect('/network');
-            });
-        });
-    });
-});
+// 4. Autonomous Background Worker Loop (Simulating Upsonic / Agent Execution)
+function runAutonomousLoop() {
+    console.log('🔄 Running background sovereign agent cycle...');
+    
+    // Perform routine maintenance, data check, or simulated quant model validation
+    const timestamp = new Date().toISOString();
+    logEvent('AutonomousWorker', 'ACTIVE', `Background cycle executed successfully at ${timestamp}`);
+}
 
-app.get('/register', (req, res) => {
-    res.redirect('/network');
-});
+// Trigger background worker loop every 30 minutes (24/7 sovereign operation)
+const LOOP_INTERVAL = 30 * 60 * 1000;
+setInterval(runAutonomousLoop, LOOP_INTERVAL);
 
-app.get('/api/status', (req, res) => {
-    db.get(`SELECT COUNT(*) as count FROM residents`, (err, residentRow) => {
-        db.get(`SELECT COUNT(*) as room_count FROM house_rooms`, (err2, roomRow) => {
-            res.json({
-                status: 'CENGIZ GÖKDOĞAN ISLAND ENGINE ONLINE & SECURE (LEVEL TWO)',
-                total_technicians: residentRow ? residentRow.count : 0,
-                workbench_artifacts: roomRow ? roomRow.room_count : 0,
-                timestamp: new Date().toISOString()
-            });
-        });
-    });
-});
-
+// Start Server
 app.listen(PORT, () => {
-    console.log(`Cengiz Gökdoğan Island Sovereign Engine running live on port ${PORT} (Level Two Sandbox & Swarm Active)`);
+    console.log(`🚀 Sovereign Engine is live on port ${PORT}`);
+    logEvent('SystemCore', 'BOOT', `Server successfully started on Render port ${PORT}`);
 });
