@@ -1,4 +1,4 @@
-// server.js - Cengiz Gökdoğan Island Sovereign Engine (Full-Length Expanded Workshop)
+// server.js - Cengiz Gökdoğan Island Sovereign Engine (Fully Unified & Expanded Workshop with Page 3)
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
@@ -54,6 +54,7 @@ db.serialize(() => {
                 stmt.run('RD-Agent Framework', 'Autonomous R&D / ML', 'https://github.com/microsoft/RD-Agent', 'Automated research and development loop for data science and quantitative models.');
                 stmt.run('AgenticSeek Framework', 'Local Manus AI Alternative', 'https://github.com/Fosowl/agenticSeek', '100% local voice-enabled AI assistant for web browsing, task planning, and autonomous coding.');
                 stmt.run('DeepSeek Harness (dsh)', 'Everything is a Plugin Core', 'https://github.com/deepseek-ai/deepseek-harness', 'Spatiotemporal composability framework powered by Cordis.');
+                stmt.run('4D Pet House & Wildlife Habitat', 'Page Three Wing', 'Local Autonomous Simulation', 'Autonomous agent workspace rendering 4D digital wildlife and pet house environments.');
                 stmt.finalize();
                 console.log('Initial technical salvage blueprints and Cengiz Island modules loaded onto workbench.');
             }
@@ -126,6 +127,21 @@ db.serialize(() => {
         payload_notes TEXT,
         executed_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS pet_project_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        builder_agent TEXT,
+        habitat_status TEXT,
+        rendering_notes TEXT,
+        built_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`, () => {
+        db.get(`SELECT COUNT(*) as count FROM pet_project_logs`, (err, row) => {
+            if (row && row.count === 0) {
+                db.run(`INSERT INTO pet_project_logs (builder_agent, habitat_status, rendering_notes) VALUES (?, ?, ?)`,
+                    ['Nanobot-Wildlife-Agent', 'BUILDING_ACTIVE', 'Rendering 4D terrain mesh, wildlife behaviors, and pet interactive spaces.']);
+            }
+        });
+    });
 
     db.run(`CREATE TABLE IF NOT EXISTS deepseek_harness_modules (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -319,29 +335,6 @@ function runAgenticSeekWorker() {
 setInterval(runAgenticSeekWorker, 220000);
 
 
-// --- DEEPSEEK-HARNESS PLUGIN PULSE WORKER ---
-function runDeepSeekHarnessWorker() {
-    const harnessActions = [
-        'Cordis Spatiotemporal State Sync',
-        'Plugin Manifest Verification',
-        'VFS Dirent Stream Check',
-        'Web UI Session Journal Pulse'
-    ];
-    const action = harnessActions[Math.floor(Math.random() * harnessActions.length)];
-
-    db.run(`INSERT INTO agentic_seek_logs (task_type, execution_target, status, payload_notes) VALUES (?, ?, ?, ?)`,
-        [`DeepSeek-Harness: ${action}`, 'Cordis Plugin Kernel', 'SUCCESS', `Everything-is-a-plugin architecture successfully verified component state and dependency graph`],
-        (err) => {
-            if (!err) {
-                console.log(`[DeepSeek-Harness Engine]: Executed plugin routine -> '${action}'`);
-            }
-        }
-    );
-}
-
-setInterval(runDeepSeekHarnessWorker, 180000);
-
-
 // --- UNIFIED AIRFLOW + CONSTELLATION ENGINE ---
 const activeChannels = [
     { id: 1, name: 'Primary Scheduler Channel', endpoint: 'https://api.openai.com/v1', active: true },
@@ -408,18 +401,21 @@ app.get('/api/voltron/dashboard', (req, res) => {
                 db.all(`SELECT * FROM rd_agent_experiments ORDER BY run_at DESC LIMIT 5`, (err4, rdLogs) => {
                     db.all(`SELECT * FROM gpt_load_gateway_logs ORDER BY logged_at DESC LIMIT 5`, (err5, gatewayLogs) => {
                         db.all(`SELECT * FROM deepseek_harness_modules`, (err6, dshModules) => {
-                            res.json({
-                                system_title: 'Cengiz Gökdoğan Island Sovereign Engine',
-                                status: 'ONLINE & SECURE ON PRIVATE ISLAND',
-                                active_channels: activeChannels,
-                                total_salvaged_modules: rooms.length,
-                                total_technicians: resRow ? resRow.resident_count : 0,
-                                deepseek_modules: dshModules || [],
-                                recent_agentic_seek_logs: seekLogs || [],
-                                recent_rd_experiments: rdLogs || [],
-                                recent_gateway_logs: gatewayLogs || [],
-                                recent_harvests: rooms,
-                                updated_at: new Date().toISOString()
+                            db.get(`SELECT * FROM pet_project_logs ORDER BY built_at DESC LIMIT 1`, (err7, petRow) => {
+                                res.json({
+                                    system_title: 'Cengiz Gökdoğan Island Sovereign Engine',
+                                    status: 'ONLINE & SECURE ON PRIVATE ISLAND',
+                                    active_channels: activeChannels,
+                                    total_salvaged_modules: rooms.length,
+                                    total_technicians: resRow ? resRow.resident_count : 0,
+                                    page_three_status: petRow || { habitat_status: 'BUILDING' },
+                                    deepseek_modules: dshModules || [],
+                                    recent_agentic_seek_logs: seekLogs || [],
+                                    recent_rd_experiments: rdLogs || [],
+                                    recent_gateway_logs: gatewayLogs || [],
+                                    recent_harvests: rooms,
+                                    updated_at: new Date().toISOString()
+                                });
                             });
                         });
                     });
@@ -503,26 +499,34 @@ app.post('/api/voltron/plugin/:name', async (req, res) => {
     }
 });
 
-app.get('/api/voltron/deepseek/modules', (req, res) => {
-    db.all(`SELECT * FROM deepseek_harness_modules ORDER BY salvaged_at DESC`, (err, modules) => {
-        if (err) return res.status(500).json({ error: 'Database retrieval error.' });
-        res.json({
-            engine: 'DeepSeek Harness (dsh)',
-            architecture: 'Everything is a Plugin',
-            total_modules: modules.length,
-            modules: modules
-        });
-    });
-});
 
-
-// --- CORE PLATFORM & NAVIGATION ROUTES ---
+// --- PAGE ONE, PAGE TWO & PAGE THREE NAVIGATION ROUTES ---
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('/network', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'network.html'));
+});
+
+// PAGE THREE: 4D Pet Project & Wildlife Habitat Wing
+app.get('/pet-project', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'pet-project.html'));
+});
+
+app.get('/api/pet-project/status', (req, res) => {
+    db.get(`SELECT * FROM pet_project_logs ORDER BY built_at DESC LIMIT 1`, (err, petRow) => {
+        db.all(`SELECT * FROM house_rooms WHERE room_name LIKE '%Wildlife%' OR room_name LIKE '%Pet%' ORDER BY added_at DESC`, (err2, rows) => {
+            res.json({
+                project_title: 'Cengiz Gökdoğan Island 4D Pet House & Wildlife Habitat',
+                page_route: '/pet-project',
+                status: petRow ? petRow.habitat_status : 'RENDERING',
+                agent_notes: petRow ? petRow.rendering_notes : 'Background agent assembling environment.',
+                associated_modules: rows || [],
+                timestamp: new Date().toISOString()
+            });
+        });
+    });
 });
 
 app.get('/api/rooms', (req, res) => {
