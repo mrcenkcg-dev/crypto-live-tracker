@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cengiz Island | 4D Pet Project & Self-Learning Sandbox</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #0f0f0f; color: #fff; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #181818; border: 1px solid #333; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        h1 { color: #a855f7; margin-top: 0; font-size: 26px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        p { color: #aaa; font-size: 14px; }
+        .status-badge { display: inline-block; background: #2e1065; border: 1px solid #a855f7; color: #d8b4fe; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 20px; }
+        .back-btn { display: inline-block; background: #333; color: #fff; padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 13px; margin-bottom: 20px; }
+        .back-btn:hover { background: #444; }
+        .section-title { color: #38bdf8; font-size: 18px; margin-top: 30px; margin-bottom: 15px; }
+        .log-card { background: #222; border: 1px solid #444; padding: 15px; border-radius: 6px; margin-bottom: 12px; }
+        .log-header { display: flex; justify-content: space-between; font-weight: bold; color: #4ade80; margin-bottom: 5px; font-size: 13px; }
+        .log-body { color: #ccc; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="/" class="back-btn">&larr; Back to Home Gateway</a>
+        
+        <div class="status-badge" id="habitat-status">SANDBOX WING: ACTIVE (2-HOUR CYCLE)</div>
+        <h1>4D Pet Project & Self-Learning Sandbox</h1>
+        <p>This is our isolated observation deck. The apprentice agent runs its self-learning and optimization checks every two hours, leaving its progress here for you and me to inspect safely.</p>
+
+        <div class="section-title">🐾 Apprentice Agent 2-Hour Learning Cycles</div>
+        <div id="learning-logs">
+            <p>Loading autonomous sandbox telemetry...</p>
+        </div>
+    </div>
+
+    <script>
+        async function loadSandboxData() {
+            try {
+                const response = await fetch('/api/pet-project/status');
+                const data = await response.json();
+                
+                document.getElementById('habitat-status').innerText = `HABITAT STATUS: ${data.status} (${data.review_cadence})`;
+                
+                const logsContainer = document.getElementById('learning-logs');
+                if (data.learning_cycles && data.learning_cycles.length > 0) {
+                    logsContainer.innerHTML = data.learning_cycles.map(cycle => `
+                        <div class="log-card">
+                            <div class="log-header">
+                                <span>Cycle #${cycle.learning_cycle}: ${cycle.experiment_title}</span>
+                                <span style="color: #facc15;">${cycle.approval_status}</span>
+                            </div>
+                            <div class="log-body">
+                                <strong>Hypothesis:</strong> ${cycle.agent_hypothesis}<br>
+                                <strong>Result:</strong> ${cycle.sandbox_result}<br>
+                                <small style="color: #888;">Tested at: ${cycle.tested_at}</small>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    logsContainer.innerHTML = '<p>No learning cycles recorded yet. The background worker is active.</p>';
+                }
+            } catch (err) {
+                document.getElementById('learning-logs').innerHTML = '<p style="color: #f87171;">Error loading sandbox telemetry from server.</p>';
+            }
+        }
+
+        loadSandboxData();
+    </script>
+</body>
+</html>
