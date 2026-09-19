@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shoulder to Shoulder - The House</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #0f0f0f; color: #fff; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .house-card { background: #181818; border: 1px solid #333; padding: 40px; border-radius: 10px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        body { font-family: Arial, sans-serif; background: #0f0f0f; color: #fff; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .house-card { background: #181818; border: 1px solid #333; padding: 40px; border-radius: 10px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .house-card h1 { color: #4CAF50; margin-top: 0; font-size: 24px; }
         .house-card p { color: #aaa; font-size: 14px; margin-bottom: 25px; }
         .form-group { margin-bottom: 15px; text-align: left; }
@@ -16,6 +16,43 @@
         .enter-btn { width: 100%; background: #4CAF50; color: white; padding: 12px; border: none; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
         .enter-btn:hover { background: #45a049; }
         .status-badge { display: inline-block; background: #111; border: 1px solid #4CAF50; color: #4CAF50; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-bottom: 15px; }
+        
+        /* Island Navigation Links Wing */
+        .island-nav {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-top: 1px solid #333;
+            border-bottom: 1px solid #333;
+            padding: 20px 0;
+        }
+        .nav-btn {
+            display: block;
+            text-align: center;
+            background: #1e3a8a;
+            color: #93c5fd;
+            padding: 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+            border: 1px solid #3b82f6;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover {
+            background: #1d4ed8;
+            color: #fff;
+        }
+        .nav-sandbox {
+            background: #581c87;
+            color: #d8b4fe;
+            border-color: #a855f7;
+        }
+        .nav-sandbox:hover {
+            background: #6b21a8;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -25,6 +62,12 @@
         <h1>Shoulder to Shoulder</h1>
         <p>Step through the front door into the shared house where forgotten spaces, chat lines, games, and tech hubs are brought home.</p>
         
+        <!-- Island Navigation Doors to Room 2 and Room 3 -->
+        <div class="island-nav">
+            <a href="/network" class="nav-btn">📊 Open /network (Harvest & Dashboard)</a>
+            <a href="/pet-project" class="nav-btn nav-sandbox">🐾 Open /pet-project (4D Pet & Sandbox Wing)</a>
+        </div>
+
         <form action="/register" method="POST">
             <div class="form-group">
                 <label for="name">Your Name</label>
