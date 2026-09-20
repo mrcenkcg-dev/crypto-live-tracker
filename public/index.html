@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anadolu Island - Command Center</title>
+    <title>Anadolu Island - Sovereign Platform</title>
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            margin: 0;
-            padding: 20px;
             background-color: #0b0b0b;
             color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -15,10 +14,16 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
-        .command-container {
+        .main-wrapper {
             width: 100%;
-            max-width: 600px;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .section-card {
             background: #141414;
             border-radius: 16px;
             padding: 24px;
@@ -31,7 +36,7 @@
             align-items: center;
             border-bottom: 1px solid #222;
             padding-bottom: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
         .title {
             font-weight: 700;
@@ -46,46 +51,98 @@
             padding: 4px 8px;
             border-radius: 4px;
         }
-        .nav-section {
-            margin-top: 20px;
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
-        .nav-label {
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        @media(max-width: 768px) {
+            .grid-container { grid-template-columns: 1fr; }
         }
-        .nav-buttons {
-            display: flex;
-            gap: 12px;
-        }
-        .platform-btn {
-            flex: 1;
-            background: #1f1f1f;
-            color: #ffffff;
-            border: 1px solid #333;
-            padding: 16px;
+        /* Short Stream Lookalike Box */
+        .shorts-box {
+            background: #181818;
             border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            text-align: center;
-            text-decoration: none;
-            transition: all 0.2s ease;
+            border: 1px solid #333;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
+            height: 450px;
+            position: relative;
+        }
+        .shorts-header {
+            padding: 12px;
+            background: #202020;
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #333;
+        }
+        .shorts-viewport {
+            flex: 1;
+            display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            position: relative;
+            background: #111;
         }
-        .platform-btn:hover {
-            background: #2a2a2a;
-            border-color: #555;
+        .shorts-actions {
+            position: absolute;
+            right: 12px;
+            bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
-        .btn-icon {
-            font-size: 20px;
+        .action-circle {
+            width: 36px;
+            height: 36px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        /* Long Sanctuary Box */
+        .sanctuary-box {
+            background: #181818;
+            border-radius: 12px;
+            border: 1px solid #333;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 450px;
+        }
+        .sanctuary-player {
+            width: 100%;
+            height: 220px;
+            background: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-size: 14px;
+            border-bottom: 1px solid #333;
+        }
+        .sanctuary-info {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .video-title {
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .video-desc {
+            font-size: 12px;
+            color: #888;
+            line-height: 1.4;
         }
         .logs-box {
-            margin-top: 24px;
             background: #0f0f0f;
             border-radius: 8px;
             padding: 12px;
@@ -98,35 +155,56 @@
 </head>
 <body>
 
-    <div class="command-container">
-        <!-- Header -->
-        <div class="header">
-            <span class="title">ANADOLU ISLAND COMMAND</span>
-            <span class="status-badge">ONLINE</span>
-        </div>
-
-        <!-- Navigation Hub -->
-        <div class="nav-section">
-            <div class="nav-label">Platform Streams</div>
-            <div class="nav-buttons">
-                <!-- Short-Form Stream Link -->
-                <a href="/shorts" class="platform-btn">
-                    <span class="btn-icon">⚡</span>
-                    <span>Shorts Stream</span>
-                </a>
-                
-                <!-- Long-Form Sanctuary Link -->
-                <a href="/sanctuary" class="platform-btn">
-                    <span class="btn-icon">🏛️</span>
-                    <span>Long-Form Sanctuary</span>
-                </a>
+    <div class="main-wrapper">
+        <!-- Command Header & Telemetry -->
+        <div class="section-card">
+            <div class="header">
+                <span class="title">ANADOLU ISLAND COMMAND CENTER</span>
+                <span class="status-badge">ONLINE</span>
+            </div>
+            <div class="logs-box">
+                [System] Autonomous Minos Core active. Background harvesting loops synced.<br>
+                [Render] Port 10000 streaming live. All systems operational.
             </div>
         </div>
 
-        <!-- System Logs Preview -->
-        <div class="logs-box">
-            [System] Core operational. Autonomous harvesting loop active.<br>
-            [Render] Port 10000 listening successfully.
+        <!-- Dual-Stream Platform Interface -->
+        <div class="section-card">
+            <div class="header">
+                <span class="title">SOVEREIGN PLATFORM STREAMS</span>
+            </div>
+            
+            <div class="grid-container">
+                <!-- 1. Short-Form Stream (TikTok-style) -->
+                <div class="shorts-box">
+                    <div class="shorts-header">
+                        <span>⚡ SHORTS STREAM</span>
+                        <span style="color: #ff3b30;">LIVE</span>
+                    </div>
+                    <div class="shorts-viewport">
+                        <div style="text-align: center; color: #666;">
+                            <p style="font-size: 14px; font-weight: 500; color: #ddd;">Vertical Feed Active</p>
+                            <p style="font-size: 11px;">Autonomous Indexer Syncing</p>
+                        </div>
+                        <div class="shorts-actions">
+                            <div class="action-circle">❤️</div>
+                            <div class="action-circle">💬</div>
+                            <div class="action-circle">🔗</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Long-Form Sanctuary (YouTube-style) -->
+                <div class="sanctuary-box">
+                    <div class="sanctuary-player">
+                        <span>🏛️ Sanctuary Main Player</span>
+                    </div>
+                    <div class="sanctuary-info">
+                        <div class="video-title">Anatolian Heritage & Cultural Stream</div>
+                        <div class="video-desc">Deep-dive archival footage, Sufi rock compositions, and autonomous cultural indexing streams.</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
