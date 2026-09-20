@@ -1,7 +1,6 @@
 /**
- * Sovereign Engine: Financial Intelligence, Media Streaming & Self-Modifying UI Core
+ * Sovereign Engine: Dual-Environment Architecture (Command Center + Public Portal)
  * Stack: Node.js, Express, SQLite, Autonomous Loop Architecture & Crowd Interest Tracking
- * Objective: 24/7 background utility, automated processing, and self-upgrading index page.
  */
 
 const express = require('express');
@@ -147,17 +146,14 @@ function runAutonomousLoop() {
 
         const intel = sovereignIntelFeeds[Math.floor(Math.random() * sovereignIntelFeeds.length)];
 
-        // Record harvested intelligence
         const stmt = db.prepare(`INSERT INTO harvested_intelligence (timestamp, source_category, title, data_payload) VALUES (?, ?, ?, ?)`);
         stmt.run(timestamp, intel.agency, intel.title, intel.payload);
         stmt.finalize();
 
-        // Record crowd interest metrics
         const cStmt = db.prepare(`INSERT INTO crowd_interests (timestamp, interest_category, estimated_audience, trend_summary) VALUES (?, ?, ?, ?)`);
         cStmt.run(timestamp, intel.category, intel.audience, intel.trend);
         cStmt.finalize();
 
-        // Update active media stream
         db.run(`UPDATE media_streams SET title = ?, description = ?, video_url = ? WHERE stream_type = 'short'`, 
             [intel.title, intel.payload, intel.video]);
 
@@ -167,7 +163,6 @@ function runAutonomousLoop() {
     }
 }
 
-// 3. Apprentice Agent Self-Upgrading UI Mutation Cycle
 function runUiUpgradeCycle() {
     console.log('🐾 Running apprentice self-upgrading UI cycle...');
     try {
@@ -206,23 +201,7 @@ setTimeout(() => {
 setInterval(runAutonomousLoop, 15 * 60 * 1000);
 setInterval(runUiUpgradeCycle, 45 * 60 * 1000);
 
-// 4. JSON API Endpoint for Live Client-Side Polling
-app.get('/api/island-status', (req, res) => {
-    db.get(`SELECT * FROM ui_mutations ORDER BY id DESC LIMIT 1`, [], (err, ui) => {
-        db.all(`SELECT * FROM media_streams`, [], (err2, media) => {
-            db.all(`SELECT * FROM crowd_interests ORDER BY timestamp DESC LIMIT 4`, [], (err3, crowd) => {
-                res.json({
-                    accent: ui ? ui.applied_css_accent : '#38bdf8',
-                    version: ui ? ui.upgrade_title : 'Genesis Core',
-                    media: media || [],
-                    crowdInterests: crowd || []
-                });
-            });
-        });
-    });
-});
-
-// 5. Self-Updating Visual Command Center & Living Interface
+// 3. PRIVATE COMMAND CENTER (Your Control Room)
 app.get('/', (req, res) => {
     db.all(`SELECT * FROM system_logs ORDER BY timestamp DESC LIMIT 6`, [], (err, logs) => {
         db.all(`SELECT * FROM harvested_intelligence ORDER BY timestamp DESC LIMIT 5`, [], (err2, harvest) => {
@@ -241,7 +220,7 @@ app.get('/', (req, res) => {
                         <head>
                             <meta charset="UTF-8">
                             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <title>Anadolu Island - Sovereign Platform & Crowd Command Center</title>
+                            <title>Anadolu Island - Sovereign Command Center</title>
                             <style>
                                 * { box-sizing: border-box; margin: 0; padding: 0; }
                                 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
@@ -251,8 +230,10 @@ app.get('/', (req, res) => {
                                 h1 { margin: 0 0 5px 0; color: ${accentColor}; font-size: 22px; transition: color 0.5s ease; }
                                 .status-badge { display: inline-block; background: #22c55e; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
                                 
-                                .monzo-btn { background: #ff5252; color: #fff; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #ff7676; transition: background 0.3s ease; display: inline-flex; align-items: center; gap: 6px; }
-                                .monzo-btn:hover { background: #ff3838; }
+                                .nav-btns { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+                                .portal-btn { background: #38bdf8; color: #000; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; transition: background 0.3s ease; }
+                                .portal-btn:hover { background: #0ea5e9; }
+                                .monzo-btn { background: #ff5252; color: #fff; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #ff7676; display: inline-flex; align-items: center; gap: 6px; }
 
                                 .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
                                 h2 { font-size: 16px; color: #fff; margin-bottom: 12px; }
@@ -260,84 +241,40 @@ app.get('/', (req, res) => {
                                 .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
                                 @media(max-width: 768px) { .grid-container { grid-template-columns: 1fr; } }
                                 
-                                .shorts-box { background: #181818; border-radius: 12px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; height: 420px; position: relative; }
-                                .shorts-header { padding: 12px; background: #202020; font-size: 12px; font-weight: bold; display: flex; justify-content: space-between; border-bottom: 1px solid #333; z-index: 2; }
+                                .shorts-box { background: #181818; border-radius: 12px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; height: 380px; position: relative; }
+                                .shorts-header { padding: 10px 12px; background: #202020; font-size: 12px; font-weight: bold; display: flex; justify-content: space-between; border-bottom: 1px solid #333; }
                                 .shorts-viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: #111; overflow: hidden; }
                                 .shorts-viewport video { width: 100%; height: 100%; object-fit: cover; }
-                                .shorts-actions { position: absolute; right: 12px; bottom: 16px; display: flex; flex-direction: column; gap: 12px; z-index: 2; }
-                                .action-circle { width: 36px; height: 36px; background: rgba(0,0,0,0.7); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid rgba(255,255,255,0.2); }
-                                
-                                .sanctuary-box { background: #181818; border-radius: 12px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; height: 420px; }
-                                .sanctuary-player { width: 100%; height: 220px; background: #222; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #333; overflow: hidden; }
-                                .sanctuary-player video { width: 100%; height: 100%; object-fit: cover; }
-                                .sanctuary-info { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
-                                .video-title { font-size: 14px; font-weight: bold; color: #fff; }
-                                .video-desc { font-size: 11px; color: #888; line-height: 1.4; }
 
                                 table { width: 100%; border-collapse: collapse; margin-top: 10px; }
                                 th, td { text-align: left; padding: 10px; border-bottom: 1px solid #262626; font-size: 13px; }
                                 th { color: #94a3b8; }
                                 .footer { text-align: center; color: #64748b; font-size: 12px; margin-top: 20px; }
-                                .highlight { color: ${accentColor}; font-weight: bold; transition: color 0.5s ease; }
+                                .highlight { color: ${accentColor}; font-weight: bold; }
                             </style>
                         </head>
                         <body>
                             <div class="container">
-                                <!-- Command Center Header -->
-                                <header id="island-header" style="border-left-color: ${accentColor};">
+                                <header>
                                     <div>
                                         <h1>⚓ Anadolu Island Sovereign Command Center</h1>
                                         <p>Status: <span class="status-badge">ONLINE</span> | Uptime: <span id="uptime-counter">${Math.floor(process.uptime())}</span>s</p>
-                                        <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 12px;">Active UI Protocol: <span id="ui-version-text" style="color: ${accentColor}; font-weight: bold;">${uiVersion}</span> &bull; Global Crowd Ingestion Active.</p>
+                                        <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 12px;">Active Protocol: <span style="color: ${accentColor}; font-weight: bold;">${uiVersion}</span></p>
                                     </div>
-                                    <div>
-                                        <a href="https://me.monzo.com/yourname" target="_blank" class="monzo-btn">
-                                            💳 Support via Monzo
-                                        </a>
+                                    <div class="nav-btns">
+                                        <a href="/island" target="_blank" class="portal-btn">🌐 View Public Island Portal &rarr;</a>
+                                        <a href="https://me.monzo.com/yourname" target="_blank" class="monzo-btn">💳 Monzo</a>
                                     </div>
                                 </header>
 
-                                <!-- Global Crowd Interest Meter (New Board!) -->
                                 <div class="card">
                                     <h2>📊 Live Global Crowd Interest Meter (Millions of Real Interactions)</h2>
                                     <table>
                                         <tr><th>Time</th><th>Interest Category</th><th>Estimated Audience</th><th>Detected Trend Summary</th></tr>
-                                        ${crowdInterests && crowdInterests.length > 0 ? crowdInterests.map(c => `<tr><td>${c.timestamp}</td><td><span class="highlight">${c.interest_category}</span></td><td>${c.estimated_audience}</td><td>${c.trend_summary}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">Agents are aggregating crowd metrics from TikTok, YouTube, IG, and FB...</td></tr>'}
+                                        ${crowdInterests && crowdInterests.length > 0 ? crowdInterests.map(c => `<tr><td>${c.timestamp}</td><td><span class="highlight">${c.interest_category}</span></td><td>${c.estimated_audience}</td><td>${c.trend_summary}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">Aggregating crowd data...</td></tr>'}
                                     </table>
                                 </div>
 
-                                <!-- Dual-Stream Platform Interface -->
-                                <div class="card">
-                                    <h2>🏛️ Sovereign Platform Streams (Multi-Platform Behavioral Feed)</h2>
-                                    <div class="grid-container">
-                                        <div class="shorts-box">
-                                            <div class="shorts-header">
-                                                <span id="short-stream-label">⚡ SHORTS STREAM (${shortStream ? shortStream.title : 'Live'})</span>
-                                                <span style="color: #ff3b30;">LIVE</span>
-                                            </div>
-                                            <div class="shorts-viewport">
-                                                <video id="dynamic-short-video" src="${shortStream ? shortStream.video_url : ''}" autoplay muted loop playsinline></video>
-                                                <div class="shorts-actions">
-                                                    <div class="action-circle">❤️</div>
-                                                    <div class="action-circle">💬</div>
-                                                    <div class="action-circle">🔗</div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="sanctuary-box">
-                                            <div class="sanctuary-player">
-                                                <video src="${sanctuaryStream ? sanctuaryStream.video_url : ''}" controls></video>
-                                            </div>
-                                            <div class="sanctuary-info">
-                                                <div class="video-title">${sanctuaryStream ? sanctuaryStream.title : 'Anatolian Heritage & Cultural Stream'}</div>
-                                                <div class="video-desc">${sanctuaryStream ? sanctuaryStream.description : 'Deep-dive archival footage and autonomous cultural indexing streams.'}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Raw Intelligence Log -->
                                 <div class="card">
                                     <h2>🌾 Live Harvested Intelligence Feed</h2>
                                     <table>
@@ -347,7 +284,7 @@ app.get('/', (req, res) => {
                                 </div>
 
                                 <div class="footer">
-                                    Anadolu Island Sovereign Infrastructure &bull; Built Shoulder-to-Shoulder &bull; The Living Island Architecture
+                                    Anadolu Island Sovereign Control Room &bull; Private Dashboard
                                 </div>
                             </div>
                         </body>
@@ -361,7 +298,108 @@ app.get('/', (req, res) => {
     });
 });
 
+// 4. PUBLIC ISLAND PORTAL (What regular visitors see)
+app.get('/island', (req, res) => {
+    db.all(`SELECT * FROM media_streams`, [], (err, media) => {
+        db.get(`SELECT * FROM ui_mutations ORDER BY id DESC LIMIT 1`, [], (err2, activeUi) => {
+            
+            const shortStream = media ? media.find(m => m.stream_type === 'short') : null;
+            const sanctuaryStream = media ? media.find(m => m.stream_type === 'sanctuary') : null;
+            const accentColor = activeUi ? activeUi.applied_css_accent : '#38bdf8';
+
+            const publicHtml = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Anadolu Island - Living Cultural Ecosystem</title>
+                <style>
+                    * { box-sizing: border-box; margin: 0; padding: 0; }
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #09090b; color: #f4f4f5; padding: 20px; }
+                    .container { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+                    
+                    header { background: #18181b; padding: 25px; border-radius: 20px; border: 1px solid #27272a; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-top: 4px solid ${accentColor}; }
+                    .logo-area h1 { font-size: 24px; color: #fff; margin-bottom: 4px; }
+                    .logo-area p { font-size: 13px; color: #a1a1aa; }
+                    
+                    .hero-banner { background: linear-gradient(135deg, #18181b, #27272a); padding: 40px; border-radius: 20px; border: 1px solid #3f3f46; text-align: center; }
+                    .hero-banner h2 { font-size: 28px; color: ${accentColor}; margin-bottom: 10px; }
+                    .hero-banner p { font-size: 15px; color: #d4d4d8; max-width: 700px; margin: 0 auto; line-height: 1.5; }
+
+                    .streams-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+                    @media(max-width: 768px) { .streams-grid { grid-template-columns: 1fr; } }
+
+                    .card { background: #18181b; border-radius: 16px; border: 1px solid #27272a; overflow: hidden; display: flex; flex-direction: column; }
+                    .card-header { padding: 15px; background: #202024; font-size: 14px; font-weight: bold; border-bottom: 1px solid #27272a; display: flex; justify-content: space-between; }
+                    .player-box { width: 100%; height: 320px; background: #000; position: relative; display: flex; align-items: center; justify-content: center; }
+                    .player-box video { width: 100%; height: 100%; object-fit: cover; }
+                    .card-body { padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+                    .title { font-size: 16px; font-weight: bold; color: #fff; }
+                    .desc { font-size: 13px; color: #a1a1aa; line-height: 1.4; }
+
+                    .footer { text-align: center; color: #71717a; font-size: 13px; padding: 20px 0; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <header>
+                        <div class="logo-area">
+                            <h1>🌿 Anadolu Island</h1>
+                            <p>An Autonomous Sovereign Social Ecosystem</p>
+                        </div>
+                        <div>
+                            <a href="/" style="background: #27272a; color: #fff; padding: 10px 16px; border-radius: 10px; text-decoration: none; font-size: 13px; border: 1px solid #3f3f46;">🔒 Command Center</a>
+                        </div>
+                    </header>
+
+                    <div class="hero-banner">
+                        <h2>Welcome to the Living Island</h2>
+                        <p>Shaped by global human culture, deep-rooted heritage, and autonomous intelligence streams. Built shoulder-to-shoulder as an independent home for community, art, and connection.</p>
+                    </div>
+
+                    <div class="streams-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <span>⚡ Live Behavioral Pulse Stream</span>
+                                <span style="color: #ef4444;">● LIVE</span>
+                            </div>
+                            <div class="player-box">
+                                <video src="${shortStream ? shortStream.video_url : ''}" autoplay muted loop playsinline></video>
+                            </div>
+                            <div class="card-body">
+                                <div class="title">${shortStream ? shortStream.title : 'Live Behavioral Stream'}</div>
+                                <div class="desc">${shortStream ? shortStream.description : 'Real-time intelligence feed active.'}</div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <span>🏛️ Anatolian Heritage & Culture</span>
+                            </div>
+                            <div class="player-box">
+                                <video src="${sanctuaryStream ? sanctuaryStream.video_url : ''}" controls></video>
+                            </div>
+                            <div class="card-body">
+                                <div class="title">${sanctuaryStream ? sanctuaryStream.title : 'Cultural Index Stream'}</div>
+                                <div class="desc">${sanctuaryStream ? sanctuaryStream.description : 'Archival footage and traditional soundscapes.'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        Anadolu Island &bull; Sovereign & Independent &bull; The Public Portal
+                    </div>
+                </div>
+            </body>
+            </html>
+            `;
+            res.send(publicHtml);
+        });
+    });
+});
+
 app.listen(PORT, () => {
-    console.log(`🚀 Sovereign Engine with Crowd Meter is live on port ${PORT}`);
+    console.log(`🚀 Sovereign Engine with Dual Portal is live on port ${PORT}`);
     logEvent('SystemCore', 'BOOT', `Server successfully started on Render port ${PORT}`);
 });
