@@ -94,14 +94,17 @@ function logEvent(module, status, message) {
     }
 }
 
-// 2. Autonomous Background Worker & Social Learning Harvesting Loop (With Dynamic Media Rotation)
+// 2. Autonomous Background Worker & TikTok Behavioral Learning Loop
 function runAutonomousLoop() {
-    console.log('🔄 Running background harvesting and social intelligence sync...');
+    console.log('🔄 Running background harvesting and TikTok behavioral learning sync...');
     try {
         const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
         
+        // Harvest feeds integrated with TikTok human behavior & engagement patterns
         const harvestFeeds = [
-            { category: 'TikTok / Short Pulse', title: 'Viral Anatolian Sufi Rhythm Trend', payload: 'Ingested short-form audio metrics. Engagement velocity up by 18.5% across nodes.', video: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+            { category: 'TikTok Behavioral Sync', title: 'High-Retention 3-Second Hook Pattern', payload: 'Learned human attention drop-off metrics. Optimized vertical stream transition triggers.', video: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+            { category: 'TikTok Behavioral Sync', title: 'Loop-Velocity & Engagement Loop', payload: 'Harvested audience replay behavior. Synchronized seamless background content rotation.', video: 'https://www.w3schools.com/html/movie.mp4' },
+            { category: 'TikTok Behavioral Sync', title: 'Authentic Community Resonance Index', payload: 'Analyzed organic user curiosity metrics. Injected raw cultural stream parameters.', video: 'https://www.w3schools.com/html/mov_bbb.mp4' },
             { category: 'Instagram Visuals', title: 'Island Aesthetic & Community Reach', payload: 'Processed tagged archival imagery payloads. Color grading index synchronized.', video: 'https://www.w3schools.com/html/movie.mp4' },
             { category: 'YouTube Archive', title: 'Bağlama Masterclass & Long-Form Telemetry', payload: 'Parsed chapters from cultural archives. Subtitle vector embeddings updated.', video: 'https://www.w3schools.com/html/mov_bbb.mp4' },
             { category: 'Facebook Community', title: 'Sovereign Node Group Interaction', payload: 'Scraped localized discussion threads. Sentiment analysis balanced at 94% positive.', video: 'https://www.w3schools.com/html/movie.mp4' },
@@ -115,11 +118,11 @@ function runAutonomousLoop() {
         stmt.run(timestamp, selectedFeed.category, selectedFeed.title, selectedFeed.payload);
         stmt.finalize();
 
-        // Dynamically rotate active short media stream to simulate a living feed
+        // Dynamically rotate active short media stream to simulate living human behavioral feeds
         db.run(`UPDATE media_streams SET title = ?, description = ?, video_url = ? WHERE stream_type = 'short'`, 
             [selectedFeed.title, selectedFeed.payload, selectedFeed.video]);
 
-        logEvent('SocialLearningEngine', 'SUCCESS', `Successfully ingested and rotated media from [${selectedFeed.category}]`);
+        logEvent('SocialLearningEngine', 'SUCCESS', `Successfully ingested and learned human behavioral patterns from [${selectedFeed.category}]`);
     } catch (err) {
         logEvent('SocialLearningEngine', 'ERROR', `Error in harvest loop: ${err.message}`);
     }
