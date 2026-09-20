@@ -62,7 +62,7 @@ function logEvent(module, status, message) {
     }
 }
 
-// 2. Self-Updating Visual Command Center (HTML Frontend)
+// 2. Self-Updating Visual Command Center & Dual-Stream Platform Interface
 app.get('/', (req, res) => {
     db.all(`SELECT * FROM system_logs ORDER BY timestamp DESC LIMIT 8`, [], (err, logs) => {
         db.all(`SELECT * FROM harvested_intelligence ORDER BY timestamp DESC LIMIT 5`, [], (err2, harvest) => {
@@ -74,30 +74,90 @@ app.get('/', (req, res) => {
                 <head>
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Sovereign Information Bank - Live Command Center</title>
-                    <meta http-equiv="refresh" content="60"> <!-- Auto-refreshes every 60 seconds to stay updated -->
+                    <title>Anadolu Island - Sovereign Platform & Command Center</title>
+                    <meta http-equiv="refresh" content="60"> <!-- Auto-refreshes every 60 seconds -->
                     <style>
-                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
-                        .container { max-width: 1000px; margin: 0 auto; }
-                        header { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-                        h1 { margin: 0 0 10px 0; color: #38bdf8; font-size: 24px; }
-                        .status-badge { display: inline-block; background: #22c55e; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 14px; }
-                        .card { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 20px; }
+                        * { box-sizing: border-box; margin: 0; padding: 0; }
+                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
+                        .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+                        
+                        header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+                        h1 { margin: 0 0 10px 0; color: #38bdf8; font-size: 22px; }
+                        .status-badge { display: inline-block; background: #22c55e; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
+                        
+                        .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+                        h2 { font-size: 16px; color: #fff; margin-bottom: 12px; }
+                        
+                        /* Dual Stream Grid */
+                        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+                        @media(max-width: 768px) { .grid-container { grid-template-columns: 1fr; } }
+                        
+                        .shorts-box { background: #181818; border-radius: 12px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; height: 420px; position: relative; }
+                        .shorts-header { padding: 12px; background: #202020; font-size: 12px; font-weight: bold; display: flex; justify-content: space-between; border-bottom: 1px solid #333; }
+                        .shorts-viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: #111; }
+                        .shorts-actions { position: absolute; right: 12px; bottom: 16px; display: flex; flex-direction: column; gap: 12px; }
+                        .action-circle { width: 36px; height: 36px; background: rgba(0,0,0,0.7); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid rgba(255,255,255,0.2); }
+                        
+                        .sanctuary-box { background: #181818; border-radius: 12px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; height: 420px; }
+                        .sanctuary-player { width: 100%; height: 200px; background: #222; display: flex; align-items: center; justify-content: center; color: #888; font-size: 14px; border-bottom: 1px solid #333; }
+                        .sanctuary-info { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+                        .video-title { font-size: 14px; font-weight: bold; color: #fff; }
+                        .video-desc { font-size: 11px; color: #888; line-height: 1.4; }
+
+                        /* Tables */
                         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #334155; font-size: 14px; }
+                        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #262626; font-size: 13px; }
                         th { color: #94a3b8; }
-                        .footer { text-align: center; color: #64748b; font-size: 12px; margin-top: 30px; }
+                        .footer { text-align: center; color: #64748b; font-size: 12px; margin-top: 20px; }
                         .highlight { color: #38bdf8; font-weight: bold; }
                     </style>
                 </head>
                 <body>
                     <div class="container">
+                        <!-- Command Center Header -->
                         <header>
-                            <h1>⚓ Sovereign Information Bank & Command Center</h1>
+                            <h1>⚓ Anadolu Island Sovereign Command Center</h1>
                             <p>Status: <span class="status-badge">ONLINE</span> | Uptime: ${Math.floor(process.uptime())} seconds</p>
-                            <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 13px;">Self-updating index page &bull; Autonomous harvesting active (Auto-refreshes every 60s).</p>
+                            <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 12px;">Self-updating platform &bull; Autonomous harvesting active (Auto-refreshes every 60s).</p>
                         </header>
 
+                        <!-- Dual-Stream Platform Interface -->
+                        <div class="card">
+                            <h2>🏛️ Sovereign Platform Streams</h2>
+                            <div class="grid-container">
+                                <!-- Short-Form Stream (TikTok-style) -->
+                                <div class="shorts-box">
+                                    <div class="shorts-header">
+                                        <span>⚡ SHORTS STREAM</span>
+                                        <span style="color: #ff3b30;">LIVE</span>
+                                    </div>
+                                    <div class="shorts-viewport">
+                                        <div style="text-align: center; color: #666;">
+                                            <p style="font-size: 13px; font-weight: 500; color: #ddd;">Vertical Feed Active</p>
+                                            <p style="font-size: 10px;">Autonomous Indexer Syncing</p>
+                                        </div>
+                                        <div class="shorts-actions">
+                                            <div class="action-circle">❤️</div>
+                                            <div class="action-circle">💬</div>
+                                            <div class="action-circle">🔗</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Long-Form Sanctuary (YouTube-style) -->
+                                <div class="sanctuary-box">
+                                    <div class="sanctuary-player">
+                                        <span>🏛️ Sanctuary Main Player</span>
+                                    </div>
+                                    <div class="sanctuary-info">
+                                        <div class="video-title">Anatolian Heritage & Cultural Stream</div>
+                                        <div class="video-desc">Deep-dive archival footage, Sufi rock compositions, and autonomous cultural indexing streams.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Harvested Intelligence Feed -->
                         <div class="card">
                             <h2>🌾 Live Harvested Intelligence Feed</h2>
                             <table>
@@ -106,6 +166,7 @@ app.get('/', (req, res) => {
                             </table>
                         </div>
 
+                        <!-- Apprentice Telemetry -->
                         <div class="card">
                             <h2>🔄 Apprentice Telemetry & Self-Learning Cycles</h2>
                             <table>
@@ -114,6 +175,7 @@ app.get('/', (req, res) => {
                             </table>
                         </div>
 
+                        <!-- System Activity Logs -->
                         <div class="card">
                             <h2>📋 System Activity Logs</h2>
                             <table>
@@ -141,7 +203,6 @@ function runAutonomousLoop() {
     try {
         const timestamp = new Date().toISOString();
         
-        // Simulate pulling a harvested data packet into our database
         const categories = ['Financial Alpha', 'Global Sports Odds', 'Community Intel'];
         const randomCategory = categories[Math.floor(Math.random() * categories.length)];
         const title = `Autonomous Harvest Payload #${Math.floor(Math.random() * 1000)}`;
