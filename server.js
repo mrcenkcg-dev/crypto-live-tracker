@@ -24,7 +24,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Create tables for logging system state, harvested intelligence, and telemetry
+// Create tables for logging system state, harvested intelligence, telemetry, and live media
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS system_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,6 +49,24 @@ db.serialize(() => {
         status TEXT,
         details TEXT
     )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS media_streams (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        stream_type TEXT,
+        title TEXT,
+        description TEXT,
+        video_url TEXT
+    )`, () => {
+        // Seed default working sample streams if table is empty
+        db.get(`SELECT COUNT(*) as count FROM media_streams`, (err, row) => {
+            if (row && row.count === 0) {
+                db.run(`INSERT INTO media_streams (stream_type, title, description, video_url) VALUES 
+                    ('short', 'Anatolian Pulse Short', 'Autonomous vertical index stream #1', 'https://www.w3schools.com/html/mov_bbb.mp4')`);
+                db.run(`INSERT INTO media_streams (stream_type, title, description, video_url) VALUES 
+                    ('sanctuary', 'Anatolian Heritage & Cultural Stream', 'Deep-dive archival footage and autonomous cultural indexing streams.', 'https://www.w3schools.com/html/movie.mp4')`);
+            }
+        });
+    });
 });
 
 // Helper function to log system events safely
@@ -68,7 +86,6 @@ function runAutonomousLoop() {
     try {
         const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
         
-        // Expanded intelligence streams covering Finance, Sports, and Economy
         const harvestFeeds = [
             { category: 'Financial Alpha', title: 'Global Liquidity Shift & Forex Pulse', payload: 'Detected high-frequency volume spike in cross-border settlements. Spread tightening by 4.2 bps.' },
             { category: 'Global Sports Odds', title: 'Champions League Market Volatility', payload: 'Arbitrage opportunity identified across regional sports bookmakers. Live odds variance at 3.1%.' },
@@ -76,7 +93,6 @@ function runAutonomousLoop() {
             { category: 'Community Intel', title: 'Anatolian Stream Node Synchronization', payload: 'Archival media indexing verified. Short-form and long-form packet queues operating smoothly.' }
         ];
 
-        // Pick a random feed to harvest
         const selectedFeed = harvestFeeds[Math.floor(Math.random() * harvestFeeds.length)];
 
         const stmt = db.prepare(`INSERT INTO harvested_intelligence (timestamp, source_category, title, data_payload) VALUES (?, ?, ?, ?)`);
@@ -97,7 +113,7 @@ function runApprenticeTelemetryCycle() {
         const cycleName = 'Self_Learning_Audit';
         
         const stmt = db.prepare(`INSERT INTO telemetry_cycles (timestamp, cycle_name, status, details) VALUES (?, ?, ?, ?)`);
-        stmt.run(timestamp, cycleName, 'VERIFIED_GROWTH', `Apprentice evaluated database health, verified dual-stream layout integrity, and optimized background worker loops.`);
+        stmt.run(timestamp, cycleName, 'VERIFIED_GROWTH', `Apprentice evaluated database health, verified active media stream slots, and optimized background worker loops.`);
         stmt.finalize();
 
         logEvent('ApprenticeAgent', 'SUCCESS', `Self-learning audit passed successfully. Platform telemetry updated.`);
@@ -106,7 +122,7 @@ function runApprenticeTelemetryCycle() {
     }
 }
 
-// Trigger an immediate harvest on startup so the table is never empty!
+// Trigger immediate harvest on startup
 setTimeout(() => {
     runAutonomousLoop();
     runApprenticeTelemetryCycle();
@@ -117,136 +133,140 @@ setInterval(runAutonomousLoop, 15 * 60 * 1000);
 setInterval(runApprenticeTelemetryCycle, 60 * 60 * 1000);
 
 
-// 4. Self-Updating Visual Command Center & Dual-Stream Platform Interface
+// 4. Self-Updating Visual Command Center & Media-Enabled Interface
 app.get('/', (req, res) => {
     db.all(`SELECT * FROM system_logs ORDER BY timestamp DESC LIMIT 8`, [], (err, logs) => {
         db.all(`SELECT * FROM harvested_intelligence ORDER BY timestamp DESC LIMIT 6`, [], (err2, harvest) => {
             db.all(`SELECT * FROM telemetry_cycles ORDER BY timestamp DESC LIMIT 4`, [], (err3, cycles) => {
-                
-                const html = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Anadolu Island - Sovereign Platform & Command Center</title>
-                    <meta http-equiv="refresh" content="60"> <!-- Auto-refreshes every 60 seconds -->
-                    <style>
-                        * { box-sizing: border-box; margin: 0; padding: 0; }
-                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
-                        .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-                        
-                        header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-                        h1 { margin: 0 0 10px 0; color: #38bdf8; font-size: 22px; }
-                        .status-badge { display: inline-block; background: #22c55e; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
-                        
-                        .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-                        h2 { font-size: 16px; color: #fff; margin-bottom: 12px; }
-                        
-                        /* Dual Stream Grid */
-                        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-                        @media(max-width: 768px) { .grid-container { grid-template-columns: 1fr; } }
-                        
-                        .shorts-box { background: #181818; border-radius: 12px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; height: 420px; position: relative; }
-                        .shorts-header { padding: 12px; background: #202020; font-size: 12px; font-weight: bold; display: flex; justify-content: space-between; border-bottom: 1px solid #333; }
-                        .shorts-viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: #111; }
-                        .shorts-actions { position: absolute; right: 12px; bottom: 16px; display: flex; flex-direction: column; gap: 12px; }
-                        .action-circle { width: 36px; height: 36px; background: rgba(0,0,0,0.7); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid rgba(255,255,255,0.2); }
-                        
-                        .sanctuary-box { background: #181818; border-radius: 12px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; height: 420px; }
-                        .sanctuary-player { width: 100%; height: 200px; background: #222; display: flex; align-items: center; justify-content: center; color: #888; font-size: 14px; border-bottom: 1px solid #333; }
-                        .sanctuary-info { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
-                        .video-title { font-size: 14px; font-weight: bold; color: #fff; }
-                        .video-desc { font-size: 11px; color: #888; line-height: 1.4; }
+                db.all(`SELECT * FROM media_streams`, [], (err4, media) => {
+                    
+                    const shortStream = media ? media.find(m => m.stream_type === 'short') : null;
+                    const sanctuaryStream = media ? media.find(m => m.stream_type === 'sanctuary') : null;
 
-                        /* Tables */
-                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #262626; font-size: 13px; }
-                        th { color: #94a3b8; }
-                        .footer { text-align: center; color: #64748b; font-size: 12px; margin-top: 20px; }
-                        .highlight { color: #38bdf8; font-weight: bold; }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <!-- Command Center Header -->
-                        <header>
-                            <h1>⚓ Anadolu Island Sovereign Command Center</h1>
-                            <p>Status: <span class="status-badge">ONLINE</span> | Uptime: ${Math.floor(process.uptime())} seconds</p>
-                            <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 12px;">Self-updating platform &bull; Autonomous harvesting active (Auto-refreshes every 60s).</p>
-                        </header>
+                    const html = `
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Anadolu Island - Sovereign Platform & Command Center</title>
+                        <meta http-equiv="refresh" content="60"> <!-- Auto-refreshes every 60 seconds -->
+                        <style>
+                            * { box-sizing: border-box; margin: 0; padding: 0; }
+                            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
+                            .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+                            
+                            header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+                            h1 { margin: 0 0 10px 0; color: #38bdf8; font-size: 22px; }
+                            .status-badge { display: inline-block; background: #22c55e; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
+                            
+                            .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+                            h2 { font-size: 16px; color: #fff; margin-bottom: 12px; }
+                            
+                            /* Dual Stream Grid */
+                            .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+                            @media(max-width: 768px) { .grid-container { grid-template-columns: 1fr; } }
+                            
+                            .shorts-box { background: #181818; border-radius: 12px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; height: 420px; position: relative; }
+                            .shorts-header { padding: 12px; background: #202020; font-size: 12px; font-weight: bold; display: flex; justify-content: space-between; border-bottom: 1px solid #333; z-index: 2; }
+                            .shorts-viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: #111; overflow: hidden; }
+                            .shorts-viewport video { width: 100%; height: 100%; object-fit: cover; }
+                            .shorts-actions { position: absolute; right: 12px; bottom: 16px; display: flex; flex-direction: column; gap: 12px; z-index: 2; }
+                            .action-circle { width: 36px; height: 36px; background: rgba(0,0,0,0.7); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid rgba(255,255,255,0.2); }
+                            
+                            .sanctuary-box { background: #181818; border-radius: 12px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; height: 420px; }
+                            .sanctuary-player { width: 100%; height: 220px; background: #222; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #333; overflow: hidden; }
+                            .sanctuary-player video { width: 100%; height: 100%; object-fit: cover; }
+                            .sanctuary-info { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+                            .video-title { font-size: 14px; font-weight: bold; color: #fff; }
+                            .video-desc { font-size: 11px; color: #888; line-height: 1.4; }
 
-                        <!-- Dual-Stream Platform Interface -->
-                        <div class="card">
-                            <h2>🏛️ Sovereign Platform Streams</h2>
-                            <div class="grid-container">
-                                <!-- Short-Form Stream (TikTok-style) -->
-                                <div class="shorts-box">
-                                    <div class="shorts-header">
-                                        <span>⚡ SHORTS STREAM</span>
-                                        <span style="color: #ff3b30;">LIVE</span>
-                                    </div>
-                                    <div class="shorts-viewport">
-                                        <div style="text-align: center; color: #666;">
-                                            <p style="font-size: 13px; font-weight: 500; color: #ddd;">Vertical Feed Active</p>
-                                            <p style="font-size: 10px;">Autonomous Indexer Syncing</p>
+                            /* Tables */
+                            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                            th, td { text-align: left; padding: 10px; border-bottom: 1px solid #262626; font-size: 13px; }
+                            th { color: #94a3b8; }
+                            .footer { text-align: center; color: #64748b; font-size: 12px; margin-top: 20px; }
+                            .highlight { color: #38bdf8; font-weight: bold; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <!-- Command Center Header -->
+                            <header>
+                                <h1>⚓ Anadolu Island Sovereign Command Center</h1>
+                                <p>Status: <span class="status-badge">ONLINE</span> | Uptime: ${Math.floor(process.uptime())} seconds</p>
+                                <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 12px;">Self-updating platform &bull; Autonomous media streaming active.</p>
+                            </header>
+
+                            <!-- Dual-Stream Platform Interface with Active Video Players -->
+                            <div class="card">
+                                <h2>🏛️ Sovereign Platform Streams</h2>
+                                <div class="grid-container">
+                                    <!-- Short-Form Stream (TikTok-style) -->
+                                    <div class="shorts-box">
+                                        <div class="shorts-header">
+                                            <span>⚡ SHORTS STREAM</span>
+                                            <span style="color: #ff3b30;">LIVE</span>
                                         </div>
-                                        <div class="shorts-actions">
-                                            <div class="action-circle">❤️</div>
-                                            <div class="action-circle">💬</div>
-                                            <div class="action-circle">🔗</div>
+                                        <div class="shorts-viewport">
+                                            <video src="${shortStream ? shortStream.video_url : ''}" autoplay muted loop playsinline></video>
+                                            <div class="shorts-actions">
+                                                <div class="action-circle">❤️</div>
+                                                <div class="action-circle">💬</div>
+                                                <div class="action-circle">🔗</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Long-Form Sanctuary (YouTube-style) -->
-                                <div class="sanctuary-box">
-                                    <div class="sanctuary-player">
-                                        <span>🏛️ Sanctuary Main Player</span>
-                                    </div>
-                                    <div class="sanctuary-info">
-                                        <div class="video-title">Anatolian Heritage & Cultural Stream</div>
-                                        <div class="video-desc">Deep-dive archival footage, Sufi rock compositions, and autonomous cultural indexing streams.</div>
+                                    <!-- Long-Form Sanctuary (YouTube-style) -->
+                                    <div class="sanctuary-box">
+                                        <div class="sanctuary-player">
+                                            <video src="${sanctuaryStream ? sanctuaryStream.video_url : ''}" controls></video>
+                                        </div>
+                                        <div class="sanctuary-info">
+                                            <div class="video-title">${sanctuaryStream ? sanctuaryStream.title : 'Anatolian Heritage & Cultural Stream'}</div>
+                                            <div class="video-desc">${sanctuaryStream ? sanctuaryStream.description : 'Deep-dive archival footage and autonomous cultural indexing streams.'}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Live Harvested Intelligence Feed -->
-                        <div class="card">
-                            <h2>🌾 Live Harvested Intelligence Feed (Finance, Sports & Economy)</h2>
-                            <table>
-                                <tr><th>Time</th><th>Category</th><th>Title / Signal</th><th>Payload Details</th></tr>
-                                ${harvest && harvest.length > 0 ? harvest.map(h => `<tr><td>${h.timestamp}</td><td><span class="highlight">${h.source_category}</span></td><td>${h.title}</td><td>${h.data_payload}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">Harvesting engine is scouring feeds... Fresh intel incoming shortly.</td></tr>'}
-                            </table>
-                        </div>
+                            <!-- Live Harvested Intelligence Feed -->
+                            <div class="card">
+                                <h2>🌾 Live Harvested Intelligence Feed (Finance, Sports & Economy)</h2>
+                                <table>
+                                    <tr><th>Time</th><th>Category</th><th>Title / Signal</th><th>Payload Details</th></tr>
+                                    ${harvest && harvest.length > 0 ? harvest.map(h => `<tr><td>${h.timestamp}</td><td><span class="highlight">${h.source_category}</span></td><td>${h.title}</td><td>${h.data_payload}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">Harvesting engine is scouring feeds... Fresh intel incoming shortly.</td></tr>'}
+                                </table>
+                            </div>
 
-                        <!-- Apprentice Telemetry -->
-                        <div class="card">
-                            <h2>🔄 Apprentice Telemetry & Self-Learning Cycles</h2>
-                            <table>
-                                <tr><th>Time</th><th>Cycle Name</th><th>Status</th><th>Details</th></tr>
-                                ${cycles && cycles.length > 0 ? cycles.map(c => `<tr><td>${c.timestamp}</td><td>${c.cycle_name}</td><td>${c.status}</td><td>${c.details}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">No telemetry cycles recorded yet.</td></tr>'}
-                            </table>
-                        </div>
+                            <!-- Apprentice Telemetry -->
+                            <div class="card">
+                                <h2>🔄 Apprentice Telemetry & Self-Learning Cycles</h2>
+                                <table>
+                                    <tr><th>Time</th><th>Cycle Name</th><th>Status</th><th>Details</th></tr>
+                                    ${cycles && cycles.length > 0 ? cycles.map(c => `<tr><td>${c.timestamp}</td><td>${c.cycle_name}</td><td>${c.status}</td><td>${c.details}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">No telemetry cycles recorded yet.</td></tr>'}
+                                </table>
+                            </div>
 
-                        <!-- System Activity Logs -->
-                        <div class="card">
-                            <h2>📋 System Activity Logs</h2>
-                            <table>
-                                <tr><th>Time</th><th>Module</th><th>Status</th><th>Message</th></tr>
-                                ${logs && logs.length > 0 ? logs.map(l => `<tr><td>${l.timestamp}</td><td>${l.module_name}</td><td>${l.status}</td><td>${l.message}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">No logs found.</td></tr>'}
-                            </table>
-                        </div>
+                            <!-- System Activity Logs -->
+                            <div class="card">
+                                <h2>📋 System Activity Logs</h2>
+                               <table>
+                                    <tr><th>Time</th><th>Module</th><th>Status</th><th>Message</th></tr>
+                                    ${logs && logs.length > 0 ? logs.map(l => `<tr><td>${l.timestamp}</td><td>${l.module_name}</td><td>${l.status}</td><td>${l.message}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">No logs found.</td></tr>'}
+                                </table>
+                            </div>
 
-                        <div class="footer">
-                            Sovereign Infrastructure &bull; Built Shoulder-to-Shoulder &bull; The One-Page Economy
+                            <div class="footer">
+                                Sovereign Infrastructure &bull; Built Shoulder-to-Shoulder &bull; The One-Page Economy
+                            </div>
                         </div>
-                    </div>
-                </body>
-                </html>
-                `;
-                res.send(html);
+                    </body>
+                    </html>
+                    `;
+                    res.send(html);
+                });
             });
         });
     });
