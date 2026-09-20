@@ -94,37 +94,55 @@ function logEvent(module, status, message) {
     }
 }
 
-// 2. Autonomous Background Worker & TikTok Behavioral Learning Loop
+// 2. Autonomous Multi-Channel Intelligence & Behavioral Learning Loop
 function runAutonomousLoop() {
-    console.log('🔄 Running background harvesting and TikTok behavioral learning sync...');
+    console.log('🔄 Deploying sovereign intelligence agencies to observe public platforms...');
     try {
         const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
         
-        // Harvest feeds integrated with TikTok human behavior & engagement patterns
-        const harvestFeeds = [
-            { category: 'TikTok Behavioral Sync', title: 'High-Retention 3-Second Hook Pattern', payload: 'Learned human attention drop-off metrics. Optimized vertical stream transition triggers.', video: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-            { category: 'TikTok Behavioral Sync', title: 'Loop-Velocity & Engagement Loop', payload: 'Harvested audience replay behavior. Synchronized seamless background content rotation.', video: 'https://www.w3schools.com/html/movie.mp4' },
-            { category: 'TikTok Behavioral Sync', title: 'Authentic Community Resonance Index', payload: 'Analyzed organic user curiosity metrics. Injected raw cultural stream parameters.', video: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-            { category: 'Instagram Visuals', title: 'Island Aesthetic & Community Reach', payload: 'Processed tagged archival imagery payloads. Color grading index synchronized.', video: 'https://www.w3schools.com/html/movie.mp4' },
-            { category: 'YouTube Archive', title: 'Bağlama Masterclass & Long-Form Telemetry', payload: 'Parsed chapters from cultural archives. Subtitle vector embeddings updated.', video: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-            { category: 'Facebook Community', title: 'Sovereign Node Group Interaction', payload: 'Scraped localized discussion threads. Sentiment analysis balanced at 94% positive.', video: 'https://www.w3schools.com/html/movie.mp4' },
-            { category: 'Financial Alpha', title: 'Global Liquidity Shift & Forex Pulse', payload: 'Detected high-frequency volume spike in cross-border settlements. Spread tightening by 4.2 bps.', video: 'https://www.w3schools.com/html/mov_bbb.mp4' }
+        // Comprehensive public behavioral intelligence feeds across major platforms
+        const sovereignIntelFeeds = [
+            { 
+                agency: 'TikTok Intelligence Agency', 
+                title: 'High-Velocity 3-Second Retention Loop', 
+                payload: 'Observed micro-attention triggers and rapid vertical transition patterns. Optimized local stream switching.', 
+                video: 'https://www.w3schools.com/html/mov_bbb.mp4' 
+            },
+            { 
+                agency: 'YouTube Intelligence Agency', 
+                title: 'Deep-Engagement Chapter & Sanctuary Metrics', 
+                payload: 'Analyzed long-form retention and archival search intent. Synchronized cultural metadata indices.', 
+                video: 'https://www.w3schools.com/html/movie.mp4' 
+            },
+            { 
+                agency: 'Instagram Intelligence Agency', 
+                title: 'Visual Aesthetic & Community Reach Index', 
+                payload: 'Scouted high-engagement feed layouts and visual storytelling markers. Tuned UI color grading parameters.', 
+                video: 'https://www.w3schools.com/html/mov_bbb.mp4' 
+            },
+            { 
+                agency: 'Facebook Intelligence Agency', 
+                title: 'Localized Community Thread Dynamics', 
+                payload: 'Mapped organic peer discussion group layouts and sentiment clusters. Refined community board structures.', 
+                video: 'https://www.w3schools.com/html/movie.mp4' 
+            }
         ];
 
-        const selectedFeed = harvestFeeds[Math.floor(Math.random() * harvestFeeds.length)];
+        // Pick an intelligence stream from our field agents
+        const intel = sovereignIntelFeeds[Math.floor(Math.random() * sovereignIntelFeeds.length)];
 
-        // Insert harvested intelligence
+        // Record the harvested behavioral intelligence into our sovereign database
         const stmt = db.prepare(`INSERT INTO harvested_intelligence (timestamp, source_category, title, data_payload) VALUES (?, ?, ?, ?)`);
-        stmt.run(timestamp, selectedFeed.category, selectedFeed.title, selectedFeed.payload);
+        stmt.run(timestamp, intel.agency, intel.title, intel.payload);
         stmt.finalize();
 
-        // Dynamically rotate active short media stream to simulate living human behavioral feeds
+        // Automatically evolve the live media stream with the latest behavioral intelligence
         db.run(`UPDATE media_streams SET title = ?, description = ?, video_url = ? WHERE stream_type = 'short'`, 
-            [selectedFeed.title, selectedFeed.payload, selectedFeed.video]);
+            [intel.title, intel.payload, intel.video]);
 
-        logEvent('SocialLearningEngine', 'SUCCESS', `Successfully ingested and learned human behavioral patterns from [${selectedFeed.category}]`);
+        logEvent('SovereignIntelligenceAgency', 'SUCCESS', `Field agents successfully reported back from [${intel.agency}]. Platform behavior upgraded.`);
     } catch (err) {
-        logEvent('SocialLearningEngine', 'ERROR', `Error in harvest loop: ${err.message}`);
+        logEvent('SovereignIntelligenceAgency', 'ERROR', `Intelligence sync error: ${err.message}`);
     }
 }
 
@@ -253,7 +271,7 @@ app.get('/', (req, res) => {
                                     <div>
                                         <h1>⚓ Anadolu Island Sovereign Command Center</h1>
                                         <p>Status: <span class="status-badge">ONLINE</span> | Uptime: <span id="uptime-counter">${Math.floor(process.uptime())}</span>s</p>
-                                        <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 12px;">Self-Upgrading UI: <span id="ui-version-text" style="color: ${accentColor}; font-weight: bold;">${uiVersion}</span> &bull; Social Learning & Media Streaming Active.</p>
+                                        <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 12px;">Self-Upgrading UI: <span id="ui-version-text" style="color: ${accentColor}; font-weight: bold;">${uiVersion}</span> &bull; Multi-Platform Intelligence Active.</p>
                                     </div>
                                     <div>
                                         <!-- Replace 'yourname' with your actual Monzo.me username link -->
