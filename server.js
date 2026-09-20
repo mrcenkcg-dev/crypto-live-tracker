@@ -60,7 +60,7 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM media_streams`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO media_streams (stream_type, title, description, video_url) VALUES 
-                    ('short', 'Anatolian Pulse Short', 'Autonomous vertical index stream #1', 'https://www.w3schools.com/html/mov_bbb.mp4')`);
+                    ('short', 'Anatolian Pulse Short #1', 'Autonomous vertical index stream #1', 'https://www.w3schools.com/html/mov_bbb.mp4')`);
                 db.run(`INSERT INTO media_streams (stream_type, title, description, video_url) VALUES 
                     ('sanctuary', 'Anatolian Heritage & Cultural Stream', 'Deep-dive archival footage and autonomous cultural indexing streams.', 'https://www.w3schools.com/html/movie.mp4')`);
             }
@@ -94,28 +94,32 @@ function logEvent(module, status, message) {
     }
 }
 
-// 2. Autonomous Background Worker & Social Learning Harvesting Loop
+// 2. Autonomous Background Worker & Social Learning Harvesting Loop (With Dynamic Media Rotation)
 function runAutonomousLoop() {
     console.log('🔄 Running background harvesting and social intelligence sync...');
     try {
         const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
         
-        // Expanded streams including Social Media Ingestion (TikTok, Instagram, YouTube, Facebook)
         const harvestFeeds = [
-            { category: 'TikTok / Short Pulse', title: 'Viral Anatolian Sufi Rhythm Trend', payload: 'Ingested short-form audio metrics. Engagement velocity up by 18.5% across nodes.' },
-            { category: 'Instagram Visuals', title: 'Island Aesthetic & Community Reach', payload: 'Processed tagged archival imagery payloads. Color grading index synchronized.' },
-            { category: 'YouTube Archive', title: 'Bağlama Masterclass & Long-Form Telemetry', payload: 'Parsed chapters from cultural archives. Subtitle vector embeddings updated.' },
-            { category: 'Facebook Community', title: 'Sovereign Node Group Interaction', payload: 'Scraped localized discussion threads. Sentiment analysis balanced at 94% positive.' },
-            { category: 'Financial Alpha', title: 'Global Liquidity Shift & Forex Pulse', payload: 'Detected high-frequency volume spike in cross-border settlements. Spread tightening by 4.2 bps.' }
+            { category: 'TikTok / Short Pulse', title: 'Viral Anatolian Sufi Rhythm Trend', payload: 'Ingested short-form audio metrics. Engagement velocity up by 18.5% across nodes.', video: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+            { category: 'Instagram Visuals', title: 'Island Aesthetic & Community Reach', payload: 'Processed tagged archival imagery payloads. Color grading index synchronized.', video: 'https://www.w3schools.com/html/movie.mp4' },
+            { category: 'YouTube Archive', title: 'Bağlama Masterclass & Long-Form Telemetry', payload: 'Parsed chapters from cultural archives. Subtitle vector embeddings updated.', video: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+            { category: 'Facebook Community', title: 'Sovereign Node Group Interaction', payload: 'Scraped localized discussion threads. Sentiment analysis balanced at 94% positive.', video: 'https://www.w3schools.com/html/movie.mp4' },
+            { category: 'Financial Alpha', title: 'Global Liquidity Shift & Forex Pulse', payload: 'Detected high-frequency volume spike in cross-border settlements. Spread tightening by 4.2 bps.', video: 'https://www.w3schools.com/html/mov_bbb.mp4' }
         ];
 
         const selectedFeed = harvestFeeds[Math.floor(Math.random() * harvestFeeds.length)];
 
+        // Insert harvested intelligence
         const stmt = db.prepare(`INSERT INTO harvested_intelligence (timestamp, source_category, title, data_payload) VALUES (?, ?, ?, ?)`);
         stmt.run(timestamp, selectedFeed.category, selectedFeed.title, selectedFeed.payload);
         stmt.finalize();
 
-        logEvent('SocialLearningEngine', 'SUCCESS', `Successfully ingested and learned from [${selectedFeed.category}]`);
+        // Dynamically rotate active short media stream to simulate a living feed
+        db.run(`UPDATE media_streams SET title = ?, description = ?, video_url = ? WHERE stream_type = 'short'`, 
+            [selectedFeed.title, selectedFeed.payload, selectedFeed.video]);
+
+        logEvent('SocialLearningEngine', 'SUCCESS', `Successfully ingested and rotated media from [${selectedFeed.category}]`);
     } catch (err) {
         logEvent('SocialLearningEngine', 'ERROR', `Error in harvest loop: ${err.message}`);
     }
@@ -128,7 +132,6 @@ function runUiUpgradeCycle() {
         const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
         const cycleName = 'Self_Upgrading_Layout_Audit';
         
-        // Dynamic accent colors the system cycles through as it learns
         const accents = ['#38bdf8', '#22c55e', '#f59e0b', '#ec4899', '#8b5cf6'];
         const chosenAccent = accents[Math.floor(Math.random() * accents.length)];
         const upgradeTitles = [
@@ -139,12 +142,10 @@ function runUiUpgradeCycle() {
         ];
         const chosenTitle = upgradeTitles[Math.floor(Math.random() * upgradeTitles.length)];
 
-        // Record telemetry
         const tStmt = db.prepare(`INSERT INTO telemetry_cycles (timestamp, cycle_name, status, details) VALUES (?, ?, ?, ?)`);
         tStmt.run(timestamp, cycleName, 'VERIFIED_EVOLUTION', `Apprentice ingested recent social media data layers and updated UI structural accent parameters.`);
         tStmt.finalize();
 
-        // Record UI Mutation
         const uStmt = db.prepare(`INSERT INTO ui_mutations (upgrade_title, applied_css_accent, status) VALUES (?, ?, ?)`);
         uStmt.run(chosenTitle, chosenAccent, 'ACTIVE');
         uStmt.finalize();
@@ -161,12 +162,26 @@ setTimeout(() => {
     runUiUpgradeCycle();
 }, 2000);
 
-// Trigger background loops (Autonomous harvest every 15 mins, UI Upgrade cycle every 45 mins)
 setInterval(runAutonomousLoop, 15 * 60 * 1000);
 setInterval(runUiUpgradeCycle, 45 * 60 * 1000);
 
+// 4. JSON API Endpoint for Live Client-Side Polling
+app.get('/api/island-status', (req, res) => {
+    db.get(`SELECT * FROM ui_mutations ORDER BY id DESC LIMIT 1`, [], (err, ui) => {
+        db.all(`SELECT * FROM media_streams`, [], (err2, media) => {
+            db.all(`SELECT * FROM harvested_intelligence ORDER BY timestamp DESC LIMIT 1`, [], (err3, harvest) => {
+                res.json({
+                    accent: ui ? ui.applied_css_accent : '#38bdf8',
+                    version: ui ? ui.upgrade_title : 'Genesis Core',
+                    media: media || [],
+                    latestHarvest: harvest ? harvest[0] : null
+                });
+            });
+        });
+    });
+});
 
-// 4. Self-Updating Visual Command Center & Living Interface
+// 5. Self-Updating Visual Command Center & Living Interface
 app.get('/', (req, res) => {
     db.all(`SELECT * FROM system_logs ORDER BY timestamp DESC LIMIT 8`, [], (err, logs) => {
         db.all(`SELECT * FROM harvested_intelligence ORDER BY timestamp DESC LIMIT 6`, [], (err2, harvest) => {
@@ -186,16 +201,19 @@ app.get('/', (req, res) => {
                             <meta charset="UTF-8">
                             <meta name="viewport" content="width=device-width, initial-scale=1.0">
                             <title>Anadolu Island - Sovereign Platform & Command Center</title>
-                            <meta http-equiv="refresh" content="60"> <!-- Auto-refreshes every 60 seconds -->
                             <style>
                                 * { box-sizing: border-box; margin: 0; padding: 0; }
                                 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
                                 .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
                                 
-                                header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-left: 5px solid ${accentColor}; }
-                                h1 { margin: 0 0 10px 0; color: ${accentColor}; font-size: 22px; transition: color 0.5s ease; }
+                                header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-left: 5px solid ${accentColor}; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+                                h1 { margin: 0 0 5px 0; color: ${accentColor}; font-size: 22px; transition: color 0.5s ease; }
                                 .status-badge { display: inline-block; background: #22c55e; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
                                 
+                                /* Monzo Direct Funding Button */
+                                .monzo-btn { background: #ff5252; color: #fff; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #ff7676; transition: background 0.3s ease; display: inline-flex; align-items: center; gap: 6px; }
+                                .monzo-btn:hover { background: #ff3838; }
+
                                 .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
                                 h2 { font-size: 16px; color: #fff; margin-bottom: 12px; }
                                 
@@ -227,11 +245,19 @@ app.get('/', (req, res) => {
                         </head>
                         <body>
                             <div class="container">
-                                <!-- Command Center Header with Self-Upgraded Theme -->
-                                <header>
-                                    <h1>⚓ Anadolu Island Sovereign Command Center</h1>
-                                    <p>Status: <span class="status-badge">ONLINE</span> | Uptime: ${Math.floor(process.uptime())} seconds</p>
-                                    <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 12px;">Self-Upgrading UI: <span style="color: ${accentColor}; font-weight: bold;">${uiVersion}</span> &bull; Social Learning & Media Streaming Active.</p>
+                                <!-- Command Center Header with Self-Upgraded Theme & Monzo Node -->
+                                <header id="island-header" style="border-left-color: ${accentColor};">
+                                    <div>
+                                        <h1>⚓ Anadolu Island Sovereign Command Center</h1>
+                                        <p>Status: <span class="status-badge">ONLINE</span> | Uptime: <span id="uptime-counter">${Math.floor(process.uptime())}</span>s</p>
+                                        <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 12px;">Self-Upgrading UI: <span id="ui-version-text" style="color: ${accentColor}; font-weight: bold;">${uiVersion}</span> &bull; Social Learning & Media Streaming Active.</p>
+                                    </div>
+                                    <div>
+                                        <!-- Replace 'yourname' with your actual Monzo.me username link -->
+                                        <a href="https://me.monzo.com/yourname" target="_blank" class="monzo-btn">
+                                            💳 Support via Monzo
+                                        </a>
+                                    </div>
                                 </header>
 
                                 <!-- Dual-Stream Platform Interface with Active Video Players -->
@@ -241,11 +267,11 @@ app.get('/', (req, res) => {
                                         <!-- Short-Form Stream (TikTok-style) -->
                                         <div class="shorts-box">
                                             <div class="shorts-header">
-                                                <span>⚡ SHORTS STREAM</span>
+                                                <span id="short-stream-label">⚡ SHORTS STREAM (${shortStream ? shortStream.title : 'Live'})</span>
                                                 <span style="color: #ff3b30;">LIVE</span>
                                             </div>
                                             <div class="shorts-viewport">
-                                                <video src="${shortStream ? shortStream.video_url : ''}" autoplay muted loop playsinline></video>
+                                                <video id="dynamic-short-video" src="${shortStream ? shortStream.video_url : ''}" autoplay muted loop playsinline></video>
                                                 <div class="shorts-actions">
                                                     <div class="action-circle">❤️</div>
                                                     <div class="action-circle">💬</div>
@@ -298,6 +324,29 @@ app.get('/', (req, res) => {
                                     Sovereign Infrastructure &bull; Built Shoulder-to-Shoulder &bull; The Living Island Architecture
                                 </div>
                             </div>
+
+                            <!-- Living Interface Polling Script -->
+                            <script>
+                                async function pollIslandStatus() {
+                                    try {
+                                        const res = await fetch('/api/island-status');
+                                        const data = await res.json();
+                                        if (data && data.media) {
+                                            const short = data.media.find(m => m.stream_type === 'short');
+                                            if (short) {
+                                                const vEl = document.getElementById('dynamic-short-video');
+                                                if (vEl && vEl.src !== short.video_url) {
+                                                    vEl.src = short.video_url;
+                                                    vEl.load();
+                                                }
+                                            }
+                                        }
+                                    } catch (e) {
+                                        console.log("Polling background sync active...");
+                                    }
+                                }
+                                setInterval(pollIslandStatus, 30000); // Check for fresh media every 30 seconds
+                            </script>
                         </body>
                         </html>
                         `;
