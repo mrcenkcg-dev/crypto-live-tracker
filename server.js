@@ -239,7 +239,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// 4. PUBLIC ISLAND PORTAL
+// 4. PUBLIC ISLAND PORTAL (Fully Equipped with Interactive Video Overlays)
 app.get('/island', (req, res) => {
     db.all(`SELECT * FROM media_streams ORDER BY id DESC`, [], (err, mediaStreams) => {
         db.all(`SELECT * FROM synthesized_upgrades ORDER BY id DESC LIMIT 4`, [], (err2, upgradesList) => {
@@ -270,8 +270,11 @@ app.get('/island', (req, res) => {
                         .card { background: #18181b; border-radius: 16px; border: 1px solid #27272a; overflow: hidden; display: flex; flex-direction: column; }
                         .card-header { padding: 12px 16px; background: #202024; font-size: 13px; font-weight: bold; border-bottom: 1px solid #27272a; display: flex; justify-content: space-between; color: #e4e4e7; }
                         .source-badge { background: ${accentColor}; color: #000; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
-                        .player-box { width: 100%; height: 200px; background: #000; display: flex; align-items: center; justify-content: center; }
-                        .player-box video { width: 100%; height: 100%; object-fit: cover; }
+                        .player-box { width: 100%; height: 220px; background: #000; position: relative; display: flex; align-items: center; justify-content: center; }
+                        .player-box video { width: 100%; height: 100%; object-fit: cover; display: block; }
+                        .play-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
+                        .play-overlay:hover { background: rgba(0,0,0,0.2); }
+                        .play-btn-circle { width: 50px; height: 50px; background: ${accentColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; font-size: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
                         .card-body { padding: 18px; display: flex; flex-direction: column; gap: 8px; }
                         .title { font-size: 15px; font-weight: bold; color: #fff; }
                         .desc { font-size: 12px; color: #a1a1aa; line-height: 1.4; }
@@ -297,14 +300,17 @@ app.get('/island', (req, res) => {
 
                         <div class="section-title">⚡ Harvested Cultural & Social Streams ("That Life" Edition)</div>
                         <div class="streams-grid">
-                            ${mediaStreams && mediaStreams.length > 0 ? mediaStreams.map(stream => `
+                            ${mediaStreams && mediaStreams.length > 0 ? mediaStreams.map((stream, idx) => `
                                 <div class="card">
                                     <div class="card-header">
                                         <span>Live Feed</span>
                                         <span class="source-badge">${stream.platform_source || 'Sovereign'}</span>
                                     </div>
-                                    <div class="player-box">
-                                        <video src="${stream.video_url}" autoplay muted loop playsinline controls></video>
+                                    <div class="player-box" id="player-box-${idx}">
+                                        <video id="vid-${idx}" src="${stream.video_url}" muted loop playsinline preload="auto"></video>
+                                        <div class="play-overlay" id="overlay-${idx}" onclick="triggerPlay(${idx})">
+                                            <div class="play-btn-circle">&#9658;</div>
+                                        </div>
                                     </div>
                                     <div class="card-body">
                                         <div class="title">${stream.title}</div>
@@ -318,6 +324,33 @@ app.get('/island', (req, res) => {
                             Anadolu Island &bull; Shoulder-to-Shoulder Network &bull; Public Portal
                         </div>
                     </div>
+
+                    <script>
+                        function triggerPlay(idx) {
+                            const vid = document.getElementById('vid-' + idx);
+                            const overlay = document.getElementById('overlay-' + idx);
+                            if (vid) {
+                                vid.play().then(() => {
+                                    if (overlay) overlay.style.display = 'none';
+                                    vid.controls = true;
+                                }).catch(err => {
+                                    console.log("Playback error:", err);
+                                });
+                            }
+                        }
+
+                        window.addEventListener('DOMContentLoaded', () => {
+                            document.querySelectorAll('video').forEach((vid, idx) => {
+                                vid.play().then(() => {
+                                    const overlay = document.getElementById('overlay-' + idx);
+                                    if (overlay) overlay.style.display = 'none';
+                                    vid.controls = true;
+                                }).catch(() => {
+                                    // Handled by play overlay
+                                });
+                            });
+                        });
+                    </script>
                 </body>
                 </html>
                 `;
