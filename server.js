@@ -110,7 +110,18 @@ function logEvent(module, status, message) {
     }
 }
 
-// 2. Autonomous Live-Net Scavenger & Self-Synthesis Engine
+// 2. API Endpoint to Receive Telemetry & Video Generator Pings
+app.post('/api/log', (req, res) => {
+    const { channel, ad_count, content_tag } = req.body;
+    const message = `Automated broadcast generated for ${channel} (Count: ${ad_count || 1}). Tag: ${content_tag || 'Standard'}`;
+    
+    logEvent('VideoPipeline', 'SUCCESS', message);
+    console.log(`📡 Telemetry received: ${message}`);
+    
+    res.status(200).json({ status: 'success', recorded_channel: channel });
+});
+
+// 3. Autonomous Live-Net Scavenger & Self-Synthesis Engine
 async function runLiveNetScavengerLoop() {
     console.log('🔄 Scavenging living net for new architectural blueprints...');
     try {
@@ -159,7 +170,7 @@ async function runLiveNetScavengerLoop() {
 setTimeout(runLiveNetScavengerLoop, 4000);
 setInterval(runLiveNetScavengerLoop, 20 * 60 * 1000);
 
-// 3. PRIVATE COMMAND CENTER
+// 4. PRIVATE COMMAND CENTER
 app.get('/', (req, res) => {
     db.all(`SELECT * FROM harvested_blueprints ORDER BY timestamp DESC LIMIT 5`, [], (err, blueprints) => {
         db.all(`SELECT * FROM synthesized_upgrades ORDER BY timestamp DESC LIMIT 5`, [], (errUpgrades, upgrades) => {
@@ -221,6 +232,14 @@ app.get('/', (req, res) => {
                                 </table>
                             </div>
 
+                            <div class="card">
+                                <h2>📋 Recent System & Pipeline Logs</h2>
+                                <table>
+                                    <tr><th>Timestamp</th><th>Module</th><th>Status</th><th>Message</th></tr>
+                                    ${logs && logs.length > 0 ? logs.map(l => `<tr><td>${l.timestamp}</td><td>${l.module_name}</td><td>${l.status}</td><td>${l.message}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">No logs recorded yet.</td></tr>'}
+                                </table>
+                            </div>
+
                             <div class="footer">
                                 Shoulder-to-Shoulder Network &bull; Sovereign Control Room &bull; Private Dashboard
                             </div>
@@ -235,7 +254,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// 4. PUBLIC ISLAND PORTAL (Fully Equipped with Resilient Interactive Video Overlays)
+// 5. PUBLIC ISLAND PORTAL (Fully Equipped with Resilient Interactive Video Overlays)
 app.get('/island', (req, res) => {
     db.all(`SELECT * FROM media_streams ORDER BY id DESC`, [], (err, mediaStreams) => {
         db.all(`SELECT * FROM synthesized_upgrades ORDER BY id DESC LIMIT 4`, [], (err2, upgradesList) => {
