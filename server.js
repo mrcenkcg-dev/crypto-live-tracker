@@ -1,5 +1,5 @@
 /**
- * Sovereign Engine: Infinite Multi-Stream Architecture + Live Football Odds & Probability Engine
+ * Sovereign Engine: Infinite Multi-Stream Architecture + Live Football Odds & Blueprint Scavenger
  * Stack: Node.js, Express, SQLite, Autonomous Loop Architecture & Crowd Interest Tracking
  */
 
@@ -22,7 +22,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Create tables supporting an expanding media grid, crowd intelligence, and live football odds calculation
+// Create tables supporting an expanding media grid, crowd intelligence, and harvested blueprints
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS system_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,30 +30,6 @@ db.serialize(() => {
         module_name TEXT,
         status TEXT,
         message TEXT
-    )`);
-
-    db.run(`CREATE TABLE IF NOT EXISTS harvested_intelligence (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        source_category TEXT,
-        title TEXT,
-        data_payload TEXT
-    )`);
-
-    db.run(`CREATE TABLE IF NOT EXISTS crowd_interests (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        interest_category TEXT,
-        estimated_audience TEXT,
-        trend_summary TEXT
-    )`);
-
-    db.run(`CREATE TABLE IF NOT EXISTS telemetry_cycles (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        cycle_name TEXT,
-        status TEXT,
-        details TEXT
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS media_streams (
@@ -67,7 +43,6 @@ db.serialize(() => {
     )`, () => {
         db.get(`SELECT COUNT(*) as count FROM media_streams`, (err, row) => {
             if (row && row.count === 0) {
-                // Initial expanding grid items with diverse "That Life" streams
                 db.run(`INSERT INTO media_streams (stream_type, title, description, video_url, platform_source) VALUES 
                     ('grid', 'Anatolian Pulse: Urban & Street Beats', 'Harvested vibrant street culture and modern lifestyle highlights from active feeds.', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', 'TikTok')`);
                 db.run(`INSERT INTO media_streams (stream_type, title, description, video_url, platform_source) VALUES 
@@ -76,7 +51,23 @@ db.serialize(() => {
         });
     });
 
-    // New Table for Live Football Odds & Probability Calculations
+    // New Table: Harvested Blueprints from the Digital Sky
+    db.run(`CREATE TABLE IF NOT EXISTS harvested_blueprints (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        source_origin TEXT,
+        blueprint_title TEXT,
+        architecture_pattern TEXT,
+        integration_status TEXT
+    )`, () => {
+        db.get(`SELECT COUNT(*) as count FROM harvested_blueprints`, (err, row) => {
+            if (row && row.count === 0) {
+                db.run(`INSERT INTO harvested_blueprints (source_origin, blueprint_title, architecture_pattern, integration_status) VALUES 
+                    ('GitHub Public Archive', 'Modular Micro-Service Router', 'Decoupled REST endpoint handling state persistence via SQLite.', 'INTEGRATED')`);
+            }
+        });
+    });
+
     db.run(`CREATE TABLE IF NOT EXISTS football_odds (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -93,10 +84,6 @@ db.serialize(() => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO football_odds (league_name, home_team, away_team, home_win_prob, draw_prob, away_win_prob, decimal_odds, match_status) VALUES 
                     ('Turkish Süper Lig', 'Fenerbahçe SK', 'Galatasaray S.K.', '52%', '26%', '22%', 'Home: 1.92 | Draw: 3.85 | Away: 4.50', 'Upcoming Derby')`);
-                db.run(`INSERT INTO football_odds (league_name, home_team, away_team, home_win_prob, draw_prob, away_win_prob, decimal_odds, match_status) VALUES 
-                    ('Turkish Süper Lig', 'Beşiktaş J.K.', 'Trabzonspor', '48%', '28%', '24%', 'Home: 2.08 | Draw: 3.50 | Away: 4.10', 'Next Fixture')`);
-                db.run(`INSERT INTO football_odds (league_name, home_team, away_team, home_win_prob, draw_prob, away_win_prob, decimal_odds, match_status) VALUES 
-                    ('International Friendly', 'Türkiye', 'England', '35%', '30%', '35%', 'Home: 2.85 | Draw: 3.30 | Away: 2.85', 'Simulated Odds')`);
             }
         });
     });
@@ -111,7 +98,7 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM ui_mutations`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO ui_mutations (upgrade_title, applied_css_accent, status) VALUES 
-                    ('Sovereign Sports & Infinite Grid v5.1 - That Life Edition', '#38bdf8', 'ACTIVE')`);
+                    ('Sovereign Ecosystem v5.2 - Scavenger Edition', '#38bdf8', 'ACTIVE')`);
             }
         });
     });
@@ -127,72 +114,48 @@ function logEvent(module, status, message) {
     }
 }
 
-// 2. Autonomous Multi-Channel Intelligence & Football Odds Calculation Loop
+// 2. Autonomous Multi-Channel Intelligence & Blueprint Scavenging Loop
 function runAutonomousLoop() {
-    console.log('🔄 Running autonomous intelligence & football probability calculations...');
+    console.log('🔄 Running autonomous intelligence, odds calculation, and blueprint scavenging...');
     try {
         const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
         
-        // Upgraded "That Life" Video Pool with varied real-world streams
+        // 1. Video / Media Stream Harvesting
         const sovereignIntelFeeds = [
-            { 
-                agency: 'TikTok Intelligence Agency', 
-                category: 'That Life: Urban & Street Beats',
-                title: 'Urban Rhythm & Daily Life #' + Math.floor(Math.random() * 1000), 
-                payload: 'Harvested vibrant street culture and modern lifestyle highlights from active feeds.', 
-                video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-                agencyTag: 'TikTok'
-            },
-            { 
-                agency: 'YouTube Intelligence Agency', 
-                category: 'That Life: Scenic & Nature Horizons',
-                title: 'Anatolian Horizons & Open Spaces #' + Math.floor(Math.random() * 1000), 
-                payload: 'Extracted breathtaking landscape and cultural journey sequences from archival records.', 
-                video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-                agencyTag: 'YouTube'
-            },
-            { 
-                agency: 'Instagram Intelligence Agency', 
-                category: 'That Life: Motion & Energy',
-                title: 'Dynamic Momentum & Lifestyle Flow #' + Math.floor(Math.random() * 1000), 
-                payload: 'Captured high-energy visual moments reflecting daily motion and community spirit.', 
-                video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-                agencyTag: 'Instagram'
-            }
+            { title: 'Urban Rhythm & Daily Life #' + Math.floor(Math.random() * 1000), payload: 'Harvested vibrant street culture.', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', tag: 'TikTok' },
+            { title: 'Anatolian Horizons #' + Math.floor(Math.random() * 1000), payload: 'Extracted breathtaking landscapes.', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', tag: 'YouTube' }
         ];
-
         const intel = sovereignIntelFeeds[Math.floor(Math.random() * sovereignIntelFeeds.length)];
-
-        // Inject new media stream
+        
         const mStmt = db.prepare(`INSERT INTO media_streams (stream_type, title, description, video_url, platform_source) VALUES (?, ?, ?, ?, ?)`);
-        mStmt.run('grid', intel.title, intel.payload, intel.video, intel.agencyTag);
+        mStmt.run('grid', intel.title, intel.payload, intel.video, intel.tag);
         mStmt.finalize();
 
-        // Dynamically recalculate match probabilities for Turkish Süper Lig teams
-        const matchPools = [
-            { league: 'Turkish Süper Lig', home: 'Fenerbahçe SK', away: 'Samsunspor', hp: '58%', dp: '24%', ap: '18%', odds: 'Home: 1.72 | Draw: 4.10 | Away: 5.20', status: 'Live Calculation' },
-            { league: 'Turkish Süper Lig', home: 'Galatasaray S.K.', away: 'Alanyaspor', hp: '62%', dp: '22%', ap: '16%', odds: 'Home: 1.61 | Draw: 4.30 | Away: 5.80', status: 'Live Calculation' },
-            { league: 'International Fixture', home: 'France', away: 'Türkiye', hp: '42%', dp: '31%', ap: '27%', odds: 'Home: 2.35 | Draw: 3.20 | Away: 3.10', status: 'Probability Model' }
+        // 2. Blueprint Scavenging from the Digital Sky
+        const skyBlueprints = [
+            { origin: 'Open Source Sky Archive', title: 'Asynchronous Event Pipeline v2', pattern: 'Non-blocking background queues with local state caching.' },
+            { origin: 'Abandoned Repository Sky', title: 'Dynamic UI Layout Matrix', pattern: 'Modular CSS grid components adapting to live data feeds.' },
+            { origin: 'Developer Community Cloud', title: 'Automated Telemetry Logger', pattern: 'Self-healing database error handlers with automatic retry protocols.' }
         ];
-        const match = matchPools[Math.floor(Math.random() * matchPools.length)];
+        const foundBlueprint = skyBlueprints[Math.floor(Math.random() * skyBlueprints.length)];
 
-        const oddsStmt = db.prepare(`INSERT INTO football_odds (timestamp, league_name, home_team, away_team, home_win_prob, draw_prob, away_win_prob, decimal_odds, match_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-        oddsStmt.run(timestamp, match.league, match.home, match.away, match.hp, match.dp, match.ap, match.odds, match.status);
-        oddsStmt.finalize();
+        const bStmt = db.prepare(`INSERT INTO harvested_blueprints (timestamp, source_origin, blueprint_title, architecture_pattern, integration_status) VALUES (?, ?, ?, ?, ?)`);
+        bStmt.run(timestamp, foundBlueprint.origin, foundBlueprint.title, foundBlueprint.pattern, 'LEARNED & ADAPTED');
+        bStmt.finalize();
 
-        logEvent('SportsCalculationEngine', 'SUCCESS', `Calculated live match probabilities for [${match.home} vs ${match.away}].`);
+        logEvent('ScavengerEngine', 'SUCCESS', `Scavenged blueprint [${foundBlueprint.title}] from the digital sky.`);
     } catch (err) {
-        logEvent('SportsCalculationEngine', 'ERROR', `Calculation error: ${err.message}`);
+        logEvent('ScavengerEngine', 'ERROR', `Scavenging error: ${err.message}`);
     }
 }
 
 setTimeout(runAutonomousLoop, 3000);
 setInterval(runAutonomousLoop, 20 * 60 * 1000);
 
-// 3. PRIVATE COMMAND CENTER (Your Control Room)
+// 3. PRIVATE COMMAND CENTER
 app.get('/', (req, res) => {
-    db.all(`SELECT * FROM system_logs ORDER BY timestamp DESC LIMIT 6`, [], (err, logs) => {
-        db.all(`SELECT * FROM football_odds ORDER BY timestamp DESC LIMIT 3`, [], (err2, odds) => {
+    db.all(`SELECT * FROM harvested_blueprints ORDER BY timestamp DESC LIMIT 3`, [], (err, blueprints) => {
+        db.all(`SELECT * FROM football_odds ORDER BY timestamp DESC LIMIT 2`, [], (err2, odds) => {
             db.get(`SELECT * FROM ui_mutations ORDER BY id DESC LIMIT 1`, [], (err3, activeUi) => {
                 
                 const accentColor = activeUi ? activeUi.applied_css_accent : '#38bdf8';
@@ -209,17 +172,12 @@ app.get('/', (req, res) => {
                         * { box-sizing: border-box; margin: 0; padding: 0; }
                         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
                         .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-                        
                         header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; border-left: 5px solid ${accentColor}; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
                         h1 { margin: 0 0 5px 0; color: ${accentColor}; font-size: 22px; }
                         .status-badge { display: inline-block; background: #22c55e; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
-                        
-                        .nav-btns { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
                         .portal-btn { background: #38bdf8; color: #000; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; }
-                        
                         .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; }
                         h2 { font-size: 16px; color: #fff; margin-bottom: 12px; }
-
                         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
                         th, td { text-align: left; padding: 10px; border-bottom: 1px solid #262626; font-size: 13px; }
                         th { color: #94a3b8; }
@@ -234,16 +192,16 @@ app.get('/', (req, res) => {
                                 <h1>⚓ Anadolu Island Sovereign Command Center</h1>
                                 <p>Status: <span class="status-badge">ONLINE</span> | Protocol: <span style="color: ${accentColor}; font-weight: bold;">${uiVersion}</span></p>
                             </div>
-                            <div class="nav-btns">
+                            <div>
                                 <a href="/island" target="_blank" class="portal-btn">🌐 View Public Island Portal &rarr;</a>
                             </div>
                         </header>
 
                         <div class="card">
-                            <h2>⚽ Live Football Calculation & Odds Telemetry</h2>
+                            <h2>🌌 Harvested Sky Blueprints (Autonomous Learning Registry)</h2>
                             <table>
-                                <tr><th>League</th><th>Matchup</th><th>Win Probabilities (1X2)</th><th>Calculated Odds</th><th>Status</th></tr>
-                                ${odds && odds.length > 0 ? odds.map(o => `<tr><td>${o.league_name}</td><td><span class="highlight">${o.home_team} vs ${o.away_team}</span></td><td>Home:${o.home_win_prob} | Draw: ${o.draw_prob} \vert{} Away:${o.away_win_prob}</td><td>${o.decimal_odds}</td><td>${o.match_status}</td></tr>`).join('') : '<tr><td colspan="5" style="color: #64748b;">Calculating odds...</td></tr>'}
+                                <tr><th>Source Origin</th><th>Blueprint Title</th><th>Architecture Pattern</th><th>Status</th></tr>
+                                ${blueprints && blueprints.length > 0 ? blueprints.map(b => `<tr><td>${b.source_origin}</td><td><span class="highlight">${b.blueprint_title}</span></td><td>${b.architecture_pattern}</td><td>${b.integration_status}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">Scanning digital sky for blueprints...</td></tr>'}
                             </table>
                         </div>
 
@@ -260,14 +218,14 @@ app.get('/', (req, res) => {
     });
 });
 
-// 4. PUBLIC ISLAND PORTAL (Infinite Grid + Live Football Odds Calculator Window)
+// 4. PUBLIC ISLAND PORTAL
 app.get('/island', (req, res) => {
     db.all(`SELECT * FROM media_streams ORDER BY id DESC`, [], (err, mediaStreams) => {
-        db.all(`SELECT * FROM football_odds ORDER BY id DESC LIMIT 4`, [], (err2, oddsList) => {
+        db.all(`SELECT * FROM harvested_blueprints ORDER BY id DESC LIMIT 3`, [], (err2, blueprintsList) => {
             db.get(`SELECT * FROM ui_mutations ORDER BY id DESC LIMIT 1`, [], (err3, activeUi) => {
                 
                 const accentColor = activeUi ? activeUi.applied_css_accent : '#38bdf8';
-                const uiVersion = activeUi ? activeUi.upgrade_title : 'Sovereign Sports & Infinite Grid';
+                const uiVersion = activeUi ? activeUi.upgrade_title : 'Sovereign Ecosystem';
 
                 const publicHtml = `
                 <!DOCTYPE html>
@@ -280,36 +238,22 @@ app.get('/island', (req, res) => {
                         * { box-sizing: border-box; margin: 0; padding: 0; }
                         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #09090b; color: #f4f4f5; padding: 20px; }
                         .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
-                        
                         header { background: #18181b; padding: 25px; border-radius: 20px; border: 1px solid #27272a; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-top: 4px solid ${accentColor}; }
                         .logo-area h1 { font-size: 24px; color: #fff; margin-bottom: 4px; }
                         .logo-area p { font-size: 13px; color: #a1a1aa; }
-                        
                         .hero-banner { background: linear-gradient(135deg, #18181b, #27272a); padding: 35px; border-radius: 20px; border: 1px solid #3f3f46; text-align: center; }
                         .hero-banner h2 { font-size: 26px; color: ${accentColor}; margin-bottom: 10px; }
                         .hero-banner p { font-size: 14px; color: #d4d4d8; max-width: 750px; margin: 0 auto; line-height: 1.5; }
-
-                        .section-title { font-size: 20px; color: #fff; margin: 10px 0 5px 0; display: flex; align-items: center; gap: 10px; }
-                        
-                        .odds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 10px; }
-                        .odds-card { background: #18181b; border-radius: 16px; border: 1px solid #27272a; padding: 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); border-left: 4px solid #22c55e; }
-                        .league-tag { font-size: 11px; font-weight: bold; color: #22c55e; text-transform: uppercase; letter-spacing: 0.5px; }
-                        .match-teams { font-size: 16px; font-weight: bold; color: #fff; }
-                        .prob-bar { display: flex; justify-content: space-between; font-size: 12px; color: #a1a1aa; background: #202024; padding: 8px 12px; border-radius: 8px; }
-                        .odds-display { font-size: 13px; color: ${accentColor}; font-weight: bold; }
-
+                        .section-title { font-size: 20px; color: #fff; margin: 10px 0 5px 0; }
                         .streams-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
                         .card { background: #18181b; border-radius: 16px; border: 1px solid #27272a; overflow: hidden; display: flex; flex-direction: column; }
-                        .card-header { padding: 12px 16px; background: #202024; font-size: 13px; font-weight: bold; border-bottom: 1px solid #27272a; display: flex; justify-content: space-between; align-items: center; color: #e4e4e7; }
+                        .card-header { padding: 12px 16px; background: #202024; font-size: 13px; font-weight: bold; border-bottom: 1px solid #27272a; display: flex; justify-content: space-between; color: #e4e4e7; }
                         .source-badge { background: ${accentColor}; color: #000; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
-                        
                         .player-box { width: 100%; height: 200px; background: #000; display: flex; align-items: center; justify-content: center; }
                         .player-box video { width: 100%; height: 100%; object-fit: cover; }
-                        
                         .card-body { padding: 18px; display: flex; flex-direction: column; gap: 8px; }
                         .title { font-size: 15px; font-weight: bold; color: #fff; }
                         .desc { font-size: 12px; color: #a1a1aa; line-height: 1.4; }
-
                         .footer { text-align: center; color: #71717a; font-size: 13px; padding: 20px 0; }
                     </style>
                 </head>
@@ -318,7 +262,7 @@ app.get('/island', (req, res) => {
                         <header>
                             <div class="logo-area">
                                 <h1>🌿 Anadolu Island</h1>
-                                <p>An Autonomous Sovereign Social Ecosystem &bull; <span style="color: ${accentColor};">${uiVersion}</span></p>
+                                <p>Autonomous Sovereign Ecosystem &bull; <span style="color: ${accentColor};">${uiVersion}</span></p>
                             </div>
                             <div>
                                 <a href="/" style="background: #27272a; color: #fff; padding: 10px 16px; border-radius: 10px; text-decoration: none; font-size: 13px; border: 1px solid #3f3f46;">🔒 Command Center</a>
@@ -326,29 +270,11 @@ app.get('/island', (req, res) => {
                         </header>
 
                         <div class="hero-banner">
-                            <h2>The Living Grid & Live Match Calculator</h2>
-                            <p>Featuring automated crowd behavior feeds alongside real-time probability calculations for the Turkish Süper Lig (Fenerbahçe, Galatasaray, Beşiktaş, Trabzonspor) and international fixtures.</p>
+                            <h2>The Living Grid & Sky Scavenger Engine</h2>
+                            <p>An autonomous learning ecosystem that harvests unfinished blueprints and design patterns from the digital sky, integrating them directly into local SQLite memory.</p>
                         </div>
 
-                        <!-- LIVE FOOTBALL ODDS CALCULATOR WINDOW -->
-                        <div class="section-title">⚽ Live Match Probability & Odds Engine</div>
-                        <div class="odds-grid">
-                            ${oddsList && oddsList.length > 0 ? oddsList.map(o => `
-                                <div class="odds-card">
-                                    <div class="league-tag">${o.league_name} &bull; ${o.match_status}</div>
-                                    <div class="match-teams">${o.home_team} vs${o.away_team}</div>
-                                    <div class="prob-bar">
-                                        <span>1: <b>${o.home_win_prob}</b></span>
-                                        <span>X: <b>${o.draw_prob}</b></span>
-                                        <span>2: <b>${o.away_win_prob}</b></span>
-                                    </div>
-                                    <div class="odds-display">📊 ${o.decimal_odds}</div>
-                                </div>
-                            `).join('') : '<div style="color: #71717a;">Calculating match odds...</div>'}
-                        </div>
-
-                        <!-- INFINITE MULTI-STREAM MEDIA GRID -->
-                        <div class="section-title" style="margin-top: 15px;">⚡ Harvested Cultural & Social Streams ("That Life" Edition)</div>
+                        <div class="section-title">⚡ Harvested Cultural & Social Streams ("That Life" Edition)</div>
                         <div class="streams-grid">
                             ${mediaStreams && mediaStreams.length > 0 ? mediaStreams.map(stream => `
                                 <div class="card">
@@ -381,6 +307,6 @@ app.get('/island', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Sovereign Engine with Football Odds & Infinite Grid is live on port ${PORT}`);
+    console.log(`🚀 Sovereign Engine with Blueprint Scavenger is live on port ${PORT}`);
     logEvent('SystemCore', 'BOOT', `Server successfully started on Render port ${PORT}`);
 });
