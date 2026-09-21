@@ -1,6 +1,6 @@
 /**
- * Sovereign Engine: Infinite Multi-Stream Architecture + Live Football Odds & Blueprint Scavenger
- * Stack: Node.js, Express, SQLite, Autonomous Loop Architecture & Crowd Interest Tracking
+ * Sovereign Engine: Infinite Multi-Stream Architecture + Live GitHub Blueprint Scavenger
+ * Stack: Node.js, Express, SQLite, Autonomous Live-Net Intelligence & Crowd Interest Tracking
  */
 
 const express = require('express');
@@ -22,7 +22,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Create tables supporting an expanding media grid, crowd intelligence, and harvested blueprints
+// Create tables supporting an expanding media grid and live harvested blueprints from the net
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS system_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,7 +51,7 @@ db.serialize(() => {
         });
     });
 
-    // New Table: Harvested Blueprints from the Digital Sky
+    // Harvested Live Blueprints from the Living Internet
     db.run(`CREATE TABLE IF NOT EXISTS harvested_blueprints (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -63,27 +63,7 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM harvested_blueprints`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO harvested_blueprints (source_origin, blueprint_title, architecture_pattern, integration_status) VALUES 
-                    ('GitHub Public Archive', 'Modular Micro-Service Router', 'Decoupled REST endpoint handling state persistence via SQLite.', 'INTEGRATED')`);
-            }
-        });
-    });
-
-    db.run(`CREATE TABLE IF NOT EXISTS football_odds (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        league_name TEXT,
-        home_team TEXT,
-        away_team TEXT,
-        home_win_prob TEXT,
-        draw_prob TEXT,
-        away_win_prob TEXT,
-        decimal_odds TEXT,
-        match_status TEXT
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM football_odds`, (err, row) => {
-            if (row && row.count === 0) {
-                db.run(`INSERT INTO football_odds (league_name, home_team, away_team, home_win_prob, draw_prob, away_win_prob, decimal_odds, match_status) VALUES 
-                    ('Turkish Süper Lig', 'Fenerbahçe SK', 'Galatasaray S.K.', '52%', '26%', '22%', 'Home: 1.92 | Draw: 3.85 | Away: 4.50', 'Upcoming Derby')`);
+                    ('GitHub Living Registry', 'Sovereign Core Initializer', 'Connected live to public net telemetry channels.', 'INITIALIZED')`);
             }
         });
     });
@@ -98,7 +78,7 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM ui_mutations`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO ui_mutations (upgrade_title, applied_css_accent, status) VALUES 
-                    ('Sovereign Ecosystem v5.2 - Scavenger Edition', '#38bdf8', 'ACTIVE')`);
+                    ('Shoulder-to-Shoulder Ecosystem v6.0 - Live Net Scavenger', '#38bdf8', 'ACTIVE')`);
             }
         });
     });
@@ -114,48 +94,49 @@ function logEvent(module, status, message) {
     }
 }
 
-// 2. Autonomous Multi-Channel Intelligence & Blueprint Scavenging Loop
-function runAutonomousLoop() {
-    console.log('🔄 Running autonomous intelligence, odds calculation, and blueprint scavenging...');
+// 2. Autonomous Live-Net Intelligence & Real Blueprint Scavenging Loop
+async function runLiveNetScavengerLoop() {
+    console.log('🔄 Connecting to the living net to harvest real blueprints...');
     try {
         const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
         
-        // 1. Video / Media Stream Harvesting
-        const sovereignIntelFeeds = [
-            { title: 'Urban Rhythm & Daily Life #' + Math.floor(Math.random() * 1000), payload: 'Harvested vibrant street culture.', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', tag: 'TikTok' },
-            { title: 'Anatolian Horizons #' + Math.floor(Math.random() * 1000), payload: 'Extracted breathtaking landscapes.', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', tag: 'YouTube' }
-        ];
-        const intel = sovereignIntelFeeds[Math.floor(Math.random() * sovereignIntelFeeds.length)];
+        // Fetch real-world open source architecture repositories directly from GitHub's public API (Live Net)
+        const response = await fetch('https://api.github.com/search/repositories?q=automation+architecture+language:javascript&sort=updated&per_page=5', {
+            headers: { 'User-Agent': 'Anadolu-Island-Sovereign-Engine' }
+        });
         
-        const mStmt = db.prepare(`INSERT INTO media_streams (stream_type, title, description, video_url, platform_source) VALUES (?, ?, ?, ?, ?)`);
-        mStmt.run('grid', intel.title, intel.payload, intel.video, intel.tag);
-        mStmt.finalize();
+        const data = await response.json();
 
-        // 2. Blueprint Scavenging from the Digital Sky
-        const skyBlueprints = [
-            { origin: 'Open Source Sky Archive', title: 'Asynchronous Event Pipeline v2', pattern: 'Non-blocking background queues with local state caching.' },
-            { origin: 'Abandoned Repository Sky', title: 'Dynamic UI Layout Matrix', pattern: 'Modular CSS grid components adapting to live data feeds.' },
-            { origin: 'Developer Community Cloud', title: 'Automated Telemetry Logger', pattern: 'Self-healing database error handlers with automatic retry protocols.' }
-        ];
-        const foundBlueprint = skyBlueprints[Math.floor(Math.random() * skyBlueprints.length)];
+        if (data && data.items && data.items.length > 0) {
+            // Pick a live repository found in the wild
+            const repo = data.items[Math.floor(Math.random() * data.items.length)];
+            
+            const origin = `GitHub Live Stream (${repo.owner.login})`;
+            const title = repo.name;
+            const pattern = repo.description ? repo.description.substring(0, 140) : 'Live public repository harvested from open digital net.';
+            
+            const bStmt = db.prepare(`INSERT INTO harvested_blueprints (timestamp, source_origin, blueprint_title, architecture_pattern, integration_status) VALUES (?, ?, ?, ?, ?)`);
+            bStmt.run(timestamp, origin, title, pattern, 'LIVE HARVESTED & ADAPTED');
+            bStmt.finalize();
 
-        const bStmt = db.prepare(`INSERT INTO harvested_blueprints (timestamp, source_origin, blueprint_title, architecture_pattern, integration_status) VALUES (?, ?, ?, ?, ?)`);
-        bStmt.run(timestamp, foundBlueprint.origin, foundBlueprint.title, foundBlueprint.pattern, 'LEARNED & ADAPTED');
-        bStmt.finalize();
+            logEvent('LiveNetScavenger', 'SUCCESS', `Successfully harvested live blueprint [${title}] from the open net.`);
+        } else {
+            logEvent('LiveNetScavenger', 'WARNING', 'Live net response received, but no items matched criteria.');
+        }
 
-        logEvent('ScavengerEngine', 'SUCCESS', `Scavenged blueprint [${foundBlueprint.title}] from the digital sky.`);
     } catch (err) {
-        logEvent('ScavengerEngine', 'ERROR', `Scavenging error: ${err.message}`);
+        logEvent('LiveNetScavenger', 'ERROR', `Live net connection error: ${err.message}`);
     }
 }
 
-setTimeout(runAutonomousLoop, 3000);
-setInterval(runAutonomousLoop, 20 * 60 * 1000);
+// Run once on startup after 4 seconds, then every 20 minutes
+setTimeout(runLiveNetScavengerLoop, 4000);
+setInterval(runLiveNetScavengerLoop, 20 * 60 * 1000);
 
 // 3. PRIVATE COMMAND CENTER
 app.get('/', (req, res) => {
-    db.all(`SELECT * FROM harvested_blueprints ORDER BY timestamp DESC LIMIT 3`, [], (err, blueprints) => {
-        db.all(`SELECT * FROM football_odds ORDER BY timestamp DESC LIMIT 2`, [], (err2, odds) => {
+    db.all(`SELECT * FROM harvested_blueprints ORDER BY timestamp DESC LIMIT 5`, [], (err, blueprints) => {
+        db.all(`SELECT * FROM system_logs ORDER BY timestamp DESC LIMIT 5`, [], (err2, logs) => {
             db.get(`SELECT * FROM ui_mutations ORDER BY id DESC LIMIT 1`, [], (err3, activeUi) => {
                 
                 const accentColor = activeUi ? activeUi.applied_css_accent : '#38bdf8';
@@ -198,15 +179,15 @@ app.get('/', (req, res) => {
                         </header>
 
                         <div class="card">
-                            <h2>🌌 Harvested Sky Blueprints (Autonomous Learning Registry)</h2>
+                            <h2>🌐 Live Net Harvested Blueprints (Real Open-World Intelligence)</h2>
                             <table>
-                                <tr><th>Source Origin</th><th>Blueprint Title</th><th>Architecture Pattern</th><th>Status</th></tr>
-                                ${blueprints && blueprints.length > 0 ? blueprints.map(b => `<tr><td>${b.source_origin}</td><td><span class="highlight">${b.blueprint_title}</span></td><td>${b.architecture_pattern}</td><td>${b.integration_status}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">Scanning digital sky for blueprints...</td></tr>'}
+                                <tr><th>Source Origin</th><th>Blueprint / Project Title</th><th>Architecture & Pattern</th><th>Status</th></tr>
+                                ${blueprints && blueprints.length > 0 ? blueprints.map(b => `<tr><td>${b.source_origin}</td><td><span class="highlight">${b.blueprint_title}</span></td><td>${b.architecture_pattern}</td><td>${b.integration_status}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">Connecting to living net for blueprints...</td></tr>'}
                             </table>
                         </div>
 
                         <div class="footer">
-                            Anadolu Island Sovereign Control Room &bull; Private Dashboard
+                            Shoulder-to-Shoulder Network &bull; Sovereign Control Room &bull; Private Dashboard
                         </div>
                     </div>
                 </body>
@@ -221,11 +202,11 @@ app.get('/', (req, res) => {
 // 4. PUBLIC ISLAND PORTAL
 app.get('/island', (req, res) => {
     db.all(`SELECT * FROM media_streams ORDER BY id DESC`, [], (err, mediaStreams) => {
-        db.all(`SELECT * FROM harvested_blueprints ORDER BY id DESC LIMIT 3`, [], (err2, blueprintsList) => {
+        db.all(`SELECT * FROM harvested_blueprints ORDER BY id DESC LIMIT 4`, [], (err2, blueprintsList) => {
             db.get(`SELECT * FROM ui_mutations ORDER BY id DESC LIMIT 1`, [], (err3, activeUi) => {
                 
                 const accentColor = activeUi ? activeUi.applied_css_accent : '#38bdf8';
-                const uiVersion = activeUi ? activeUi.upgrade_title : 'Sovereign Ecosystem';
+                const uiVersion = activeUi ? activeUi.upgrade_title : 'Shoulder-to-Shoulder Ecosystem';
 
                 const publicHtml = `
                 <!DOCTYPE html>
@@ -233,7 +214,7 @@ app.get('/island', (req, res) => {
                 <head>
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Anadolu Island - Living Cultural & Sports Ecosystem</title>
+                    <title>Anadolu Island - Living Cultural & Network Ecosystem</title>
                     <style>
                         * { box-sizing: border-box; margin: 0; padding: 0; }
                         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #09090b; color: #f4f4f5; padding: 20px; }
@@ -262,7 +243,7 @@ app.get('/island', (req, res) => {
                         <header>
                             <div class="logo-area">
                                 <h1>🌿 Anadolu Island</h1>
-                                <p>Autonomous Sovereign Ecosystem &bull; <span style="color: ${accentColor};">${uiVersion}</span></p>
+                                <p>Shoulder-to-Shoulder Ecosystem &bull; <span style="color: ${accentColor};">${uiVersion}</span></p>
                             </div>
                             <div>
                                 <a href="/" style="background: #27272a; color: #fff; padding: 10px 16px; border-radius: 10px; text-decoration: none; font-size: 13px; border: 1px solid #3f3f46;">🔒 Command Center</a>
@@ -270,8 +251,8 @@ app.get('/island', (req, res) => {
                         </header>
 
                         <div class="hero-banner">
-                            <h2>The Living Grid & Sky Scavenger Engine</h2>
-                            <p>An autonomous learning ecosystem that harvests unfinished blueprints and design patterns from the digital sky, integrating them directly into local SQLite memory.</p>
+                            <h2>The Living Net & Live Blueprint Harvester</h2>
+                            <p>An autonomous learning platform connected directly to the living internet, harvesting real-world architectural blueprints and open-source intelligence as it grows.</p>
                         </div>
 
                         <div class="section-title">⚡ Harvested Cultural & Social Streams ("That Life" Edition)</div>
@@ -294,7 +275,7 @@ app.get('/island', (req, res) => {
                         </div>
 
                         <div class="footer">
-                            Anadolu Island &bull; Sovereign & Independent &bull; Public Portal
+                            Anadolu Island &bull; Shoulder-to-Shoulder Network &bull; Public Portal
                         </div>
                     </div>
                 </body>
@@ -307,6 +288,6 @@ app.get('/island', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Sovereign Engine with Blueprint Scavenger is live on port ${PORT}`);
+    console.log(`🚀 Sovereign Engine with Live Net Scavenger is live on port ${PORT}`);
     logEvent('SystemCore', 'BOOT', `Server successfully started on Render port ${PORT}`);
 });
