@@ -22,7 +22,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Create tables supporting media streams, harvested blueprints, and autonomous system upgrades
+// Create tables supporting media streams, harvested blueprints, autonomous system upgrades, and learning cycles
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS system_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -98,6 +98,25 @@ db.serialize(() => {
             }
         });
     });
+
+    // Learning Cycles Table for 4D Pet Project & Self-Learning Sandbox
+    db.run(`CREATE TABLE IF NOT EXISTS learning_cycles (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        learning_cycle INTEGER,
+        experiment_title TEXT,
+        approval_status TEXT,
+        agent_hypothesis TEXT,
+        sandbox_result TEXT,
+        tested_at TEXT
+    )`, () => {
+        db.get(`SELECT COUNT(*) as count FROM learning_cycles`, (err, row) => {
+            if (row && row.count === 0) {
+                db.run(`INSERT INTO learning_cycles (learning_cycle, experiment_title, approval_status, agent_hypothesis, sandbox_result, tested_at) VALUES 
+                    (1, 'Autonomous Telemetry Stream Sync', 'APPROVED', 'Refreshing background fetch routines improves dashboard responsiveness.', 'Success: Latency reduced by 14% across all active nodes.', '2026-09-21 12:00:00')`);
+            }
+        });
+    });
 });
 
 function logEvent(module, status, message) {
@@ -119,6 +138,26 @@ app.post('/api/log', (req, res) => {
     console.log(`📡 Telemetry received: ${message}`);
     
     res.status(200).json({ status: 'success', recorded_channel: channel });
+});
+
+// API Endpoint for Pet Project / Sandbox Telemetry
+app.get('/api/pet-project/status', (req, res) => {
+    db.all(`SELECT * FROM learning_cycles ORDER BY learning_cycle DESC LIMIT 10`, [], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({
+            status: 'ACTIVE',
+            review_cadence: '2-HOUR CYCLE',
+            learning_cycles: rows || []
+        });
+    });
+});
+
+// Serve the pet-project HTML observation deck file directly
+app.get('/pet-project', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pet-project.html'));
 });
 
 // 3. Autonomous Live-Net Scavenger & Self-Synthesis Engine
@@ -211,7 +250,8 @@ app.get('/', (req, res) => {
                                     <h1>⚓ Anadolu Island Sovereign Command Center</h1>
                                     <p>Status: <span class="status-badge">ONLINE</span> | Protocol: <span style="color: ${accentColor}; font-weight: bold;">${uiVersion}</span></p>
                                 </div>
-                                <div>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <a href="/pet-project" class="portal-btn" style="background: #a855f7; color: #fff;">🐾 4D Sandbox</a>
                                     <a href="/island" target="_blank" class="portal-btn">🌐 View Public Island Portal &rarr;</a>
                                 </div>
                             </header>
@@ -303,7 +343,8 @@ app.get('/island', (req, res) => {
                                 <h1>🌿 Anadolu Island</h1>
                                 <p>Shoulder-to-Shoulder Ecosystem &bull; <span style="color: ${accentColor};">${uiVersion}</span></p>
                             </div>
-                            <div>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <a href="/pet-project" style="background: #27272a; color: #a855f7; padding: 10px 16px; border-radius: 10px; text-decoration: none; font-size: 13px; border: 1px solid #a855f7; font-weight: bold;">🐾 4D Sandbox</a>
                                 <a href="/" style="background: #27272a; color: #fff; padding: 10px 16px; border-radius: 10px; text-decoration: none; font-size: 13px; border: 1px solid #3f3f46;">🔒 Command Center</a>
                             </div>
                         </header>
