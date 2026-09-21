@@ -1,11 +1,20 @@
 import os
 import time
+import random
+import sqlite3
 import requests
-from moviepy.editor import TextClip, ColorClip, CompositeVideoClip
+import ffmpeg
+from datetime import datetime
 
-# Initialize a persistent session for efficient server pings
-session = requests.Session()
+# Configuration & Paths
+OUTPUT_DIR = "./public/videos"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+DB_PATH = "sovereign_engine.db"
 SERVER_URL = "https://mrcenk.onrender.com/api/log"
+
+# Persistent session for efficient server telemetry pings
+session = requests.Session()
 
 # Cultural & Community Slogans for Autonomous Rotation
 SLOGANS = [
@@ -16,75 +25,93 @@ SLOGANS = [
     "Anatolian Pulse & Digital Roots"
 ]
 
-def generate_short_video(output_filename="output_short.mp4", text_message=None):
-    print("🎬 Generating vertical short video...")
+def render_dynamic_video_card(title_text, video_id):
+    """Generates a procedural vertical video using lightweight FFmpeg filters."""
+    output_filename = f"video_{video_id}.mp4"
+    output_filepath = os.path.join(OUTPUT_DIR, output_filename)
     
-    if not text_message:
-        # Automatically rotate through slogans on each run
-        import random
-        text_message = random.choice(SLOGANS)
-
+    print(f"🎬 Rendering vertical video card for: [{title_text}]")
+    
     try:
-        # 1. Create a dark background clip (Vertical 9:16 ratio for Shorts/Reels/TikTok: 1080x1920)
-        background = ColorClip(size=(1080, 1920), color=(15, 15, 25), duration=5)
-        
-        # 2. Create text overlay (Ensure ImageMagick is configured on your host environment)
-        txt_clip = TextClip(
-            text_message, 
-            fontsize=65, 
-            color='white', 
-            size=(960, None), 
-            method='caption'
-        ).set_duration(5).set_position('center')
-        
-        # 3. Composite the video together
-        video = CompositeVideoClip([background, txt_clip])
-        
-        # 4. Write the final video file
-        output_path = os.path.join(os.getcwd(), output_filename)
-        video.write_videofile(
-            output_path, 
-            fps=24, 
-            codec='libx264', 
-            audio_codec='aac',
-            logger=None # Keeps console clean during automated loops
+        # Create a vertical 9:16 canvas (1080x1920) with a dark theme background and centered text
+        (
+            ffmpeg
+            .input('color=c=0x18181b:s=1080x1920:d=5', f='lavfi')
+            .drawtext(
+                text=title_text,
+                x='(w-text_w)/2',
+                y='(h-text_h)/2',
+                fontsize=52,
+                fontcolor='white',
+                shadowcolor='black',
+                shadowx=3,
+                shadowy=3
+            )
+            .output(output_filepath, pix_fmt='yuv420p', vcodec='libx264', r=25)
+            .overwrite_output()
+            .run(quiet=True)
         )
-        
-        print(f"✅ Video successfully created at: {output_path} [{text_message}]")
-        
-        # 5. Notify the live Render server to update counters for all platforms
-        notify_server_all_platforms(text_message)
-        
-        return output_path
-
+        print(f"✅ Rendered media asset: {output_filepath}")
+        return f"/videos/{output_filename}"
     except Exception as e:
-        print(f"⚠️ Video generation warning/error (Check ImageMagick dependencies): {e}")
+        print(f"❌ FFmpeg Render Error: {e}")
         return None
 
-def notify_server_all_platforms(message):
+def notify_server_all_platforms(content_tag):
+    """Pings your Express server telemetry endpoint to update activity counters across platforms."""
     platforms = ["youtube", "tiktok", "instagram", "facebook"]
     
     for channel in platforms:
-        payload = {"channel": channel, "ad_count": 1, "content_tag": message}
+        payload = {"channel": channel, "ad_count": 1, "content_tag": content_tag}
         try:
             response = session.post(SERVER_URL, json=payload, timeout=10)
             if response.status_code == 200:
-                print(f"   ↳ Logged activity for {channel} on Render.")
+                print(f"    ↳ Logged telemetry activity for {channel} on Render.")
             else:
-                print(f"   ↳ Server response for {channel}: {response.status_code}")
+                print(f"    ↳ Server response for {channel}: {response.status_code}")
         except requests.exceptions.RequestException as e:
-            print(f"   ↳ Network error pinging server for {channel}: {e}")
+            print(f"    ↳ Network error pinging server for {channel}: {e}")
+
+def run_autonomous_cycle():
+    """Executes a full generation, database injection, and telemetry notification cycle."""
+    timestamp_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+    title_text = random.choice(SLOGANS)
+    description_text = f"Autonomous video generation loop executed live on worker. Tag: {title_text}"
+    
+    # 1. Render physical MP4 asset
+    video_url = render_dynamic_video_card(title_text, timestamp_id)
+    
+    if video_url:
+        # 2. Inject directly into local SQLite database so it populates the public /island portal grid
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO media_streams (stream_type, title, description, video_url, platform_source)
+                VALUES (?, ?, ?, ?, ?)
+            """, ('grid', title_text, description_text, video_url, 'Sovereign Engine'))
+            conn.commit()
+            conn.close()
+            print("🚀 Successfully published rendered video record to SQLite database.")
+        except sqlite3.Error as db_err:
+            print(f"⚠️ Database insertion error: {db_err}")
+
+        # 3. Notify remote Express server logs
+        notify_server_all_platforms(title_text)
+    else:
+        print("⚠️ Skipping database injection due to render failure.")
 
 if __name__ == "__main__":
-    print("🚀 Starting automated hourly multi-platform video generator script...")
+    print("🚀 Starting autonomous hourly multi-platform video generator worker...")
     
     # Run once immediately on startup
-    generate_short_video()
+    run_autonomous_cycle()
     
+    # Continuous hourly loop
     while True:
-        print("⏳ Waiting for the next cycle (1 hour)...")
+        print("⏳ Waiting for the next autonomous cycle (1 hour)...")
         time.sleep(3600)
         try:
-            generate_short_video()
+            run_autonomous_cycle()
         except Exception as e:
-            print(f"❌ Error during scheduled video generation loop: {e}")
+            print(f"❌ Error in main loop execution: {e}")
