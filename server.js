@@ -1,18 +1,22 @@
 /**
- * Sovereign Engine: Self-Upgrading Live-Net Architecture
- * Stack: Node.js, Express, SQLite, Autonomous Blueprint Scavenger & Dynamic Code Synthesis
+ * Sovereign Engine: Self-Upgrading Live-Net Architecture with Media Streaming
+ * Stack: Node.js, Express, SQLite, FFmpeg Video Generation, & Dynamic Public Portal
  */
 
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const { spawn } = require('child_process');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 app.use(express.json());
 
-// 1. Initialize SQLite Database (Local Sovereign Storage)
+// 1. Serve Static Assets (Rendered Videos)
+app.use('/videos', express.static(path.join(__dirname, 'public/videos')));
+
+// 2. Initialize SQLite Database (Local Sovereign Storage)
 const dbPath = path.resolve(__dirname, 'sovereign_engine.db');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
@@ -118,7 +122,7 @@ function logEvent(module, status, message) {
     }
 }
 
-// 2. API Endpoints
+// 3. API Endpoints
 app.post('/api/log', (req, res) => {
     const { channel, ad_count, content_tag } = req.body;
     const message = `Automated broadcast generated for ${channel} (Count: ${ad_count || 1}). Tag: ${content_tag || 'Standard'}`;
@@ -147,7 +151,7 @@ app.get('/pet-project', (req, res) => {
     res.sendFile(path.join(__dirname, 'pet-project.html'));
 });
 
-// 3. Autonomous Live-Net Scavenger & Self-Synthesis Engine
+// 4. Autonomous Live-Net Scavenger & Self-Synthesis Engine
 async function runLiveNetScavengerLoop() {
     console.log('🔄 Scavenging living net for new architectural blueprints...');
     try {
@@ -196,7 +200,7 @@ async function runLiveNetScavengerLoop() {
 setTimeout(runLiveNetScavengerLoop, 4000);
 setInterval(runLiveNetScavengerLoop, 20 * 60 * 1000);
 
-// 4. PRIVATE COMMAND CENTER
+// 5. PRIVATE COMMAND CENTER
 app.get('/', (req, res) => {
     db.all(`SELECT * FROM harvested_blueprints ORDER BY timestamp DESC LIMIT 5`, [], (err, blueprints) => {
         db.all(`SELECT * FROM synthesized_upgrades ORDER BY timestamp DESC LIMIT 5`, [], (errUpgrades, upgrades) => {
@@ -281,121 +285,121 @@ app.get('/', (req, res) => {
     });
 });
 
-// 5. PUBLIC ISLAND PORTAL (Real-Time Live Intelligence & Blueprint Feed)
+// 6. PUBLIC ISLAND PORTAL (Vibrant Social Media Feed & Video Stream)
 app.get('/island', (req, res) => {
-    db.all(`SELECT * FROM harvested_blueprints ORDER BY timestamp DESC LIMIT 6`, [], (err, blueprints) => {
-        db.all(`SELECT * FROM synthesized_upgrades ORDER BY timestamp DESC LIMIT 6`, [], (err2, upgrades) => {
-            db.all(`SELECT * FROM system_logs ORDER BY timestamp DESC LIMIT 8`, [], (err3, logs) => {
-                db.get(`SELECT * FROM ui_mutations ORDER BY id DESC LIMIT 1`, [], (err4, activeUi) => {
+    db.all(`SELECT * FROM media_streams ORDER BY id DESC`, [], (err, mediaStreams) => {
+        db.get(`SELECT * FROM ui_mutations ORDER BY id DESC LIMIT 1`, [], (err2, activeUi) => {
+            
+            const accentColor = activeUi ? activeUi.applied_css_accent : '#22c55e';
+            const uiVersion = activeUi ? activeUi.upgrade_title : 'Shoulder-to-Shoulder Ecosystem';
+
+            const publicHtml = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Anadolu Island - Community & Media Feed</title>
+                <style>
+                    * { box-sizing: border-box; margin: 0; padding: 0; }
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f0f0f; color: #f1f1f1; padding: 0; }
                     
-                    const accentColor = activeUi ? activeUi.applied_css_accent : '#22c55e';
-                    const uiVersion = activeUi ? activeUi.upgrade_title : 'Shoulder-to-Shoulder Ecosystem v7.0';
+                    nav { background: #181818; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
+                    .brand { font-size: 20px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 8px; }
+                    .brand span { color: ${accentColor}; }
+                    .nav-actions { display: flex; gap: 12px; align-items: center; }
+                    .nav-btn { background: #272727; color: #fff; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: bold; border: 1px solid #3f3f46; transition: background 0.2s; }
+                    .nav-btn:hover { background: #3f3f46; }
 
-                    const publicHtml = `
-                    <!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>Anadolu Island - Living Net Intelligence Portal</title>
-                        <style>
-                            * { box-sizing: border-box; margin: 0; padding: 0; }
-                            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
-                            .container { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-                            header { background: #141414; padding: 22px; border-radius: 16px; border: 1px solid #262626; border-left: 5px solid ${accentColor}; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-                            h1 { font-size: 22px; color: #fff; margin-bottom: 4px; }
-                            p { font-size: 13px; color: #94a3b8; }
-                            .nav-btn { background: #262626; color: #fff; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; transition: background 0.2s; }
-                            .nav-btn:hover { background: #3f3f46; }
-                            .hero-banner { background: #141414; padding: 25px; border-radius: 16px; border: 1px solid #262626; display: flex; flex-direction: column; gap: 8px; }
-                            .hero-banner h2 { font-size: 18px; color: ${accentColor}; }
-                            .hero-banner p { color: #cbd5e1; line-height: 1.5; font-size: 14px; }
-                            .grid-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-                            @media (max-width: 768px) { .grid-section { grid-template-columns: 1fr; } }
-                            .card { background: #141414; border-radius: 16px; border: 1px solid #262626; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
-                            .card h2 { font-size: 16px; color: #fff; border-bottom: 1px solid #262626; padding-bottom: 8px; }
-                            table { width: 100%; border-collapse: collapse; }
-                            th, td { text-align: left; padding: 9px; border-bottom: 1px solid #262626; font-size: 13px; }
-                            th { color: #94a3b8; font-weight: 600; }
-                            .badge { background: rgba(34, 197, 94, 0.15); color: ${accentColor}; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-                            .log-item { display: flex; flex-direction: column; gap: 3px; padding: 10px; background: #18181b; border-radius: 8px; border: 1px solid #27272a; font-size: 13px; }
-                            .log-time { color: #71717a; font-size: 11px; }
-                            .footer { text-align: center; color: #64748b; font-size: 12px; padding: 15px 0; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="container">
-                            <header>
-                                <div>
-                                    <h1>🌿 Anadolu Island Public Intelligence Portal</h1>
-                                    <p>Shoulder-to-Shoulder Ecosystem &bull; <span style="color: ${accentColor};">${uiVersion}</span></p>
-                                </div>
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <a href="/pet-project" class="nav-btn" style="color: #a855f7; border-color: #a855f7;">🐾 4D Sandbox</a>
-                                    <a href="/" class="nav-btn">🔒 Command Center</a>
-                                </div>
-                            </header>
+                    .container { max-width: 900px; margin: 30px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 30px; }
 
-                            <div class="hero-banner">
-                               <h2>Live Autonomous Learning Stream</h2>
-                               <p>This portal reflects real-time telemetry from the living net. Every repository harvested, blueprint analyzed, and module synthesized by the background agents is recorded transparently here.</p>
-                            </div>
+                    .hero-card { background: #1a1a1a; border: 1px solid #333; border-radius: 16px; padding: 30px; text-align: center; background: linear-gradient(135deg, #181818, #222); }
+                    .hero-card h1 { font-size: 28px; color: #fff; margin-bottom: 10px; }
+                    .hero-card p { font-size: 15px; color: #aaa; max-width: 600px; margin: 0 auto; line-height: 1.5; }
 
-                            <div class="grid-section">
-                                <div class="card">
-                                    <h2>🧬 Harvested GitHub Blueprints</h2>
-                                    <table>
-                                        <tr><th>Origin / Source</th><th>Repository Title</th><th>Status</th></tr>
-                                        ${blueprints && blueprints.length > 0 ? blueprints.map(b => `
-                                            <tr>
-                                                <td style="color: #94a3b8; font-size: 12px;">${b.source_origin}</td>
-                                                <td><span style="color: ${accentColor}; font-weight: bold;">${b.blueprint_title}</span></td>
-                                                <td><span class="badge">${b.integration_status}</span></td>
-                                            </tr>
-                                        `).join('') : '<tr><td colspan="3" style="color: #64748b;">Scanning network for active blueprints...</td></tr>'}
-                                    </table>
-                                </div>
+                    .feed-header { font-size: 18px; font-weight: bold; color: #fff; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 10px; }
+                    .feed-stream { display: flex; flex-direction: column; gap: 24px; }
 
-                                <div class="card">
-                                    <h2>⚡ Synthesized Upgrades</h2>
-                                    <table>
-                                        <tr><th>Upgrade Module</th><th>Applied Architecture</th><th>Status</th></tr>
-                                        ${upgrades && upgrades.length > 0 ? upgrades.map(u => `
-                                            <tr>
-                                                <td><span style="color: #fff; font-weight: bold;">${u.upgrade_name}</span></td>
-                                                <td style="color: #94a3b8; font-size: 12px;">${u.applied_logic}</td>
-                                                <td><span class="badge">${u.status}</span></td>
-                                            </tr>
-                                        `).join('') : '<tr><td colspan="3" style="color: #64748b;">Waiting for synthesis cycle...</td></tr>'}
-                                    </table>
-                                </div>
-                            </div>
+                    .post-card { background: #181818; border: 1px solid #333; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+                    .post-header { padding: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #262626; }
+                    .author-info { display: flex; align-items: center; gap: 10px; }
+                    .avatar { width: 36px; height: 36px; background: ${accentColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; }
+                    .author-name { font-size: 14px; font-weight: bold; color: #fff; }
+                    .post-time { font-size: 12px; color: #888; }
+                    .platform-tag { background: #2a2a2a; color: ${accentColor}; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
 
-                            <div class="card">
-                                <h2>📋 Real-Time System Telemetry Logs</h2>
-                                <div style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto;">
-                                    ${logs && logs.length > 0 ? logs.map(l => `
-                                        <div class="log-item">
-                                            <div style="display: flex; justify-content: space-between;">
-                                                <strong style="color: ${accentColor};">${l.module_name}</strong>
-                                                <span class="log-time">${l.timestamp}</span>
-                                            </div>
-                                            <span style="color: #cbd5e1;">${l.message}</span>
+                    .media-box { width: 100%; max-height: 450px; background: #000; display: flex; align-items: center; justify-content: center; position: relative; }
+                    .media-box video { width: 100%; max-height: 450px; object-fit: contain; display: block; }
+                    
+                    .post-body { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+                    .post-title { font-size: 16px; font-weight: bold; color: #fff; }
+                    .post-desc { font-size: 14px; color: #bbb; line-height: 1.4; }
+
+                    .footer { text-align: center; color: #666; font-size: 13px; padding: 20px 0; }
+                </style>
+            </head>
+            <body>
+
+                <nav>
+                    <div class="brand">
+                        🌿 Anadolu <span>Island</span>
+                    </div>
+                    <div class="nav-actions">
+                        <a href="/pet-project" class="nav-btn" style="color: #c084fc; border-color: #c084fc;">🐾 4D Sandbox</a>
+                        <a href="/" class="nav-btn">🔒 Command Center</a>
+                    </div>
+                </nav>
+
+                <div class="container">
+                    
+                    <div class="hero-card">
+                        <h1>Shoulder-to-Shoulder Community Feed</h1>
+                        <p>Welcome to our media stage. Here is where cultural streams, video assets, and community stories come together.</p>
+                    </div>
+
+                    <div class="feed-header">
+                        <span>📡 Live Community Streams & Stories</span>
+                        <span style="font-size: 12px; color: #888;">Staging Preview</span>
+                    </div>
+
+                    <div class="feed-stream">
+                        ${mediaStreams && mediaStreams.length > 0 ? mediaStreams.map((stream) => `
+                            <div class="post-card">
+                                <div class="post-header">
+                                    <div class="author-info">
+                                        <div class="avatar">AI</div>
+                                        <div>
+                                            <div class="author-name">Anadolu Island Network</div>
+                                            <div class="post-time">${stream.timestamp}</div>
                                         </div>
-                                    `).join('') : '<div style="color: #64748b;">No system logs recorded yet.</div>'}
+                                    </div>
+                                    <span class="platform-tag">${stream.platform_source || 'Community'}</span>
+                                </div>
+                                <div class="media-box">
+                                    <video src="${stream.video_url}" controls playsinline preload="metadata"></video>
+                                </div>
+                                <div class="post-body">
+                                    <div class="post-title">${stream.title}</div>
+                                    <div class="post-desc">${stream.description}</div>
                                 </div>
                             </div>
-
-                            <div class="footer">
-                                Anadolu Island &bull; Shoulder-to-Shoulder Autonomous Engine &bull; Live Telemetry
+                        `).join('') : `
+                            <div class="post-card" style="padding: 40px; text-align: center; color: #888;">
+                                No active media streams loaded yet. Ready for your Python video generator worker feed!
                             </div>
-                        </div>
-                    </body>
-                    </html>
-                    `;
-                    res.send(publicHtml);
-                });
-            });
+                        `}
+                    </div>
+
+                    <div class="footer">
+                        Anadolu Island &bull; Shoulder-to-Shoulder Ecosystem &bull; Public Portal
+                    </div>
+
+                </div>
+
+            </body>
+            </html>
+            `;
+            res.send(publicHtml);
         });
     });
 });
