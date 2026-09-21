@@ -42,12 +42,13 @@
             font-weight: 700;
             font-size: 16px;
             letter-spacing: 1px;
+            color: #38bdf8;
         }
         .status-badge {
             font-size: 10px;
             font-weight: 700;
-            background: #34c759;
-            color: #ffffff;
+            background: #22c55e;
+            color: #000000;
             padding: 4px 8px;
             border-radius: 4px;
         }
@@ -59,18 +60,17 @@
         @media(max-width: 768px) {
             .grid-container { grid-template-columns: 1fr; }
         }
-        /* Short Stream Lookalike Box */
-        .shorts-box {
+        /* Stream Box */
+        .stream-box {
             background: #181818;
             border-radius: 12px;
             border: 1px solid #333;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 450px;
             position: relative;
         }
-        .shorts-header {
+        .stream-header {
             padding: 12px;
             background: #202020;
             font-size: 13px;
@@ -79,63 +79,55 @@
             justify-content: space-between;
             border-bottom: 1px solid #333;
         }
-        .shorts-viewport {
-            flex: 1;
+        .player-viewport {
+            width: 100%;
+            height: 220px;
+            background: #000;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            background: #111;
         }
-        .shorts-actions {
+        .player-viewport video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .play-overlay {
             position: absolute;
-            right: 12px;
-            bottom: 16px;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
         }
-        .action-circle {
-            width: 36px;
-            height: 36px;
-            background: rgba(0,0,0,0.7);
+        .play-overlay:hover { background: rgba(0,0,0,0.2); }
+        .play-btn-circle {
+            width: 44px;
+            height: 44px;
+            background: #38bdf8;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            border: 1px solid rgba(255,255,255,0.2);
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
-        /* Long Sanctuary Box */
-        .sanctuary-box {
-            background: #181818;
-            border-radius: 12px;
-            border: 1px solid #333;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 450px;
-        }
-        .sanctuary-player {
-            width: 100%;
-            height: 220px;
-            background: #222;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #777;
-            font-size: 14px;
-            border-bottom: 1px solid #333;
-        }
-        .sanctuary-info {
+        .stream-info {
             padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
         .video-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
+            color: #fff;
         }
         .video-desc {
             font-size: 12px;
@@ -150,6 +142,7 @@
             font-family: monospace;
             font-size: 12px;
             color: #aaa;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -162,9 +155,9 @@
                 <span class="title">ANADOLU ISLAND COMMAND CENTER</span>
                 <span class="status-badge">ONLINE</span>
             </div>
-            <div class="logs-box">
-                [System] Autonomous Minos Core active. Background harvesting loops synced.<br>
-                [Render] Port 10000 streaming live. All systems operational.
+            <div class="logs-box" id="system-logs">
+                [System] Autonomous Sovereign Engine active. Background harvesting loops synced.<br>
+                [Render] Live-net connection verified. All systems operational.
             </div>
         </div>
 
@@ -174,39 +167,59 @@
                 <span class="title">SOVEREIGN PLATFORM STREAMS</span>
             </div>
             
-            <div class="grid-container">
-                <!-- 1. Short-Form Stream (TikTok-style) -->
-                <div class="shorts-box">
-                    <div class="shorts-header">
+            <div class="grid-container" id="streams-grid">
+                <!-- Stream 1: Short-Form / Vertical Feed -->
+                <div class="stream-box">
+                    <div class="stream-header">
                         <span>⚡ SHORTS STREAM</span>
                         <span style="color: #ff3b30;">LIVE</span>
                     </div>
-                    <div class="shorts-viewport">
-                        <div style="text-align: center; color: #666;">
-                            <p style="font-size: 14px; font-weight: 500; color: #ddd;">Vertical Feed Active</p>
-                            <p style="font-size: 11px;">Autonomous Indexer Syncing</p>
+                    <div class="player-viewport" id="player-box-0">
+                        <video id="vid-0" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" muted loop playsinline preload="auto"></video>
+                        <div class="play-overlay" id="overlay-0" onclick="triggerPlay(0)">
+                            <div class="play-btn-circle">&#9658;</div>
                         </div>
-                        <div class="shorts-actions">
-                            <div class="action-circle">❤️</div>
-                            <div class="action-circle">💬</div>
-                            <div class="action-circle">🔗</div>
-                        </div>
+                    </div>
+                    <div class="stream-info">
+                        <div class="video-title">Anatolian Pulse: Urban & Street Beats</div>
+                        <div class="video-desc">Harvested vibrant street culture and modern lifestyle highlights from active feeds.</div>
                     </div>
                 </div>
 
-                <!-- 2. Long-Form Sanctuary (YouTube-style) -->
-                <div class="sanctuary-box">
-                    <div class="sanctuary-player">
-                        <span>🏛️ Sanctuary Main Player</span>
+                <!-- Stream 2: Long-Form Sanctuary -->
+                <div class="stream-box">
+                    <div class="stream-header">
+                        <span>🏛️ SANCTUARY MAIN PLAYER</span>
+                        <span style="color: #38bdf8;">ARCHIVE</span>
                     </div>
-                    <div class="sanctuary-info">
-                        <div class="video-title">Anatolian Heritage & Cultural Stream</div>
-                        <div class="video-desc">Deep-dive archival footage, Sufi rock compositions, and autonomous cultural indexing streams.</div>
+                    <div class="player-viewport" id="player-box-1">
+                        <video id="vid-1" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" muted loop playsinline preload="auto"></video>
+                        <div class="play-overlay" id="overlay-1" onclick="triggerPlay(1)">
+                            <div class="play-btn-circle">&#9658;</div>
+                        </div>
+                    </div>
+                    <div class="stream-info">
+                        <div class="video-title">Deep Thinking: Sovereign Philosophy & Poetry</div>
+                        <div class="video-desc">Captured from cultural archives and thoughtful community discourse.</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script>
+        function triggerPlay(idx) {
+            const vid = document.getElementById('vid-' + idx);
+            const overlay = document.getElementById('overlay-' + idx);
+            if (vid) {
+                vid.play().then(() => {
+                    if (overlay) overlay.style.display = 'none';
+                    vid.controls = true;
+                }).catch(err => {
+                    console.log("Playback restriction handled:", err);
+                });
+            }
+        }
+    </script>
 </body>
 </html>
