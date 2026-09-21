@@ -116,7 +116,6 @@ async function runLiveNetScavengerLoop() {
     try {
         const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
         
-        // Fetch real-world open source repositories from GitHub's public API
         const response = await fetch('https://api.github.com/search/repositories?q=automation+framework+language:javascript&sort=updated&per_page=5', {
             headers: { 'User-Agent': 'Anadolu-Island-Sovereign-Engine' }
         });
@@ -130,14 +129,12 @@ async function runLiveNetScavengerLoop() {
             const title = repo.name;
             const pattern = repo.description ? repo.description.substring(0, 140) : 'Live public repository harvested from open digital net.';
             
-            // 1. Save blueprint to harvested table
             const bStmt = db.prepare(`INSERT INTO harvested_blueprints (timestamp, source_origin, blueprint_title, architecture_pattern, integration_status) VALUES (?, ?, ?, ?, ?)`);
             bStmt.run(timestamp, origin, title, pattern, 'LIVE HARVESTED');
             bStmt.finalize();
 
             logEvent('LiveNetScavenger', 'SUCCESS', `Harvested live blueprint [${title}] from ${origin}.`);
 
-            // 2. Autonomous Self-Synthesis: Convert the harvested blueprint into an active system upgrade
             setTimeout(() => {
                 const upgradeName = `Module Bridge: ${title}`;
                 const logicDesc = `Auto-integrated architectural patterns from ${origin}: "${pattern}"`;
@@ -159,7 +156,6 @@ async function runLiveNetScavengerLoop() {
     }
 }
 
-// Run once on startup after 4 seconds, then every 20 minutes
 setTimeout(runLiveNetScavengerLoop, 4000);
 setInterval(runLiveNetScavengerLoop, 20 * 60 * 1000);
 
@@ -239,7 +235,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// 4. PUBLIC ISLAND PORTAL (Fully Equipped with Interactive Video Overlays)
+// 4. PUBLIC ISLAND PORTAL (Fully Equipped with Resilient Interactive Video Overlays)
 app.get('/island', (req, res) => {
     db.all(`SELECT * FROM media_streams ORDER BY id DESC`, [], (err, mediaStreams) => {
         db.all(`SELECT * FROM synthesized_upgrades ORDER BY id DESC LIMIT 4`, [], (err2, upgradesList) => {
@@ -301,13 +297,13 @@ app.get('/island', (req, res) => {
                         <div class="section-title">⚡ Harvested Cultural & Social Streams ("That Life" Edition)</div>
                         <div class="streams-grid">
                             ${mediaStreams && mediaStreams.length > 0 ? mediaStreams.map((stream, idx) => `
-                                <div class="card">
+                                <div class="card" id="player-box-${idx}">
                                     <div class="card-header">
                                         <span>Live Feed</span>
                                         <span class="source-badge">${stream.platform_source || 'Sovereign'}</span>
                                     </div>
-                                    <div class="player-box" id="player-box-${idx}">
-                                        <video id="vid-${idx}" src="${stream.video_url}" muted loop playsinline preload="auto"></video>
+                                    <div class="player-box">
+                                        <video id="vid-${idx}" src="${stream.video_url}" muted loop playsinline preload="auto" onerror="handleVideoError(${idx})"></video>
                                         <div class="play-overlay" id="overlay-${idx}" onclick="triggerPlay(${idx})">
                                             <div class="play-btn-circle">&#9658;</div>
                                         </div>
@@ -334,22 +330,17 @@ app.get('/island', (req, res) => {
                                     if (overlay) overlay.style.display = 'none';
                                     vid.controls = true;
                                 }).catch(err => {
-                                    console.log("Playback error:", err);
+                                    console.log("Playback restriction:", err);
                                 });
                             }
                         }
 
-                        window.addEventListener('DOMContentLoaded', () => {
-                            document.querySelectorAll('video').forEach((vid, idx) => {
-                                vid.play().then(() => {
-                                    const overlay = document.getElementById('overlay-' + idx);
-                                    if (overlay) overlay.style.display = 'none';
-                                    vid.controls = true;
-                                }).catch(() => {
-                                    // Handled by play overlay
-                                });
-                            });
-                        });
+                        function handleVideoError(idx) {
+                            const box = document.getElementById('player-box-' + idx);
+                            if (box) {
+                                box.innerHTML = '<div style="color: #a1a1aa; font-size: 12px; text-align: center; padding: 20px;">Stream buffering or source restricted by browser policy. Autonomous sync active.</div>';
+                            }
+                        }
                     </script>
                 </body>
                 </html>
