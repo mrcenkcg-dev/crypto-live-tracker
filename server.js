@@ -67,11 +67,11 @@ db.serialize(() => {
     )`, () => {
         db.get(`SELECT COUNT(*) as count FROM media_streams`, (err, row) => {
             if (row && row.count === 0) {
-                // Initial expanding grid items
+                // Initial expanding grid items with diverse "That Life" streams
                 db.run(`INSERT INTO media_streams (stream_type, title, description, video_url, platform_source) VALUES 
-                    ('grid', 'Anatolian Pulse: Viral Humor & Laughter', 'Harvested from high-velocity TikTok feeds reflecting daily human joy and wit.', 'https://www.w3schools.com/html/mov_bbb.mp4', 'TikTok')`);
+                    ('grid', 'Anatolian Pulse: Urban & Street Beats', 'Harvested vibrant street culture and modern lifestyle highlights from active feeds.', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', 'TikTok')`);
                 db.run(`INSERT INTO media_streams (stream_type, title, description, video_url, platform_source) VALUES 
-                    ('grid', 'Deep Thinking: Sovereign Philosophy & Poetry', 'Captured from YouTube cultural archives and thoughtful community discourse.', 'https://www.w3schools.com/html/movie.mp4', 'YouTube')`);
+                    ('grid', 'Deep Thinking: Sovereign Philosophy & Poetry', 'Captured from YouTube cultural archives and thoughtful community discourse.', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', 'YouTube')`);
             }
         });
     });
@@ -111,7 +111,7 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM ui_mutations`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO ui_mutations (upgrade_title, applied_css_accent, status) VALUES 
-                    ('Sovereign Sports & Infinite Grid v5.0', '#38bdf8', 'ACTIVE')`);
+                    ('Sovereign Sports & Infinite Grid v5.1 - That Life Edition', '#38bdf8', 'ACTIVE')`);
             }
         });
     });
@@ -133,22 +133,31 @@ function runAutonomousLoop() {
     try {
         const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
         
+        // Upgraded "That Life" Video Pool with varied real-world streams
         const sovereignIntelFeeds = [
             { 
                 agency: 'TikTok Intelligence Agency', 
-                category: 'Viral Humor & Fast Laughter',
-                title: 'Viral Laughter & Quick Wit Stream #' + Math.floor(Math.random() * 100), 
-                payload: 'Harvested high-engagement humor and viral micro-moments from millions of active users.', 
-                video: 'https://www.w3schools.com/html/mov_bbb.mp4',
+                category: 'That Life: Urban & Street Beats',
+                title: 'Urban Rhythm & Daily Life #' + Math.floor(Math.random() * 1000), 
+                payload: 'Harvested vibrant street culture and modern lifestyle highlights from active feeds.', 
+                video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
                 agencyTag: 'TikTok'
             },
             { 
                 agency: 'YouTube Intelligence Agency', 
-                category: 'Deep Thinking & Philosophy',
-                title: 'Deep Thinking & Heritage Audio-Visual #' + Math.floor(Math.random() * 100), 
-                payload: 'Extracted profound long-form storytelling and traditional Anatolian thought streams.', 
-                video: 'https://www.w3schools.com/html/movie.mp4',
+                category: 'That Life: Scenic & Nature Horizons',
+                title: 'Anatolian Horizons & Open Spaces #' + Math.floor(Math.random() * 1000), 
+                payload: 'Extracted breathtaking landscape and cultural journey sequences from archival records.', 
+                video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
                 agencyTag: 'YouTube'
+            },
+            { 
+                agency: 'Instagram Intelligence Agency', 
+                category: 'That Life: Motion & Energy',
+                title: 'Dynamic Momentum & Lifestyle Flow #' + Math.floor(Math.random() * 1000), 
+                payload: 'Captured high-energy visual moments reflecting daily motion and community spirit.', 
+                video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+                agencyTag: 'Instagram'
             }
         ];
 
@@ -339,7 +348,7 @@ app.get('/island', (req, res) => {
                         </div>
 
                         <!-- INFINITE MULTI-STREAM MEDIA GRID -->
-                        <div class="section-title" style="margin-top: 15px;">⚡ Harvested Cultural & Social Streams</div>
+                        <div class="section-title" style="margin-top: 15px;">⚡ Harvested Cultural & Social Streams ("That Life" Edition)</div>
                         <div class="streams-grid">
                             ${mediaStreams && mediaStreams.length > 0 ? mediaStreams.map(stream => `
                                 <div class="card">
