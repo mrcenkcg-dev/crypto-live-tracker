@@ -5,102 +5,134 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shoulder to Shoulder - Level Two Autonomous Engine Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #0f0f0f; color: #fff; margin: 0; padding: 20px; }
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 { color: #4CAF50; margin: 0; font-size: 28px; }
-        header p { color: #aaa; font-size: 14px; }
-        .status-banner { background: #1a1a1a; border: 1px solid #4CAF50; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 25px; font-weight: bold; color: #4CAF50; }
-        .grid-container { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        
+        header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; border-left: 5px solid #22c55e; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        header h1 { color: #22c55e; margin: 0 0 4px 0; font-size: 22px; }
+        header p { color: #94a3b8; font-size: 13px; }
+        .nav-links { display: flex; gap: 10px; align-items: center; }
+        .portal-btn { background: #262626; color: #fff; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; transition: background 0.2s; }
+        .portal-btn:hover { background: #3f3f46; }
+
+        .status-banner { background: #141414; border: 1px solid #22c55e; padding: 15px 20px; border-radius: 12px; font-weight: bold; color: #22c55e; font-size: 14px; display: flex; align-items: center; gap: 10px; }
+        .pulse-dot { width: 10px; height: 10px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 768px) { .grid-container { grid-template-columns: 1fr; } }
-        .section-box { background: #181818; border: 1px solid #333; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .section-box h2 { color: #4CAF50; font-size: 18px; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 8px; }
-        .feed-container { display: flex; flex-direction: column; gap: 15px; max-width: 1000px; margin: 20px auto; }
-        .space-card { background: #181818; border: 1px solid #333; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: relative; }
-        .badge { display: inline-block; background: #222; border: 1px solid #4CAF50; color: #4CAF50; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-bottom: 10px; }
-        .space-card h3 { margin: 0 0 10px 0; color: #fff; font-size: 18px; }
-        .space-card p { color: #aaa; font-size: 14px; margin: 0 0 15px 0; }
-        .action-btn { display: inline-block; background: #4CAF50; color: white; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 14px; }
-        .action-btn:hover { background: #45a049; }
-        ul { padding-left: 20px; color: #ccc; font-size: 13px; }
-        li { margin-bottom: 8px; }
-        .back-link { display: block; text-align: center; margin-top: 30px; color: #888; text-decoration: none; font-size: 13px; }
+
+        .section-box { background: #141414; border: 1px solid #262626; padding: 20px; border-radius: 16px; }
+        .section-box h2 { color: #22c55e; font-size: 16px; margin-bottom: 12px; border-bottom: 1px solid #262626; padding-bottom: 8px; }
+        
+        .feed-container { display: flex; flex-direction: column; gap: 15px; }
+        .space-card { background: #141414; border: 1px solid #262626; padding: 20px; border-radius: 16px; position: relative; transition: border-color 0.2s; }
+        .space-card:hover { border-color: #3f3f46; }
+        .badge { display: inline-block; background: #1e1e24; border: 1px solid #22c55e; color: #22c55e; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-bottom: 10px; }
+        .space-card h3 { margin: 0 0 8px 0; color: #fff; font-size: 16px; }
+        .space-card p { color: #94a3b8; font-size: 13px; margin: 0 0 15px 0; line-height: 1.4; }
+        
+        .action-btn { display: inline-block; background: #22c55e; color: #000; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; transition: background 0.2s; }
+        .action-btn:hover { background: #16a34a; color: #fff; }
+
+        ul { padding-left: 18px; color: #cbd5e1; font-size: 13px; display: flex; flex-direction: column; gap: 10px; }
+        li { line-height: 1.4; }
+
+        .footer-nav { text-align: center; margin-top: 10px; display: flex; justify-content: center; gap: 20px; font-size: 13px; }
+        .back-link { color: #64748b; text-decoration: none; }
         .back-link:hover { color: #fff; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Shoulder to Shoulder Workshop</h1>
-        <p>Level Two Autonomous Engine & Blueprint Command Console</p>
-    </header>
+    <div class="container">
+        <header>
+            <div>
+                <h1>🌿 Shoulder to Shoulder Workshop</h1>
+                <p>Level Two Autonomous Engine & Blueprint Command Console</p>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="portal-btn">🔒 Command Center</a>
+                <a href="/island" class="portal-btn">🌐 Public Island</a>
+            </div>
+        </header>
 
-    <div class="status-banner" id="system-status">
-        Connecting to Level Two Core...
-    </div>
-
-    <div class="grid-container">
-        <!-- RD-Agent Autonomous Loop Telemetry -->
-        <div class="section-box">
-            <h2>Autonomous R&D Experiments</h2>
-            <ul id="rd-feed">
-                <li>Loading recent model iterations...</li>
-            </ul>
+        <div class="status-banner" id="system-status">
+            <div class="pulse-dot"></div>
+            <span>Connecting to Level Two Core...</span>
         </div>
 
-        <!-- GPT-Load Gateway Channels -->
-        <div class="section-box">
-            <h2>Active Gateway Channels</h2>
-            <ul id="gateway-feed">
-                <li>Loading active routing pools...</li>
-            </ul>
+        <div class="grid-container">
+            <!-- RD-Agent Autonomous Loop Telemetry -->
+            <div class="section-box">
+                <h2>Autonomous R&D Experiments</h2>
+                <ul id="rd-feed">
+                    <li>Loading recent model iterations...</li>
+                </ul>
+            </div>
+
+            <!-- GPT-Load Gateway Channels -->
+            <div class="section-box">
+                <h2>Active Gateway Channels</h2>
+                <ul id="gateway-feed">
+                    <li>Loading active routing pools...</li>
+                </ul>
+            </div>
+        </div>
+
+        <div>
+            <h2 style="color: #22c55e; font-size: 18px; border-bottom: 1px solid #262626; padding-bottom: 8px; margin-top: 10px;">Harvested Level Two Blueprints</h2>
+        </div>
+
+        <div class="feed-container" id="spaces-feed">
+            <p style="text-align: center; color: #64748b; padding: 20px;">Loading connected rooms from the house...</p>
+        </div>
+
+        <div class="footer-nav">
+            <a href="/" class="back-link">&larr; Return to Sovereign Dashboard</a>
+            <a href="javascript:loadDashboard()" class="back-link">🔄 Refresh Workbench Telemetry</a>
         </div>
     </div>
-
-    <div style="max-width: 1000px; margin: 0 auto; margin-top: 25px;">
-        <h2 style="color: #4CAF50; font-size: 20px; border-bottom: 1px solid #333; padding-bottom: 8px;">Harvested Level Two Blueprints</h2>
-    </div>
-
-    <div class="feed-container" id="spaces-feed">
-        <p style="text-align: center; color: #777;">Loading connected rooms from the house...</p>
-    </div>
-
-    <a href="/" class="back-link">&larr; Refresh Workbench Telemetry</a>
 
     <script>
         async function loadDashboard() {
             try {
-                // Fetch full Level Two telemetry from backend
+                // Fetch full Level Two telemetry from backend endpoint
                 const response = await fetch('/api/voltron/dashboard');
                 const data = await response.json();
 
                 // Update Status Banner
-                document.getElementById('system-status').innerText = `${data.system_title} — ${data.status}`;
+                document.getElementById('system-status').innerHTML = `
+                    <div class="pulse-dot"></div>
+                    <span>${data.system_title || 'Shoulder-to-Shoulder Core'} — ${data.status || 'ONLINE'}</span>
+                `;
 
                 // Update RD-Agent Experiments Feed
                 const rdFeed = document.getElementById('rd-feed');
                 if (data.recent_rd_experiments && data.recent_rd_experiments.length > 0) {
                     rdFeed.innerHTML = data.recent_rd_experiments.map(exp => `
-                        <li><strong>${exp.experiment_name}</strong><br><span style="color: #888;">Score: ${exp.metric_score} | Status: ${exp.hypothesis_status}</span></li>
+                        <li><strong>${exp.experiment_name}</strong><br><span style="color: #64748b;">Score: ${exp.metric_score} | Status: ${exp.hypothesis_status}</span></li>
                     `).join('');
                 } else {
-                    rdFeed.innerHTML = '<li>No autonomous experiments logged yet.</li>';
+                    rdFeed.innerHTML = '<li>No autonomous experiments logged yet. System standby active.</li>';
                 }
 
                 // Update Gateway Channels Feed
                 const gatewayFeed = document.getElementById('gateway-feed');
                 if (data.active_channels && data.active_channels.length > 0) {
                     gatewayFeed.innerHTML = data.active_channels.map(ch => `
-                        <li><strong>${ch.name}</strong> <span style="color: #4CAF50;">[ACTIVE]</span><br><span style="color: #888;">Endpoint: ${ch.endpoint}</span></li>
+                        <li><strong>${ch.name}</strong> <span style="color: #22c55e; font-weight: bold;">[ACTIVE]</span><br><span style="color: #64748b;">Endpoint: ${ch.endpoint}</span></li>
                     `).join('');
                 } else {
-                    gatewayFeed.innerHTML = '<li>No active channels found.</li>';
+                    gatewayFeed.innerHTML = '<li>No active routing channels found.</li>';
                 }
 
                 // Update Harvested Rooms / Blueprints Feed
                 const feedContainer = document.getElementById('spaces-feed');
                 const rooms = data.recent_harvests || [];
                 if (rooms.length === 0) {
-                    feedContainer.innerHTML = '<p style="text-align: center; color: #777;">No rooms connected to the house yet.</p>';
+                    feedContainer.innerHTML = '<p style="text-align: center; color: #64748b; padding: 20px;">No rooms connected to the house yet. Scavenger active.</p>';
                     return;
                 }
 
@@ -109,18 +141,21 @@
                     const card = document.createElement('div');
                     card.className = 'space-card';
                     card.innerHTML = `
-                        <span class="badge">${room.room_type}</span>
+                        <span class="badge">${room.room_type || 'Module'}</span>
                         <h3>${room.room_name}</h3>
                         <p>${room.description}</p>
-                        <a class="action-btn" href="${room.room_url}" target="_blank">Inspect Repository</a>
+                        <a class="action-btn" href="${room.room_url}" target="_blank">Inspect Repository &rarr;</a>
                     `;
                     feedContainer.appendChild(card);
                 });
 
             } catch (err) {
                 console.error('Error loading dashboard telemetry:', err);
-                document.getElementById('system-status').innerText = 'ERROR: Failed to sync with Level Two engine.';
-                document.getElementById('spaces-feed').innerHTML = '<p style="text-align: center; color: #f44336;">Error loading connected rooms.</p>';
+                document.getElementById('system-status').innerHTML = `
+                    <div class="pulse-dot" style="background: #ef4444; box-shadow: 0 0 8px #ef4444;"></div>
+                    <span style="color: #ef4444;">OFFLINE: Failed to sync with Level Two engine. Retrying...</span>
+                `;
+                document.getElementById('spaces-feed').innerHTML = '<p style="text-align: center; color: #ef4444; padding: 20px;">Error syncing connected rooms with local SQLite storage.</p>';
             }
         }
 
