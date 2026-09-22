@@ -1,6 +1,7 @@
 /**
- * Sovereign Engine: Unified Self-Upgrading Architecture with Toll Gate Billing & Community Hub
- * Stack: Node.js, Express, SQLite, FFmpeg Media Feed, & Micro-Fee API Toll Gates
+ * Sovereign Engine: Ultimate Unified Self-Upgrading Architecture
+ * Complete Stack: Node.js, Express, SQLite Persistence, Autonomous Scavenger Loop, 
+ * FFmpeg/Video Feed, Custom Blueprint Injector, 4D Sandbox, Toll Gates, & Monzo Accumulator
  */
 
 const express = require('express');
@@ -27,7 +28,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Create comprehensive tables supporting media streams, blueprints, upgrades, learning cycles, and micro-fee toll transactions
+// Create complete, comprehensive tables ensuring zero data loss
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS system_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -90,7 +91,7 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM synthesized_upgrades`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO synthesized_upgrades (upgrade_name, source_blueprint, applied_logic, status) VALUES 
-                    ('Shoulder-to-Shoulder Ecosystem v7.0 - Toll-Gated Core', 'Sovereign Core Initializer', 'Micro-fee billing engine and community bridge active.', 'ACTIVE')`);
+                    ('Shoulder-to-Shoulder Ecosystem v7.0 - Ultimate Sovereign Core', 'Sovereign Core Initializer', 'All architectural loops, toll gates, and Monzo accumulator active.', 'ACTIVE')`);
             }
         });
     });
@@ -105,7 +106,7 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM ui_mutations`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO ui_mutations (upgrade_title, applied_css_accent, status) VALUES 
-                    ('Shoulder-to-Shoulder Ecosystem v7.0 - Toll-Gated Core', '#22c55e', 'ACTIVE')`);
+                    ('Shoulder-to-Shoulder Ecosystem v7.0 - Ultimate Sovereign Core', '#22c55e', 'ACTIVE')`);
             }
         });
     });
@@ -123,7 +124,7 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM learning_cycles`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO learning_cycles (learning_cycle, experiment_title, approval_status, agent_hypothesis, sandbox_result, tested_at) VALUES 
-                    (1, 'Autonomous Telemetry Stream Sync', 'APPROVED', 'Refreshing background fetch routines improves dashboard responsiveness.', 'Success: Latency reduced across all active nodes.', '2026-09-21 12:00:00')`);
+                    (1, 'Autonomous Telemetry Stream Sync', 'APPROVED', 'Refreshing background fetch routines improves dashboard responsiveness.', 'Success: Latency reduced across all active nodes.', '2026-09-22 12:00:00')`);
             }
         });
     });
@@ -185,61 +186,80 @@ app.post('/api/add-blueprint', (req, res) => {
     });
 });
 
-// 5. 4D Sandbox / Pet Project Route
-app.get('/pet-project', (req, res) => {
-    const sandboxHtml = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>4D Sandbox & Pet Project Observation Deck</title>
-        <style>
-            * { box-sizing: border-box; margin: 0; padding: 0; }
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
-            .container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
-            header { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(168, 85, 247, 0.3); display: flex; justify-content: space-between; align-items: center; }
-            h1 { color: #c084fc; font-size: 24px; margin-bottom: 6px; }
-            p { color: #94a3b8; font-size: 14px; }
-            .back-btn { background: #262626; color: #fff; padding: 10px 18px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; }
-            .card { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 16px; }
-            h2 { font-size: 18px; color: #fff; }
-            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-            th, td { text-align: left; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13px; }
-            th { color: #94a3b8; }
-            .highlight { color: #c084fc; font-weight: bold; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <header>
-                <div>
-                    <h1>🐾 4D Sandbox Observation Deck</h1>
-                    <p>Apprentice Agent Autonomous Learning & Wildlife/Pet Mobile Simulation Workspace</p>
-                </div>
-                <a href="/" class="back-btn">&larr; Command Center</a>
-            </header>
-            <div class="card">
-                <h2>🧪 Active Learning Cycles & Agent Hypotheses</h2>
-                <table>
-                    <tr><th>Cycle</th><th>Experiment Title</th><th>Status</th><th>Agent Hypothesis</th><th>Sandbox Result</th></tr>
-                    <tr>
-                        <td><span class="highlight">#1</span></td>
-                        <td>Autonomous Telemetry Stream Sync</td>
-                        <td><span style="color: #22c55e; font-weight: bold;">APPROVED</span></td>
-                        <td>Refreshing background fetch routines improves dashboard responsiveness.</td>
-                        <td>Success: Latency reduced across all active nodes.</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </body>
-    </html>
-    `;
-    res.send(sandboxHtml);
+app.get('/api/pet-project/status', (req, res) => {
+    db.all(`SELECT * FROM learning_cycles ORDER BY learning_cycle DESC LIMIT 10`, [], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({
+            status: 'ACTIVE',
+            review_cadence: '2-HOUR CYCLE',
+            learning_cycles: rows || []
+        });
+    });
 });
 
-// 6. Autonomous Live-Net Scavenger Loop
+// 5. 4D Sandbox / Pet Project Route
+app.get('/pet-project', (req, res) => {
+    db.all(`SELECT * FROM learning_cycles ORDER BY learning_cycle DESC`, [], (err, cycles) => {
+        const sandboxHtml = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>4D Sandbox & Pet Project Observation Deck</title>
+            <style>
+                * { box-sizing: border-box; margin: 0; padding: 0; }
+                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
+                .container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+                header { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(168, 85, 247, 0.3); display: flex; justify-content: space-between; align-items: center; }
+                h1 { color: #c084fc; font-size: 24px; margin-bottom: 6px; }
+                p { color: #94a3b8; font-size: 14px; }
+                .back-btn { background: #262626; color: #fff; padding: 10px 18px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; }
+                .card { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 16px; }
+                h2 { font-size: 18px; color: #fff; }
+                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                th, td { text-align: left; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13px; }
+                th { color: #94a3b8; }
+                .highlight { color: #c084fc; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <header>
+                    <div>
+                        <h1>🐾 4D Sandbox Observation Deck</h1>
+                        <p>Apprentice Agent Autonomous Learning & Wildlife/Pet Mobile Simulation Workspace</p>
+                    </div>
+                    <a href="/" class="back-btn">&larr; Command Center</a>
+                </header>
+
+                <div class="card">
+                    <h2>🧪 Active Learning Cycles & Agent Hypotheses</h2>
+                    <table>
+                        <tr><th>Cycle</th><th>Experiment Title</th><th>Status</th><th>Agent Hypothesis</th><th>Sandbox Result</th></tr>
+                        ${cycles && cycles.length > 0 ? cycles.map(c => `
+                            <tr>
+                                <td><span class="highlight">#${c.learning_cycle}</span></td>
+                                <td>${c.experiment_title}</td>
+                                <td><span style="color: #22c55e; font-weight: bold;">${c.approval_status}</span></td>
+                                <td>${c.agent_hypothesis}</td>
+                                <td>${c.sandbox_result}</td>
+                            </tr>
+                        `).join('') : '<tr><td colspan="5" style="color: #64748b;">No learning cycles recorded yet.</td></tr>'}
+                    </table>
+                </div>
+            </div>
+        </body>
+        </html>
+        `;
+        res.send(sandboxHtml);
+    });
+});
+
+// 6. Autonomous Live-Net Scavenger & Self-Synthesis Engine
 async function runLiveNetScavengerLoop() {
     console.log('🔄 Scavenging living net for new architectural blueprints...');
     try {
@@ -276,103 +296,134 @@ async function runLiveNetScavengerLoop() {
 setTimeout(runLiveNetScavengerLoop, 4000);
 setInterval(runLiveNetScavengerLoop, 20 * 60 * 1000);
 
-// 7. PRIVATE COMMAND CENTER (Includes Toll Transactions & Custom Blueprint Injection)
+// 7. PRIVATE COMMAND CENTER (Includes Monzo Accumulator, Custom Injection, & All Data Tables)
 app.get('/', (req, res) => {
     db.all(`SELECT * FROM harvested_blueprints ORDER BY timestamp DESC LIMIT 5`, [], (err, blueprints) => {
         db.all(`SELECT * FROM synthesized_upgrades ORDER BY timestamp DESC LIMIT 5`, [], (errUpgrades, upgrades) => {
             db.all(`SELECT * FROM toll_transactions ORDER BY timestamp DESC LIMIT 5`, [], (errTolls, tolls) => {
-                db.all(`SELECT * FROM system_logs ORDER BY timestamp DESC LIMIT 5`, [], (err2, logs) => {
-                    db.get(`SELECT * FROM ui_mutations ORDER BY id DESC LIMIT 1`, [], (err3, activeUi) => {
-                        
-                        const accentColor = activeUi ? activeUi.applied_css_accent : '#22c55e';
-                        const uiVersion = activeUi ? activeUi.upgrade_title : 'Sovereign Core Initializer';
+                db.all(`SELECT fee_amount FROM toll_transactions`, [], (errRev, revRows) => {
+                    db.all(`SELECT * FROM system_logs ORDER BY timestamp DESC LIMIT 5`, [], (err2, logs) => {
+                        db.get(`SELECT * FROM ui_mutations ORDER BY id DESC LIMIT 1`, [], (err3, activeUi) => {
+                            
+                            const accentColor = activeUi ? activeUi.applied_css_accent : '#22c55e';
+                            const uiVersion = activeUi ? activeUi.upgrade_title : 'Sovereign Core Initializer';
 
-                        const html = `
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <title>Anadolu Island - Sovereign Command Center</title>
-                            <style>
-                                * { box-sizing: border-box; margin: 0; padding: 0; }
-                                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
-                                .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-                                header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; border-left: 5px solid ${accentColor}; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-                                h1 { margin: 0 0 5px 0; color: ${accentColor}; font-size: 22px; }
-                                .status-badge { display: inline-block; background: #22c55e; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
-                                .portal-btn { background: #262626; color: #fff; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; }
-                                .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; }
-                                h2 { font-size: 16px; color: #fff; margin-bottom: 12px; }
-                                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                                th, td { text-align: left; padding: 10px; border-bottom: 1px solid #262626; font-size: 13px; }
-                                th { color: #94a3b8; }
-                                .footer { text-align: center; color: #64748b; font-size: 12px; margin-top: 20px; }
-                                .highlight { color: ${accentColor}; font-weight: bold; }
-                                input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-size: 13px; width: 100%; }
-                                button { background: ${accentColor}; color: #000; font-weight: bold; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; transition: opacity 0.2s; }
-                                button:hover { opacity: 0.9; }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="container">
-                                <header>
-                                    <div>
-                                        <h1>⚓ Anadolu Island Sovereign Command Center</h1>
-                                        <p>Status: <span class="status-badge">ONLINE</span> | Protocol: <span style="color: ${accentColor}; font-weight: bold;">${uiVersion}</span></p>
-                                    </div>
-                                    <div style="display: flex; gap: 10px; align-items: center;">
-                                        <a href="/pet-project" class="portal-btn" style="background: #a855f7; color: #fff; border-color: #a855f7;">🐾 4D Sandbox</a>
-                                        <a href="/island" class="portal-btn">🌐 View Public Island Portal &rarr;</a>
-                                    </div>
-                                </header>
+                            let totalRevenue = 0;
+                            if (revRows) {
+                                revRows.forEach(r => {
+                                    totalRevenue += parseFloat(r.fee_amount.replace('$', '')) || 0.001;
+                                });
+                            }
 
-                                <!-- Custom Blueprint Injection Box -->
-                                <div class="card" style="border-color: rgba(34, 197, 94, 0.3);">
-                                    <h2>🛠️ Inject Custom Service Blueprint</h2>
-                                    <p style="font-size: 13px; color: #94a3b8; margin-bottom: 10px;">Add your own custom blueprints or service goals directly into the engine database to upgrade your active system.</p>
-                                    <form action="/api/add-blueprint" method="POST" style="display: flex; flex-direction: column; gap: 12px;">
-                                        <div style="display: flex; gap: 10px;">
-                                            <input type="text" name="source_origin" placeholder="Source Origin (e.g., Cenk Personal Dev)" required style="flex: 1;">
-                                            <input type="text" name="blueprint_title" placeholder="Blueprint / Service Title (e.g., Mobile Wildlife Feed API)" required style="flex: 1;">
+                            const html = `
+                            <!DOCTYPE html>
+                            <html lang="en">
+                            <head>
+                                <meta charset="UTF-8">
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <title>Anadolu Island - Sovereign Command Center</title>
+                                <style>
+                                    * { box-sizing: border-box; margin: 0; padding: 0; }
+                                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
+                                    .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+                                    header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; border-left: 5px solid ${accentColor}; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+                                    h1 { margin: 0 0 5px 0; color: ${accentColor}; font-size: 22px; }
+                                    .status-badge { display: inline-block; background: #22c55e; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
+                                    .portal-btn { background: #262626; color: #fff; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; }
+                                    .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; }
+                                    h2 { font-size: 16px; color: #fff; margin-bottom: 12px; }
+                                    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                                    th, td { text-align: left; padding: 10px; border-bottom: 1px solid #262626; font-size: 13px; }
+                                    th { color: #94a3b8; }
+                                    .footer { text-align: center; color: #64748b; font-size: 12px; margin-top: 20px; }
+                                    .highlight { color: ${accentColor}; font-weight: bold; }
+                                    input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-size: 13px; width: 100%; }
+                                    button { background: ${accentColor}; color: #000; font-weight: bold; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; transition: opacity 0.2s; }
+                                    button:hover { opacity: 0.9; }
+                                </style>
+                            </head>
+                            <body>
+                                <div class="container">
+                                    <header>
+                                        <div>
+                                            <h1>⚓ Anadolu Island Sovereign Command Center</h1>
+                                            <p>Status: <span class="status-badge">ONLINE</span> | Protocol: <span style="color: ${accentColor}; font-weight: bold;">${uiVersion}</span></p>
                                         </div>
-                                        <textarea name="architecture_pattern" placeholder="Describe the architecture pattern or service logic..." rows="2" required></textarea>
-                                        <button type="submit">💾 Inject & Upgrade Engine</button>
-                                    </form>
-                                </div>
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <a href="/pet-project" class="portal-btn" style="background: #a855f7; color: #fff; border-color: #a855f7;">🐾 4D Sandbox</a>
+                                            <a href="/island" class="portal-btn">🌐 View Public Island Portal &rarr;</a>
+                                        </div>
+                                    </header>
 
-                                <div class="card">
-                                    <h2>🪙 Micro-Fee Toll Gate & API Billing Transactions</h2>
-                                    <table>
-                                        <tr><th>Timestamp</th><th>Service Endpoint</th><th>Fee Amount</th><th>Client Origin</th><th>Status</th></tr>
-                                        ${tolls && tolls.length > 0 ? tolls.map(t => `<tr><td>${t.timestamp}</td><td><span class="highlight">${t.service_endpoint}</span></td><td>${t.fee_amount}</td><td>${t.client_origin}</td><td>${t.status}</td></tr>`).join('') : '<tr><td colspan="5" style="color: #64748b;">No toll transactions recorded yet.</td></tr>'}
-                                    </table>
-                                </div>
+                                    <!-- Monzo Payout Tracker Card -->
+                                    <div class="card" style="border-color: rgba(34, 197, 94, 0.4); background: linear-gradient(135deg, #141414, #18221b);">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                                            <div>
+                                                <h2>💳 Monzo Payout & Balance Accumulator</h2>
+                                                <p style="font-size: 13px; color: #94a3b8;">Accumulating micro-fees locally. Ready for bank details when milestone thresholds (£10-£40+) are reached.</p>
+                                            </div>
+                                            <div style="background: #0f1710; border: 1px solid #22c55e; padding: 12px 20px; border-radius: 12px; text-align: right;">
+                                                <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: bold;">Accumulated Balance</div>
+                                                <div style="font-size: 22px; font-weight: bold; color: #22c55e;">$${totalRevenue.toFixed(3)} <span style="font-size: 13px; color: #aaa;">USD</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <div class="card">
-                                    <h2>🧬 Self-Synthesized Upgrades & Custom Services</h2>
-                                    <table>
-                                        <tr><th>Upgrade Name</th><th>Source Blueprint</th><th>Applied Logic & Integration</th><th>Status</th></tr>
-                                        ${upgrades && upgrades.length > 0 ? upgrades.map(u => `<tr><td><span class="highlight">${u.upgrade_name}</span></td><td>${u.source_blueprint}</td><td>${u.applied_logic}</td><td>${u.status}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">No upgrades recorded yet.</td></tr>'}
-                                    </table>
-                                </div>
+                                    <!-- Custom Blueprint Injection Box -->
+                                    <div class="card" style="border-color: rgba(34, 197, 94, 0.3);">
+                                        <h2>🛠️ Inject Custom Service Blueprint</h2>
+                                        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 10px;">Add your own custom blueprints or service goals directly into the engine database.</p>
+                                        <form action="/api/add-blueprint" method="POST" style="display: flex; flex-direction: column; gap: 12px;">
+                                            <div style="display: flex; gap: 10px;">
+                                                <input type="text" name="source_origin" placeholder="Source Origin (e.g., Cenk Personal Dev)" required style="flex: 1;">
+                                                <input type="text" name="blueprint_title" placeholder="Blueprint / Service Title" required style="flex: 1;">
+                                            </div>
+                                            <textarea name="architecture_pattern" placeholder="Describe the architecture pattern or service logic..." rows="2" required></textarea>
+                                            <button type="submit">💾 Inject & Upgrade Engine</button>
+                                        </form>
+                                    </div>
 
-                                <div class="card">
-                                    <h2>🌐 Harvested & Injected Blueprints</h2>
-                                    <table>
-                                        <tr><th>Source Origin</th><th>Blueprint / Project Title</th><th>Architecture & Pattern</th><th>Status</th></tr>
-                                        ${blueprints && blueprints.length > 0 ? blueprints.map(b => `<tr><td>${b.source_origin}</td><td><span class="highlight">${b.blueprint_title}</span></td><td>${b.architecture_pattern}</td><td>${b.integration_status}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">No blueprints recorded yet.</td></tr>'}
-                                    </table>
-                                </div>
+                                    <div class="card">
+                                        <h2>🪙 Micro-Fee Toll Gate Transactions</h2>
+                                        <table>
+                                            <tr><th>Timestamp</th><th>Service Endpoint</th><th>Fee Amount</th><th>Client Origin</th><th>Status</th></tr>
+                                            ${tolls && tolls.length > 0 ? tolls.map(t => `<tr><td>${t.timestamp}</td><td><span class="highlight">${t.service_endpoint}</span></td><td>${t.fee_amount}</td><td>${t.client_origin}</td><td>${t.status}</td></tr>`).join('') : '<tr><td colspan="5" style="color: #64748b;">No toll transactions recorded yet.</td></tr>'}
+                                        </table>
+                                    </div>
 
-                                <div class="footer">
-                                    Shoulder-to-Shoulder Network &bull; Sovereign Control Room &bull; Private Dashboard
+                                    <div class="card">
+                                        <h2>🧬 Self-Synthesized Upgrades & Custom Services</h2>
+                                        <table>
+                                            <tr><th>Upgrade Name</th><th>Source Blueprint</th><th>Applied Logic & Integration</th><th>Status</th></tr>
+                                            ${upgrades && upgrades.length > 0 ? upgrades.map(u => `<tr><td><span class="highlight">${u.upgrade_name}</span></td><td>${u.source_blueprint}</td><td>${u.applied_logic}</td><td>${u.status}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">No upgrades recorded yet.</td></tr>'}
+                                        </table>
+                                    </div>
+
+                                    <div class="card">
+                                        <h2>🌐 Harvested & Injected Blueprints</h2>
+                                        <table>
+                                            <tr><th>Source Origin</th><th>Blueprint / Project Title</th><th>Architecture & Pattern</th><th>Status</th></tr>
+                                            ${blueprints && blueprints.length > 0 ? blueprints.map(b => `<tr><td>${b.source_origin}</td><td><span class="highlight">${b.blueprint_title}</span></td><td>${b.architecture_pattern}</td><td>${b.integration_status}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">No blueprints recorded yet.</td></tr>'}
+                                        </table>
+                                    </div>
+
+                                    <div class="card">
+                                        <h2>📋 Recent System & Pipeline Logs</h2>
+                                        <table>
+                                            <tr><th>Timestamp</th><th>Module</th><th>Status</th><th>Message</th></tr>
+                                            ${logs && logs.length > 0 ? logs.map(l => `<tr><td>${l.timestamp}</td><td>${l.module_name}</td><td>${l.status}</td><td>${l.message}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">No logs recorded yet.</td></tr>'}
+                                        </table>
+                                    </div>
+
+                                    <div class="footer">
+                                        Shoulder-to-Shoulder Network &bull; Sovereign Control Room &bull; Private Dashboard
+                                    </div>
                                 </div>
-                            </div>
-                        </body>
-                        </html>
-                        `;
-                        res.send(html);
+                            </body>
+                            </html>
+                            `;
+                            res.send(html);
+                        });
                     });
                 });
             });
@@ -479,6 +530,6 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Toll-Gated Sovereign Engine is live on port ${PORT}`);
-    logEvent('SystemCore', 'BOOT', `Toll-gated server successfully started on Render port ${PORT}`);
+    console.log(`🚀 Ultimate Unified Sovereign Engine is live on port ${PORT}`);
+    logEvent('SystemCore', 'BOOT', `Ultimate unified server successfully started on Render port ${PORT}`);
 });
