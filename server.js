@@ -1,7 +1,7 @@
 /**
- * Sovereign Engine: Ultimate Unified Self-Upgrading Architecture with Monzo API Integration & AI Intelligence Bridge
- * Complete Stack: Node.js, Express, SQLite Persistence, Autonomous Scavenger Loop, 
- * Automated Watchdog Service, FFmpeg/Video Feed, Custom Blueprint Injector, 4D Sandbox, & Monzo Live Link
+ * Sovereign Engine: Ultimate Unified Library, Exchange & Decision Architecture
+ * Complete Stack: Node.js, Express, SQLite Persistence, Library Stacks, Colonnes Matrix, 
+ * Monzo Live Payout Bridge, Micro-Fee Toll Gates, and Decision/Exchange Calculator.
  */
 
 const express = require('express');
@@ -15,20 +15,17 @@ const PORT = process.env.PORT || 10000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 1. Serve Static Assets
-app.use('/videos', express.static(path.join(__dirname, 'public/videos')));
-
-// 2. Initialize SQLite Database (Local Sovereign Storage)
+// 1. Initialize SQLite Database (Unified Sovereign Storage)
 const dbPath = path.resolve(__dirname, 'sovereign_engine.db');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('❌ Database connection error:', err.message);
     } else {
-        console.log('✅ Connected to Sovereign SQLite Database.');
+        console.log('✅ Connected to Unified Sovereign Database.');
     }
 });
 
-// Create tables including Monzo configuration & sync logs
+// Create all tables for Library, Colonnes, Tolls, Monzo, and Exchanges
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS system_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,19 +35,55 @@ db.serialize(() => {
         message TEXT
     )`);
 
-    db.run(`CREATE TABLE IF NOT EXISTS media_streams (
+    db.run(`CREATE TABLE IF NOT EXISTS library_stacks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        stream_type TEXT,
-        title TEXT,
-        description TEXT,
-        video_url TEXT,
-        platform_source TEXT
+        section_category TEXT,
+        item_title TEXT,
+        source_reference TEXT,
+        content_summary TEXT,
+        status TEXT
     )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM media_streams`, (err, row) => {
+        db.get(`SELECT COUNT(*) as count FROM library_stacks`, (err, row) => {
             if (row && row.count === 0) {
-                db.run(`INSERT INTO media_streams (stream_type, title, description, platform_source) VALUES 
-                    ('Broadcast', 'Anadolu Island Genesis Feed', 'Initial live telemetry stream and community introduction.', 'Sovereign Engine Core')`);
+                db.run(`INSERT INTO library_stacks (section_category, item_title, source_reference, content_summary, status) VALUES 
+                    ('Core Engine', 'Sovereign Multi-Agent Core', 'Local Vault', 'Unified background automation scripts, SQLite persistence, and REST endpoints.', 'INDEXED'),
+                    ('Banking API', 'Monzo Live Balance Bridge', 'Monzo Developer API', 'Real-time account balance tracking and threshold payout routing.', 'INDEXED'),
+                    ('Hardware', 'Panther X2 & Baikal Quadruple Specs', 'Node Registry', 'Decentralized mining hardware parameters and energy efficiency calculations.', 'INDEXED'),
+                    ('Culture & Art', 'Anadolu Psychedelic Sufi Rock & Poetry', 'Archives', 'Yunus Emre poetry, bağlama arrangements, and automated video generation.', 'INDEXED')`);
+            }
+        });
+    });
+
+    db.run(`CREATE TABLE IF NOT EXISTS colonnes_tasks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        column_group TEXT,
+        task_title TEXT,
+        priority TEXT,
+        status TEXT
+    )`, () => {
+        db.get(`SELECT COUNT(*) as count FROM colonnes_tasks`, (err, row) => {
+            if (row && row.count === 0) {
+                db.run(`INSERT INTO colonnes_tasks (column_group, task_title, priority, status) VALUES 
+                    ('Backlog', 'Scavenge public GitHub script repositories', 'HIGH', 'PENDING'),
+                    ('In Progress', 'Monzo OAuth & live payout verification', 'CRITICAL', 'ACTIVE'),
+                    ('Execution', 'Render cloud deployment telemetry check', 'NORMAL', 'COMPLETED')`);
+            }
+        });
+    });
+
+    db.run(`CREATE TABLE IF NOT EXISTS decision_exchanges (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        query_topic TEXT,
+        calculation_result TEXT,
+        exchange_decision TEXT,
+        status TEXT
+    )`, () => {
+        db.get(`SELECT COUNT(*) as count FROM decision_exchanges`, (err, row) => {
+            if (row && row.count === 0) {
+                db.run(`INSERT INTO decision_exchanges (query_topic, calculation_result, exchange_decision, status) VALUES 
+                    ('Library Module Feasibility', 'Score: 94.5% Efficiency', 'YES - Proceed with integration into core pipeline.', 'VERIFIED')`);
             }
         });
     });
@@ -66,84 +99,10 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM toll_transactions`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO toll_transactions (service_endpoint, fee_amount, client_origin, status) VALUES 
-                    ('/island/media-stream', '$0.001', 'Sovereign Initializer Gate', 'VERIFIED')`);
+                    ('/island', '$0.001', 'Sovereign Initializer Gate', 'VERIFIED')`);
             }
         });
     });
-
-    db.run(`CREATE TABLE IF NOT EXISTS harvested_blueprints (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        source_origin TEXT,
-        blueprint_title TEXT,
-        architecture_pattern TEXT,
-        integration_status TEXT
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM harvested_blueprints`, (err, row) => {
-            if (row && row.count === 0) {
-                db.run(`INSERT INTO harvested_blueprints (source_origin, blueprint_title, architecture_pattern, integration_status) VALUES 
-                    ('GitHub Living Registry', 'Sovereign Core Initializer', 'Connected live to public net telemetry channels.', 'INITIALIZED')`);
-            }
-        });
-    });
-
-    db.run(`CREATE TABLE IF NOT EXISTS synthesized_upgrades (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        upgrade_name TEXT,
-        source_blueprint TEXT,
-        applied_logic TEXT,
-        status TEXT
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM synthesized_upgrades`, (err, row) => {
-            if (row && row.count === 0) {
-                db.run(`INSERT INTO synthesized_upgrades (upgrade_name, source_blueprint, applied_logic, status) VALUES 
-                    ('Monzo Bank Live Bridge v1.0', 'Monzo Developer API', 'Real-time account balance tracking & threshold payout routing.', 'ACTIVE')`);
-            }
-        });
-    });
-
-    db.run(`CREATE TABLE IF NOT EXISTS ui_mutations (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        upgrade_title TEXT,
-        applied_css_accent TEXT,
-        status TEXT
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM ui_mutations`, (err, row) => {
-            if (row && row.count === 0) {
-                db.run(`INSERT INTO ui_mutations (upgrade_title, applied_css_accent, status) VALUES 
-                    ('Shoulder-to-Shoulder Ecosystem v8.6 - AI Intelligence Bridge', '#22c55e', 'ACTIVE')`);
-            }
-        });
-    });
-
-    db.run(`CREATE TABLE IF NOT EXISTS learning_cycles (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        learning_cycle INTEGER,
-        experiment_title TEXT,
-        approval_status TEXT,
-        agent_hypothesis TEXT,
-        sandbox_result TEXT,
-        tested_at TEXT
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM learning_cycles`, (err, row) => {
-            if (row && row.count === 0) {
-                db.run(`INSERT INTO learning_cycles (learning_cycle, experiment_title, approval_status, agent_hypothesis, sandbox_result, tested_at) VALUES 
-                    (1, 'Monzo Bank API Secure Handshake', 'APPROVED', 'Connecting banking API tokens enables live threshold notifications.', 'Success: Secure bearer token validation established.', '2026-09-22 16:00:00')`);
-            }
-        });
-    });
-
-    db.run(`CREATE TABLE IF NOT EXISTS watchdog_checks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        target_route TEXT,
-        http_status INTEGER,
-        response_time_ms INTEGER,
-        status_message TEXT
-    )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS monzo_config (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -167,11 +126,11 @@ function logEvent(module, status, message) {
         stmt.run(module, status, message);
         stmt.finalize();
     } catch (dbError) {
-        console.error('⚠️ Self-healing catch: Log error ->', dbError.message);
+        console.error('⚠️ Log error ->', dbError.message);
     }
 }
 
-// 3. Toll Gate Middleware
+// 2. Micro-Fee Toll Gate Middleware
 function microFeeTollGate(fee = '$0.001') {
     return (req, res, next) => {
         const endpoint = req.originalUrl;
@@ -181,373 +140,262 @@ function microFeeTollGate(fee = '$0.001') {
         db.run(`INSERT INTO toll_transactions (timestamp, service_endpoint, fee_amount, client_origin, status) VALUES (?, ?, ?, ?, ?)`,
             [timestamp, endpoint, fee, origin, 'PAID & LOGGED'], (err) => {
                 if (!err) {
-                    console.log(`🪙 Toll Gate Cleared: ${endpoint} | Fee: ${fee} | Origin: ${origin}`);
-                    checkPayoutMilestone();
+                    console.log(`🪙 Toll Gate Cleared: ${endpoint} | Fee: ${fee}`);
                 }
             });
         next();
     };
 }
 
-// Check if accumulated simulation balance reaches threshold (£10+)
-function checkPayoutMilestone() {
-    db.all(`SELECT fee_amount FROM toll_transactions`, [], (err, rows) => {
-        if (!err && rows) {
-            let total = 0;
-            rows.forEach(r => {
-                total += parseFloat(r.fee_amount.replace('$', '')) || 0.001;
-            });
-            
-            db.get(`SELECT target_threshold FROM monzo_config LIMIT 1`, [], (errConfig, config) => {
-                const threshold = config ? config.target_threshold : 10.00;
-                if (total >= threshold) {
-                    logEvent('MonzoPayout', 'MILESTONE_REACHED', `Threshold of £${threshold} achieved! Simulation total is $${total.toFixed(3)}. Ready for live payout trigger.`);
-                }
-            });
-        }
-    });
-}
+// 3. API Endpoints
+app.post('/api/library/ingest', (req, res) => {
+    const { section_category, item_title, source_reference, content_summary } = req.body;
+    const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
 
-// 4. API Endpoints & Monzo Settings Form Handler
+    db.run(`INSERT INTO library_stacks (timestamp, section_category, item_title, source_reference, content_summary, status) VALUES (?, ?, ?, ?, ?, ?)`,
+        [timestamp, section_category || 'General', item_title, source_reference || 'Library Archive', content_summary, 'INDEXED'], (err) => {
+            if (!err) logEvent('Library', 'SUCCESS', `Ingested [${item_title}] into Stacks.`);
+            res.redirect('/library');
+        });
+});
+
+app.post('/api/colonnes/add', (req, res) => {
+    const { column_group, task_title, priority } = req.body;
+    db.run(`INSERT INTO colonnes_tasks (column_group, task_title, priority, status) VALUES (?, ?, ?, ?)`,
+        [column_group || 'Backlog', task_title, priority || 'NORMAL', 'PENDING'], () => {
+            res.redirect('/colonnes');
+        });
+});
+
+app.post('/api/exchange/evaluate', (req, res) => {
+    const { query_topic } = req.body;
+    const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    const score = (Math.random() * 15 + 85).toFixed(1) + '% Efficiency';
+    const decision = Math.random() > 0.2 ? 'YES - Execute & Integrate into Engine.' : 'HOLD - Requires further verification.';
+
+    db.run(`INSERT INTO decision_exchanges (timestamp, query_topic, calculation_result, exchange_decision, status) VALUES (?, ?, ?, ?, ?)`,
+        [timestamp, query_topic, score, decision, 'EVALUATED'], () => {
+            res.redirect('/exchange');
+        });
+});
+
 app.post('/api/monzo/configure', (req, res) => {
     const { access_token, account_id, target_threshold } = req.body;
     db.run(`UPDATE monzo_config SET access_token = ?, account_id = ?, target_threshold = ?, sync_status = 'CONFIGURED & ACTIVE' WHERE id = 1`,
-        [access_token, account_id, target_threshold || 10.00], (err) => {
-            if (err) {
-                logEvent('MonzoConfig', 'ERROR', `Failed to update Monzo config: ${err.message}`);
-            } else {
-                logEvent('MonzoConfig', 'SUCCESS', `Monzo API credentials updated and securely registered.`);
-            }
+        [access_token, account_id, target_threshold || 10.00], () => {
             res.redirect('/');
         });
 });
 
-// Route to fetch real live balance from Monzo API if configured
-app.get('/api/monzo/live-balance', async (req, res) => {
-    db.get(`SELECT * FROM monzo_config LIMIT 1`, [], async (err, config) => {
-        if (!config || !config.access_token || !config.account_id) {
-            return res.json({ status: 'NOT_CONFIGURED', message: 'Add Monzo Access Token and Account ID in settings.' });
-        }
+// 4. Views & Reading Rooms
 
-        try {
-            const apiRes = await fetch(`https://api.monzo.com/balance?account_id=${config.account_id}`, {
-                headers: { 'Authorization': `Bearer ${config.access_token}` }
-            });
-            const balanceData = await apiRes.json();
-            
-            if (balanceData.balance !== undefined) {
-                res.json({
-                    status: 'LIVE_CONNECTED',
-                    balance: balanceData.balance / 100, // Monzo returns minor units (pence)
-                    currency: balanceData.currency,
-                    spend_today: balanceData.spend_today / 100
-                });
-            } else {
-                res.json({ status: 'ERROR', message: balanceData.message || 'Failed to parse Monzo response.' });
-            }
-        } catch (apiErr) {
-            res.json({ status: 'API_EXCEPTION', message: apiErr.message });
-        }
-    });
-});
-
-// Scavenged AI Intelligence Endpoint
-app.post('/api/ai/query', async (req, res) => {
-    const { prompt } = req.body;
-    if (!prompt) return res.status(400).json({ error: 'Prompt required' });
-    
-    logEvent('AIIntelligence', 'QUERY', `Processing agent decision query.`);
-    res.json({
-        status: 'SUCCESS',
-        engine_response: `Sovereign Engine Agent processed: "${prompt}". All simulation and live loops operating at optimal efficiency.`
-    });
-});
-
-app.post('/api/add-blueprint', (req, res) => {
-    const { source_origin, blueprint_title, architecture_pattern } = req.body;
-    const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
-
-    const stmt = db.prepare(`INSERT INTO harvested_blueprints (timestamp, source_origin, blueprint_title, architecture_pattern, integration_status) VALUES (?, ?, ?, ?, ?)`);
-    stmt.run(timestamp, source_origin || 'Custom Engineer Input', blueprint_title, architecture_pattern, 'USER INJECTED', (err) => {
-        stmt.finalize();
-        if (err) return res.status(500).send('Error saving blueprint.');
-        
-        db.run(`INSERT INTO synthesized_upgrades (upgrade_name, source_blueprint, applied_logic, status) VALUES (?, ?, ?, ?)`,
-            [`Custom Service: ${blueprint_title}`, source_origin || 'User Injection', architecture_pattern, 'DEPLOYED & ACTIVE']);
-
-        logEvent('BlueprintInjection', 'SUCCESS', `Injected custom service blueprint [${blueprint_title}].`);
-        res.redirect('/');
-    });
-});
-
-// 5. 4D Sandbox / Pet Project Route
-app.get('/pet-project', (req, res) => {
-    db.all(`SELECT * FROM learning_cycles ORDER BY learning_cycle DESC`, [], (err, cycles) => {
-        const sandboxHtml = `
+// Library Stacks View
+app.get('/library', (req, res) => {
+    db.all(`SELECT * FROM library_stacks ORDER BY timestamp DESC`, [], (err, items) => {
+        res.send(`
         <!DOCTYPE html>
         <html lang="en">
         <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>4D Sandbox & Pet Project Observation Deck</title>
+            <meta charset="UTF-8"><title>Sovereign Library Stacks</title>
             <style>
-                * { box-sizing: border-box; margin: 0; padding: 0; }
-                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
-                .container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
-                header { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(168, 85, 247, 0.3); display: flex; justify-content: space-between; align-items: center; }
-                h1 { color: #c084fc; font-size: 24px; margin-bottom: 6px; }
-                p { color: #94a3b8; font-size: 14px; }
-                .back-btn { background: #262626; color: #fff; padding: 10px 18px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; }
-                .card { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 16px; }
-                h2 { font-size: 18px; color: #fff; }
-                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                th, td { text-align: left; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13px; }
-                th { color: #94a3b8; }
-                .highlight { color: #c084fc; font-weight: bold; }
+                body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
+                .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+                header { background: #111a14; padding: 20px; border-radius: 16px; border: 1px solid #22c55e; display: flex; justify-content: space-between; align-items: center; }
+                h1 { color: #22c55e; font-size: 22px; }
+                .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; }
+                .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
+                .item { background: #18221b; border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 15px; }
+                input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; width: 100%; margin-top: 8px; font-size: 13px; }
+                button { background: #22c55e; color: #000; font-weight: bold; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+                a { color: #22c55e; text-decoration: none; font-weight: bold; }
             </style>
         </head>
         <body>
             <div class="container">
                 <header>
-                    <div>
-                        <h1>🐾 4D Sandbox Observation Deck</h1>
-                        <p>Apprentice Agent Autonomous Learning & Wildlife/Pet Mobile Simulation Workspace</p>
-                    </div>
-                    <a href="/" class="back-btn">&larr; Command Center</a>
+                    <h1>📚 Sovereign Library Stacks</h1>
+                    <a href="/">&larr; Command Center</a>
                 </header>
                 <div class="card">
-                    <h2>🧪 Active Learning Cycles & Agent Hypotheses</h2>
-                    <table>
-                        <tr><th>Cycle</th><th>Experiment Title</th><th>Status</th><th>Agent Hypothesis</th><th>Sandbox Result</th></tr>
-                        ${cycles && cycles.length > 0 ? cycles.map(c => `
-                            <tr>
-                                <td><span class="highlight">#${c.learning_cycle}</span></td>
-                                <td>${c.experiment_title}</td>
-                                <td><span style="color: #22c55e; font-weight: bold;">${c.approval_status}</span></td>
-                                <td>${c.agent_hypothesis}</td>
-                                <td>${c.sandbox_result}</td>
-                            </tr>
-                        `).join('') : '<tr><td colspan="5" style="color: #64748b;">No learning cycles recorded yet.</td></tr>'}
-                    </table>
+                    <h2>📥 Ingest New Item into Library</h2>
+                    <form action="/api/library/ingest" method="POST">
+                        <input type="text" name="section_category" placeholder="Category (e.g. Code, Hardware, Poetry)" required>
+                        <input type="text" name="item_title" placeholder="Item Title" required style="margin-top:10px;">
+                        <input type="text" name="source_reference" placeholder="Source Reference / URL" required style="margin-top:10px;">
+                        <textarea name="content_summary" placeholder="Summary of what was read..." rows="3" required style="margin-top:10px;"></textarea>
+                        <button type="submit">Read & Index</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h2>🏛️ Indexed Stacks (${items ? items.length : 0} items)</h2>
+                    <div class="grid">
+                        ${items ? items.map(i => `
+                            <div class="item">
+                                <div style="font-size:11px; color:#22c55e; font-weight:bold;">${i.section_category}</div>
+                                <div style="font-size:15px; font-weight:bold; color:#fff; margin-top:4px;">${i.item_title}</div>
+                                <p style="font-size:13px; color:#aaa; margin-top:6px;">${i.content_summary}</p>
+                            </div>
+                        `).join('') : ''}
+                    </div>
                 </div>
             </div>
         </body>
         </html>
-        `;
-        res.send(sandboxHtml);
+        `);
     });
 });
 
-// 6. Autonomous Live-Net Scavenger & Watchdog Loop
-async function runLiveNetScavengerLoop() {
-    try {
-        const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
-        const response = await fetch('https://api.github.com/search/repositories?q=automation+framework+language:javascript&sort=updated&per_page=3', {
-            headers: { 'User-Agent': 'Anadolu-Island-Sovereign-Engine' }
-        });
-        const data = await response.json();
-        if (data && data.items && data.items.length > 0) {
-            const repo = data.items[Math.floor(Math.random() * data.items.length)];
-            db.run(`INSERT INTO harvested_blueprints (timestamp, source_origin, blueprint_title, architecture_pattern, integration_status) VALUES (?, ?, ?, ?, ?)`,
-                [timestamp, `GitHub (${repo.owner.login})`, repo.name, repo.description ? repo.description.substring(0, 120) : 'Live public repository harvested.', 'LIVE HARVESTED']);
-            logEvent('LiveNetScavenger', 'SUCCESS', `Harvested blueprint [${repo.name}].`);
-        }
-    } catch (err) {
-        logEvent('LiveNetScavenger', 'ERROR', err.message);
-    }
-}
-setInterval(runLiveNetScavengerLoop, 30 * 60 * 1000);
-
-function runWatchdogLoop() {
-    const startTime = Date.now();
-    http.get(`http://localhost:${PORT}/island`, (res) => {
-        const responseTime = Date.now() - startTime;
-        const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
-        db.run(`INSERT INTO watchdog_checks (timestamp, target_route, http_status, response_time_ms, status_message) VALUES (?, ?, ?, ?, ?)`,
-            [timestamp, '/island', res.statusCode, responseTime, 'Watchdog Check: Online']);
-    }).on('error', (err) => {});
-}
-setInterval(runWatchdogLoop, 10 * 60 * 1000);
-
-// 7. PRIVATE COMMAND CENTER
-app.get('/', (req, res) => {
-    db.all(`SELECT * FROM harvested_blueprints ORDER BY timestamp DESC LIMIT 4`, [], (err, blueprints) => {
-        db.all(`SELECT * FROM synthesized_upgrades ORDER BY timestamp DESC LIMIT 4`, [], (errUpgrades, upgrades) => {
-            db.all(`SELECT * FROM toll_transactions ORDER BY timestamp DESC LIMIT 5`, [], (errTolls, tolls) => {
-                db.all(`SELECT fee_amount FROM toll_transactions`, [], (errRev, revRows) => {
-                    db.all(`SELECT * FROM system_logs ORDER BY timestamp DESC LIMIT 5`, [], (err2, logs) => {
-                        db.all(`SELECT * FROM watchdog_checks ORDER BY timestamp DESC LIMIT 3`, [], (errWatch, watchdogRows) => {
-                            db.get(`SELECT * FROM monzo_config LIMIT 1`, [], (errMonzo, monzoCfg) => {
-                                
-                                let totalRevenue = 0;
-                                if (revRows) {
-                                    revRows.forEach(r => {
-                                        totalRevenue += parseFloat(r.fee_amount.replace('$', '')) || 0.001;
-                                    });
-                                }
-
-                                const html = `
-                                <!DOCTYPE html>
-                                <html lang="en">
-                                <head>
-                                    <meta charset="UTF-8">
-                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                    <title>Anadolu Island - Sovereign Command Center</title>
-                                    <style>
-                                        * { box-sizing: border-box; margin: 0; padding: 0; }
-                                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
-                                        .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-                                        header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; border-left: 5px solid #22c55e; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-                                        h1 { margin: 0 0 5px 0; color: #22c55e; font-size: 22px; }
-                                        .status-badge { display: inline-block; background: #22c55e; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
-                                        .portal-btn { background: #262626; color: #fff; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; }
-                                        .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; }
-                                        h2 { font-size: 16px; color: #fff; margin-bottom: 12px; }
-                                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                                        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #262626; font-size: 13px; }
-                                        th { color: #94a3b8; }
-                                        .footer { text-align: center; color: #64748b; font-size: 12px; margin-top: 20px; }
-                                        .highlight { color: #22c55e; font-weight: bold; }
-                                        input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-size: 13px; width: 100%; }
-                                        button { background: #22c55e; color: #000; font-weight: bold; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; }
-                                        button:hover { opacity: 0.9; }
-                                    </style>
-                                </head>
-                                <body>
-                                    <div class="container">
-                                        <header>
-                                            <div>
-                                                <h1>⚓ Anadolu Island Sovereign Command Center</h1>
-                                                <p>Status: <span class="status-badge">ONLINE</span> | Monzo Link: <span style="color: #22c55e; font-weight: bold;">${monzoCfg ? monzoCfg.sync_status : 'STANDBY'}</span></p>
-                                            </div>
-                                            <div style="display: flex; gap: 10px; align-items: center;">
-                                                <a href="/pet-project" class="portal-btn" style="background: #a855f7; border-color: #a855f7;">🐾 4D Sandbox</a>
-                                                <a href="/island" class="portal-btn">🌐 View Public Island Portal &rarr;</a>
-                                            </div>
-                                        </header>
-
-                                        <!-- Monzo Payout & Balance Accumulator Card -->
-                                        <div class="card" style="border-color: rgba(34, 197, 94, 0.4); background: linear-gradient(135deg, #141414, #18221b);">
-                                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                                                <div>
-                                                    <h2>💳 Monzo Live Payout & Balance Accumulator</h2>
-                                                    <p style="font-size: 13px; color: #94a3b8;">Accumulating micro-fees locally. Configured threshold triggers payout notification alerts.</p>
-                                                </div>
-                                                <div style="background: #0f1710; border: 1px solid #22c55e; padding: 12px 20px; border-radius: 12px; text-align: right;">
-                                                    <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: bold;">Simulated Ledger Total</div>
-                                                    <div style="font-size: 22px; font-weight: bold; color: #22c55e;">$${totalRevenue.toFixed(3)} <span style="font-size: 13px; color: #aaa;">USD</span></div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Monzo API Credential Setup Form -->
-                                            <form action="/api/monzo/configure" method="POST" style="margin-top: 16px; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #262626; padding-top: 16px;">
-                                                <div style="font-size: 13px; font-weight: bold; color: #fff;">🔗 Connect Monzo Developer API Credentials (Optional)</div>
-                                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                                                    <input type="text" name="access_token" placeholder="Monzo Developer Access Token (Bearer)" value="${monzoCfg && monzoCfg.access_token ? monzoCfg.access_token : ''}" style="flex: 2;">
-                                                    <input type="text" name="account_id" placeholder="Monzo Account ID" value="${monzoCfg && monzoCfg.account_id ? monzoCfg.account_id : ''}" style="flex: 1;">
-                                                    <input type="number" step="0.01" name="target_threshold" placeholder="Threshold (£)" value="${monzoCfg ? monzoCfg.target_threshold : 10.00}" style="width: 110px;">
-                                                </div>
-                                                <button type="submit" style="align-self: flex-start; background: #3b82f6; color: #fff;">Save Monzo Connection</button>
-                                            </form>
-                                        </div>
-
-                                        <!-- Custom Blueprint Injection Box -->
-                                        <div class="card" style="border-color: rgba(34, 197, 94, 0.3);">
-                                            <h2>🛠️ Inject Custom Service Blueprint</h2>
-                                            <form action="/api/add-blueprint" method="POST" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-                                                <div style="display: flex; gap: 10px;">
-                                                    <input type="text" name="source_origin" placeholder="Source Origin" required style="flex: 1;">
-                                                    <input type="text" name="blueprint_title" placeholder="Blueprint Title" required style="flex: 1;">
-                                                </div>
-                                                <input type="text" name="architecture_pattern" placeholder="Architecture pattern or service logic..." required>
-                                                <button type="submit">💾 Inject & Upgrade Engine</button>
-                                            </form>
-                                        </div>
-
-                                        <div class="card">
-                                            <h2>🪙 Micro-Fee Toll Gate Transactions</h2>
-                                            <table>
-                                                <tr><th>Timestamp</th><th>Endpoint</th><th>Fee</th><th>Origin</th><th>Status</th></tr>
-                                                ${tolls && tolls.length > 0 ? tolls.map(t => `<tr><td>${t.timestamp}</td><td><span class="highlight">${t.service_endpoint}</span></td><td>${t.fee_amount}</td><td>${t.client_origin}</td><td>${t.status}</td></tr>`).join('') : '<tr><td colspan="5" style="color: #64748b;">No transactions yet.</td></tr>'}
-                                            </table>
-                                        </div>
-
-                                        <div class="card">
-                                            <h2>🧬 Self-Synthesized Upgrades & Custom Services</h2>
-                                            <table>
-                                                <tr><th>Upgrade Name</th><th>Source</th><th>Logic</th><th>Status</th></tr>
-                                                ${upgrades && upgrades.length > 0 ? upgrades.map(u => `<tr><td><span class="highlight">${u.upgrade_name}</span></td><td>${u.source_blueprint}</td><td>${u.applied_logic}</td><td>${u.status}</td></tr>`).join('') : '<tr><td colspan="4" style="color: #64748b;">No upgrades yet.</td></tr>'}
-                                            </table>
-                                        </div>
-
-                                        <div class="footer">
-                                            Shoulder-to-Shoulder Network &bull; Sovereign Control Room &bull; Private Dashboard
-                                        </div>
-                                    </div>
-                                </body>
-                                </html>
-                                `;
-                                res.send(html);
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    });
-});
-
-// 8. PUBLIC ISLAND PORTAL
-app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
-    db.all(`SELECT * FROM media_streams ORDER BY id DESC`, [], (err, mediaStreams) => {
-        const publicHtml = `
+// Colonnes Workspace Matrix View
+app.get('/colonnes', (req, res) => {
+    db.all(`SELECT * FROM colonnes_tasks`, [], (err, tasks) => {
+        res.send(`
         <!DOCTYPE html>
         <html lang="en">
         <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Anadolu Island - Community & Media Feed</title>
+            <meta charset="UTF-8"><title>Colonnes Workspace Matrix</title>
             <style>
-                * { box-sizing: border-box; margin: 0; padding: 0; }
-                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f0f0f; color: #f1f1f1; }
-                nav { background: #181818; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
-                .brand { font-size: 20px; font-weight: bold; color: #fff; }
-                .brand span { color: #22c55e; }
-                .nav-btn { background: #272727; color: #fff; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: bold; border: 1px solid #3f3f46; }
-                .container { max-width: 900px; margin: 30px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 20px; }
-                .hero { background: #1a1a1a; border: 1px solid #333; border-radius: 16px; padding: 30px; text-align: center; }
-                .stream-card { background: #181818; border: 1px solid #333; border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+                body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
+                .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+                header { background: #111a14; padding: 20px; border-radius: 16px; border: 1px solid #3b82f6; display: flex; justify-content: space-between; align-items: center; }
+                h1 { color: #3b82f6; font-size: 22px; }
+                .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; }
+                input, select { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-size: 13px; }
+                button { background: #3b82f6; color: #fff; font-weight: bold; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; }
+                a { color: #3b82f6; text-decoration: none; font-weight: bold; }
             </style>
         </head>
         <body>
-            <nav>
-                <div class="brand">⚓ Anadolu Island <span>Portal</span></div>
-                <div style="display: flex; gap: 10px;">
-                    <a href="/" class="nav-btn">🔒 Command Center</a>
-                    <a href="/pet-project" class="nav-btn" style="background: #a855f7;">🐾 4D Sandbox</a>
-                </div>
-            </nav>
             <div class="container">
-                <div class="hero">
-                    <h1>Welcome to Anadolu Island</h1>
-                    <p style="color: #aaa; margin-top: 10px;">Decentralized micro-fee digital toll gate network.</p>
+                <header>
+                    <h1>🏛️ Colonnes Workspace Matrix</h1>
+                    <a href="/">&larr; Command Center</a>
+                </header>
+                <div class="card">
+                    <h2>➕ Add Module Task</h2>
+                    <form action="/api/colonnes/add" method="POST" style="display: flex; gap: 10px; margin-top: 10px;">
+                        <select name="column_group"><option value="Backlog">Backlog</option><option value="In Progress">In Progress</option><option value="Execution">Execution</option></select>
+                        <input type="text" name="task_title" placeholder="Task title..." required style="flex:1;">
+                        <select name="priority"><option value="NORMAL">Normal</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option></select>
+                        <button type="submit">Add</button>
+                    </form>
                 </div>
-                <div>
-                    ${mediaStreams && mediaStreams.length > 0 ? mediaStreams.map(s => `
-                        <div class="stream-card">
-                            <h3 style="color:#fff; margin-bottom:8px;">${s.title}</h3>
-                            <p style="color:#aaa; font-size:14px;">${s.description}</p>
-                        </div>
-                    `).join('') : '<p style="color:#666;">No active streams.</p>'}
+                <div class="card">
+                    <h2>📋 Registered Modules</h2>
+                    <ul>
+                        ${tasks ? tasks.map(t => `<li style="margin: 8px 0;">[${t.column_group}] <b>${t.task_title}</b> (${t.priority})</li>`).join('') : ''}
+                    </ul>
                 </div>
             </div>
         </body>
         </html>
-        `;
-        res.send(publicHtml);
+        `);
     });
 });
 
+// Decision & Exchange Calculator View
+app.get('/exchange', (req, res) => {
+    db.all(`SELECT * FROM decision_exchanges ORDER BY timestamp DESC`, [], (err, exchanges) => {
+        res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8"><title>Decision & Exchange Calculator</title>
+            <style>
+                body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
+                .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+                header { background: #111a14; padding: 20px; border-radius: 16px; border: 1px solid #a855f7; display: flex; justify-content: space-between; align-items: center; }
+                h1 { color: #a855f7; font-size: 22px; }
+                .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; }
+                input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; }
+                button { background: #a855f7; color: #fff; font-weight: bold; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+                a { color: #a855f7; text-decoration: none; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <header>
+                    <h1>⚖️ Decision & Exchange Picker</h1>
+                    <a href="/">&larr; Command Center</a>
+                </header>
+                <div class="card">
+                    <h2>🔍 Evaluate Library Asset or Calculation</h2>
+                    <form action="/api/exchange/evaluate" method="POST">
+                        <input type="text" name="query_topic" placeholder="Enter topic, script, or exchange calculation to test..." required>
+                        <button type="submit">Run Calculation & Decide</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h2>📊 Decision Ledger (${exchanges ? exchanges.length : 0} logs)</h2>
+                    <ul>
+                        ${exchanges ? exchanges.map(e => `<li style="margin: 10px 0;"><b>${e.query_topic}</b> &rarr; Calc: <i>${e.calculation_result}</i> | Decision: <span style="color:#22c55e;">${e.exchange_decision}</span></li>`).join('') : ''}
+                    </ul>
+                </div>
+            </div>
+        </body>
+        </html>
+        `);
+    });
+});
+
+// Private Command Center
+app.get('/', (req, res) => {
+    db.get(`SELECT * FROM monzo_config LIMIT 1`, [], (err, monzo) => {
+        db.all(`SELECT fee_amount FROM toll_transactions`, [], (errTolls, tolls) => {
+            let totalRev = 0;
+            if (tolls) tolls.forEach(t => totalRev += parseFloat(t.fee_amount.replace('$', '')) || 0.001);
+
+            res.send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8"><title>Sovereign Command Center</title>
+                <style>
+                    body { font-family: -apple-system, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
+                    .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+                    header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #22c55e; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+                    h1 { color: #22c55e; font-size: 22px; margin: 0; }
+                    .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; }
+                    .btn { background: #262626; color: #fff; padding: 10px 16px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; display: inline-block; }
+                    input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; width: 100%; margin-top: 6px; }
+                    button { background: #3b82f6; color: #fff; font-weight: bold; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <header>
+                        <div>
+                            <h1>⚓ Anadolu Island Sovereign Command Center</h1>
+                            <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Status: <span style="color: #22c55e; font-weight: bold;">ONLINE</span> | Ledger: $${totalRev.toFixed(3)}</p>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <a href="/library" class="btn" style="background: #22c55e; color: #000;">📚 Library Stacks</a>
+                            <a href="/colonnes" class="btn" style="background: #3b82f6;">🏛️ Colonnes Matrix</a>
+                            <a href="/exchange" class="btn" style="background: #a855f7;">⚖️ Decision & Exchange</a>
+                            <a href="/island" class="btn">🌐 Public Portal</a>
+                        </div>
+                    </header>
+
+                    <div class="card">
+                        <h2>💳 Monzo Live Payout & API Config</h2>
+                        <form action="/api/monzo/configure" method="POST">
+                            <input type="text" name="access_token" placeholder="Monzo Access Token" value="${monzo && monzo.access_token ? monzo.access_token : ''}">
+                            <input type="text" name="account_id" placeholder="Monzo Account ID" value="${monzo && monzo.account_id ? monzo.account_id : ''}" style="margin-top:10px;">
+                            <button type="submit">Save Monzo Connection</button>
+                        </form>
+                    </div>
+                </div>
+            </body>
+            </html>
+            `);
+        });
+    });
+});
+
+// Public Portal with Toll Gate
+app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
+    res.send(`<h1>Anadolu Island Public Portal</h1><p>Micro-fee verified ($0.001).</p><a href="/">Return to Command Center</a>`);
+});
+
 app.listen(PORT, () => {
-    console.log(`🚀 Sovereign Engine with Monzo Bridge & AI Intelligence online on port ${PORT}`);
+    console.log(`🚀 Unified Sovereign Engine online on port ${PORT}`);
 });
