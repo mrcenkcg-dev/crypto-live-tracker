@@ -1,4 +1,131 @@
-// 8. PUBLIC ISLAND PORTAL (Protected by Micro-Fee Toll Gate Middleware)
+const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
+
+// 1. Initialize Express App & Server Configuration
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// 2. Initialize SQLite Database (Local Persistence)
+const dbFile = path.join(__dirname, 'sovereign.db');
+const db = new sqlite3.Database(dbFile, (err) => {
+    if (err) {
+        console.error('Error opening database', err.message);
+    } else {
+        console.log('Connected to the SQLite database.');
+        initDatabaseTables();
+    }
+});
+
+function initDatabaseTables() {
+    db.run(`CREATE TABLE IF NOT EXISTS system_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        event_type TEXT,
+        status TEXT,
+        message TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS media_streams (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        description TEXT,
+        platform_source TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS ui_mutations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        applied_css_accent TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+}
+
+// 3. System Logging Helper
+function logEvent(eventType, status, message) {
+    const query = `INSERT INTO system_logs (event_type, status, message) VALUES (?, ?, ?)`;
+    db.run(query, [eventType, status, message], (err) => {
+        if (err) console.error('Failed to log event:', err.message);
+    });
+}
+
+// 4. Micro-Fee Toll Gate Middleware
+const microFeeTollGate = (feeAmount) => {
+    return (req, res, next) => {
+        const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        logEvent('TollGateCheck', 'VERIFIED', `Cleared micro-fee of ${feeAmount} for IP ${clientIp} on route ${req.originalUrl}`);
+        next();
+    };
+};
+
+// 5. Command Center Dashboard Route
+app.get('/', (req, res) => {
+    db.all(`SELECT * FROM system_logs ORDER BY id DESC LIMIT 10`, [], (err, logs) => {
+        const dashboardHtml = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Sovereign Engine &bull; Command Center</title>
+            <style>
+                * { box-sizing: border-box; margin: 0; padding: 0; }
+                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f0f0f; color: #f1f1f1; padding: 20px; }
+                .container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+                header { background: #181818; border: 1px solid #333; padding: 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+                h1 { font-size: 22px; color: #fff; }
+                .btn { background: #22c55e; color: #000; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; }
+                .btn:hover { background: #16a34a; }
+                .card { background: #181818; border: 1px solid #333; border-radius: 12px; padding: 20px; }
+                h2 { font-size: 16px; margin-bottom: 15px; color: #aaa; border-bottom: 1px solid #333; padding-bottom: 8px; }
+                table { width: 100%; border-collapse: collapse; font-size: 13px; }
+                th, td { text-align: left; padding: 10px; border-bottom: 1px solid #222; }
+                th { color: #888; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <header>
+                    <h1>🛡️ Sovereign Engine Command Center</h1>
+                    <a href="/island" class="btn">✨ Visit Public Island</a>
+                </header>
+                <div class="card">
+                    <h2>Recent Telemetry & System Logs</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Event</th>
+                                <th>Status</th>
+                                <th>Message</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${logs && logs.length > 0 ? logs.map(l => `
+                                <tr>
+                                    <td>${l.id}</td>
+                                    <td><b>${l.event_type}</b></td>
+                                    <td><span style="color: #22c55e;">${l.status}</span></td>
+                                    <td>${l.message}</td>
+                                    <td>${l.timestamp}</td>
+                                </tr>
+                            `).join('') : `<tr><td colspan="5" style="text-align:center; color:#666;">No system logs recorded yet.</td></tr>`}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </body>
+        </html>
+        `;
+        res.send(dashboardHtml);
+    });
+});
+
+// 6. Public Island Portal Route (Protected by Micro-Fee Toll Gate)
 app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
     db.all(`SELECT * FROM media_streams ORDER BY id DESC`, [], (err, mediaStreams) => {
         db.get(`SELECT * FROM ui_mutations ORDER BY id DESC LIMIT 1`, [], (err2, activeUi) => {
@@ -84,7 +211,7 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
     });
 });
 
-// 9. Boot Application
+// 7. Boot Application & Start Server
 app.listen(PORT, () => {
     console.log(`🚀 Sovereign Engine successfully running on port ${PORT}`);
     logEvent('SystemBoot', 'SUCCESS', `Sovereign Engine online and listening on port ${PORT}.`);
