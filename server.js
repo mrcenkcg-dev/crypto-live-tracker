@@ -1,5 +1,5 @@
 /**
- * Sovereign Engine: Ultimate Unified Master Build
+ * Sovereign Engine: Ultimate Unified Master Build (Fixed SQL Syntax)
  * Node.js, Express, SQLite Persistence, Super Agents, Library Stacks, 
  * Colonnes Matrix, Decision Calculator, Monzo Bridge, & Clean Live Match Portal.
  */
@@ -125,9 +125,9 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM live_matches`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO live_matches (league_name, home_team, away_team, match_time, match_score, status, ad_sponsor) VALUES 
-                    ('Anatolian Super League', 'Galatasaray SK', 'Fenerbahçe SK', 'LIVE 78\'', '2 - 1', 'PLAYING', 'Anadolu Sufi Rock Beats'),
-                    ('Anatolian Super League', 'Beşiktaş JK', 'Trabzonspor', '19:00 TR', '0 - 0', 'UPCOMING', 'Get Big Together Platform'),
-                    ('Anadolu Cup', 'Ankara Gücü', 'Bursaspor', 'FT', '3 - 1', 'FINISHED', 'Panther X2 Nodes')`);
+                    ('Anatolian Super League', 'Galatasaray SK', 'Fenerbahce SK', 'LIVE 78 Min', '2 - 1', 'PLAYING', 'Anadolu Sufi Rock Beats'),
+                    ('Anatolian Super League', 'Besiktas JK', 'Trabzonspor', '19:00 TR', '0 - 0', 'UPCOMING', 'Get Big Together Platform'),
+                    ('Anadolu Cup', 'Ankara Guclu', 'Bursaspor', 'FT', '3 - 1', 'FINISHED', 'Panther X2 Nodes')`);
             }
         });
     });
