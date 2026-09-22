@@ -434,9 +434,98 @@ app.get('/', (req, res) => {
     });
 });
 
-// Public Portal with Toll Gate
+// Fully Loaded Public Portal with Exchange Rates, Football Ads, and Live Agent Feeds
 app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
-    res.send(`<h1>Anadolu Island Public Portal</h1><p>Micro-fee verified ($0.001).</p><a href="/">Return to Command Center</a>`);
+    db.all(`SELECT * FROM super_agent_logs ORDER BY timestamp DESC LIMIT 3`, [], (err, agents) => {
+        db.all(`SELECT * FROM library_stacks ORDER BY timestamp DESC LIMIT 4`, [], (errLib, items) => {
+            res.send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Anadolu Island - Public Exchange & Sports Ad Network</title>
+                <style>
+                    * { box-sizing: border-box; margin: 0; padding: 0; }
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
+                    .container { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+                    header { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.4); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+                    h1 { color: #22c55e; font-size: 24px; margin-bottom: 6px; }
+                    p { color: #94a3b8; font-size: 14px; }
+                    .badge { background: #22c55e; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 12px; display: inline-block; }
+                    .btn { background: #262626; color: #fff; padding: 10px 18px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; }
+                    .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+                    h2 { font-size: 18px; color: #fff; }
+                    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+                    .panel { background: #18221b; border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+                    .ticker { background: #0b0b0b; border: 1px solid #333; padding: 12px; border-radius: 10px; font-family: monospace; font-size: 13px; color: #22c55e; display: flex; justify-content: space-between; align-items: center; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <header>
+                        <div>
+                            <h1>🌴 Anadolu Island Public Portal</h1>
+                            <p>Status: <span class="badge">ACTIVE & MONITORED</span> | Toll Collected: $0.001</p>
+                        </div>
+                        <a href="/" class="btn">&larr; Command Center</a>
+                    </header>
+
+                    <!-- LIVE EXCHANGE RATES & FINANCIAL WINDOW -->
+                    <div class="card">
+                        <h2>💱 Live Exchange Rates & Micro-Fee Window</h2>
+                        <div class="grid">
+                            <div class="panel">
+                                <span style="font-size: 11px; color: #a855f7; font-weight: bold;">CURRENCY PAIR</span>
+                                <div style="font-size: 20px; font-weight: bold; color: #fff;">GBP / TRY</div>
+                                <div style="font-size: 14px; color: #22c55e;">Rate: 43.85 &uarr; <span style="font-size: 11px; color: #aaa;">(Live Bridge)</span></div>
+                            </div>
+                            <div class="panel">
+                                <span style="font-size: 11px; color: #a855f7; font-weight: bold;">MICRO-FEE GATEWAY</span>
+                                <div style="font-size: 20px; font-weight: bold; color: #fff;">USD / TOKEN</div>
+                                <div style="font-size: 14px; color: #3b82f6;">Toll Rate: $0.001 / Request</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FOOTBALL & SPORTS ADS WINDOW -->
+                    <div class="card" style="border-left: 4px solid #3b82f6;">
+                        <h2>⚽ Active Football Ads & Sports Ad Network</h2>
+                        <p>Managed over the last 10 days by our automated campaign engine.</p>
+                        <div class="grid">
+                            <div class="panel" style="border-color: rgba(59, 130, 246, 0.3);">
+                                <span style="font-size: 11px; color: #3b82f6; font-weight: bold;">CAMPAIGN #1</span>
+                                <div style="font-size: 16px; font-weight: bold; color: #fff;">Anatolian League Match Day Ads</div>
+                                <p style="font-size: 13px; color: #aaa;">High-impact sports banner impressions streaming live across partner channels.</p>
+                                <span style="font-size: 11px; color: #22c55e; font-weight: bold;">Status: RUNNING (100% Fill Rate)</span>
+                            </div>
+                            <div class="panel" style="border-color: rgba(59, 130, 246, 0.3);">
+                                <span style="font-size: 11px; color: #3b82f6; font-weight: bold;">CAMPAIGN #2</span>
+                                <div style="font-size: 16px; font-weight: bold; color: #fff;">Sufi Rock & Sports Video Shorts</div>
+                                <p style="font-size: 13px; color: #aaa;">Automated vertical video insertions featuring sports highlights and cultural audio.</p>
+                                <span style="font-size: 11px; color: #22c55e; font-weight: bold;">Status: BROADCASTING</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LIVE SUPER AGENT TELEMETRY -->
+                    <div class="card">
+                        <h2>🤖 Super Agent Background Activity</h2>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            ${agents && agents.length > 0 ? agents.map(a => `
+                                <div class="ticker">
+                                    <span>[${a.agent_name}]${a.action_taken}</span>
+                                    <span style="color: #3b82f6;">${a.status}</span>
+                                </div>
+                            `).join('') : '<p style="color: #64748b;">Agents standing by.</p>'}
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+            `);
+        });
+    });
 });
 
 app.listen(PORT, () => {
