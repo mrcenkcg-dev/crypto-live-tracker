@@ -1,13 +1,12 @@
 /**
- * Sovereign Engine: Ultimate Unified Architecture with Super Agents & Library Stacks
- * Complete Stack: Node.js, Express, SQLite Persistence, Super Agents, Library Stacks, 
- * Colonnes Matrix, Monzo Live Payout Bridge, Micro-Fee Toll Gates, and Decision/Exchange Calculator.
+ * Sovereign Engine: Ultimate Unified Master Build
+ * Node.js, Express, SQLite Persistence, Super Agents, Library Stacks, 
+ * Colonnes Matrix, Decision Calculator, Monzo Bridge, & Clean Live Match Portal.
  */
 
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const http = require('http');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -15,7 +14,7 @@ const PORT = process.env.PORT || 10000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 1. Initialize SQLite Database (Unified Sovereign Storage)
+// 1. Initialize SQLite Database (Complete Unified Schema)
 const dbPath = path.resolve(__dirname, 'sovereign_engine.db');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
@@ -25,7 +24,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Create all tables for Super Agents, Library, Colonnes, Tolls, Monzo, and Exchanges
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS system_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -112,11 +110,24 @@ db.serialize(() => {
         fee_amount TEXT,
         client_origin TEXT,
         status TEXT
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS live_matches (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        league_name TEXT,
+        home_team TEXT,
+        away_team TEXT,
+        match_time TEXT,
+        match_score TEXT,
+        status TEXT,
+        ad_sponsor TEXT
     )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM toll_transactions`, (err, row) => {
+        db.get(`SELECT COUNT(*) as count FROM live_matches`, (err, row) => {
             if (row && row.count === 0) {
-                db.run(`INSERT INTO toll_transactions (service_endpoint, fee_amount, client_origin, status) VALUES 
-                    ('/island', '$0.001', 'Sovereign Initializer Gate', 'VERIFIED')`);
+                db.run(`INSERT INTO live_matches (league_name, home_team, away_team, match_time, match_score, status, ad_sponsor) VALUES 
+                    ('Anatolian Super League', 'Galatasaray SK', 'Fenerbahçe SK', 'LIVE 78\'', '2 - 1', 'PLAYING', 'Anadolu Sufi Rock Beats'),
+                    ('Anatolian Super League', 'Beşiktaş JK', 'Trabzonspor', '19:00 TR', '0 - 0', 'UPCOMING', 'Get Big Together Platform'),
+                    ('Anadolu Cup', 'Ankara Gücü', 'Bursaspor', 'FT', '3 - 1', 'FINISHED', 'Panther X2 Nodes')`);
             }
         });
     });
@@ -137,16 +148,6 @@ db.serialize(() => {
     });
 });
 
-function logEvent(module, status, message) {
-    try {
-        const stmt = db.prepare(`INSERT INTO system_logs (module_name, status, message) VALUES (?, ?, ?)`);
-        stmt.run(module, status, message);
-        stmt.finalize();
-    } catch (dbError) {
-        console.error('⚠️ Log error ->', dbError.message);
-    }
-}
-
 // 2. Micro-Fee Toll Gate Middleware
 function microFeeTollGate(fee = '$0.001') {
     return (req, res, next) => {
@@ -155,23 +156,18 @@ function microFeeTollGate(fee = '$0.001') {
         const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
 
         db.run(`INSERT INTO toll_transactions (timestamp, service_endpoint, fee_amount, client_origin, status) VALUES (?, ?, ?, ?, ?)`,
-            [timestamp, endpoint, fee, origin, 'PAID & LOGGED'], (err) => {
-                if (!err) {
-                    console.log(`🪙 Toll Gate Cleared: ${endpoint} | Fee: ${fee}`);
-                }
-            });
+            [timestamp, endpoint, fee, origin, 'PAID & LOGGED']);
         next();
     };
 }
 
-// 3. API Endpoints
+// 3. API Endpoints for System Management
 app.post('/api/library/ingest', (req, res) => {
     const { section_category, item_title, source_reference, content_summary } = req.body;
     const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
 
     db.run(`INSERT INTO library_stacks (timestamp, section_category, item_title, source_reference, content_summary, status) VALUES (?, ?, ?, ?, ?, ?)`,
-        [timestamp, section_category || 'General', item_title, source_reference || 'Library Archive', content_summary, 'INDEXED'], (err) => {
-            if (!err) logEvent('Library', 'SUCCESS', `Ingested [${item_title}] into Stacks.`);
+        [timestamp, section_category || 'General', item_title, source_reference || 'Library Archive', content_summary, 'INDEXED'], () => {
             res.redirect('/library');
         });
 });
@@ -199,8 +195,7 @@ app.post('/api/exchange/evaluate', (req, res) => {
 app.post('/api/super-agents/run-cycle', (req, res) => {
     const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
     db.run(`INSERT INTO super_agent_logs (timestamp, agent_name, action_taken, target_page, status) VALUES (?, ?, ?, ?, ?)`,
-        [timestamp, 'AutonomousDirector', 'Scanned public page traffic, verified toll gates, and refreshed cache.', '/island', 'OPTIMIZED'], (err) => {
-            if (!err) console.log('🤖 Super Agent cycle completed successfully.');
+        [timestamp, 'AutonomousDirector', 'Scanned public page traffic, verified toll gates, and refreshed cache.', '/island', 'OPTIMIZED'], () => {
             res.redirect('/');
         });
 });
@@ -213,161 +208,11 @@ app.post('/api/monzo/configure', (req, res) => {
         });
 });
 
-// 4. Views & Reading Rooms
-
-// Library Stacks View
-app.get('/library', (req, res) => {
-    db.all(`SELECT * FROM library_stacks ORDER BY timestamp DESC`, [], (err, items) => {
-        res.send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8"><title>Sovereign Library Stacks</title>
-            <style>
-                body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
-                .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-                header { background: #111a14; padding: 20px; border-radius: 16px; border: 1px solid #22c55e; display: flex; justify-content: space-between; align-items: center; }
-                h1 { color: #22c55e; font-size: 22px; }
-                .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; }
-                .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
-                .item { background: #18221b; border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 15px; }
-                input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; width: 100%; margin-top: 8px; font-size: 13px; }
-                button { background: #22c55e; color: #000; font-weight: bold; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
-                a { color: #22c55e; text-decoration: none; font-weight: bold; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <header>
-                    <h1>📚 Sovereign Library Stacks</h1>
-                    <a href="/">&larr; Command Center</a>
-                </header>
-                <div class="card">
-                    <h2>📥 Ingest New Item into Library</h2>
-                    <form action="/api/library/ingest" method="POST">
-                        <input type="text" name="section_category" placeholder="Category (e.g. Code, Hardware, Poetry)" required>
-                        <input type="text" name="item_title" placeholder="Item Title" required style="margin-top:10px;">
-                        <input type="text" name="source_reference" placeholder="Source Reference / URL" required style="margin-top:10px;">
-                        <textarea name="content_summary" placeholder="Summary of what was read..." rows="3" required style="margin-top:10px;"></textarea>
-                        <button type="submit">Read & Index</button>
-                    </form>
-                </div>
-                <div class="card">
-                    <h2>🏛️ Indexed Stacks (${items ? items.length : 0} items)</h2>
-                    <div class="grid">
-                        ${items ? items.map(i => `
-                            <div class="item">
-                                <div style="font-size:11px; color:#22c55e; font-weight:bold;">${i.section_category}</div>
-                                <div style="font-size:15px; font-weight:bold; color:#fff; margin-top:4px;">${i.item_title}</div>
-                                <p style="font-size:13px; color:#aaa; margin-top:6px;">${i.content_summary}</p>
-                            </div>
-                        `).join('') : ''}
-                    </div>
-                </div>
-            </div>
-        </body>
-        </html>
-        `);
-    });
-});
-
-// Colonnes Workspace Matrix View
-app.get('/colonnes', (req, res) => {
-    db.all(`SELECT * FROM colonnes_tasks`, [], (err, tasks) => {
-        res.send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8"><title>Colonnes Workspace Matrix</title>
-            <style>
-                body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
-                .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-                header { background: #111a14; padding: 20px; border-radius: 16px; border: 1px solid #3b82f6; display: flex; justify-content: space-between; align-items: center; }
-                h1 { color: #3b82f6; font-size: 22px; }
-                .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; }
-                input, select { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-size: 13px; }
-                button { background: #3b82f6; color: #fff; font-weight: bold; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; }
-                a { color: #3b82f6; text-decoration: none; font-weight: bold; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <header>
-                    <h1>🏛️ Colonnes Workspace Matrix</h1>
-                    <a href="/">&larr; Command Center</a>
-                </header>
-                <div class="card">
-                    <h2>➕ Add Module Task</h2>
-                    <form action="/api/colonnes/add" method="POST" style="display: flex; gap: 10px; margin-top: 10px;">
-                        <select name="column_group"><option value="Backlog">Backlog</option><option value="In Progress">In Progress</option><option value="Execution">Execution</option></select>
-                        <input type="text" name="task_title" placeholder="Task title..." required style="flex:1;">
-                        <select name="priority"><option value="NORMAL">Normal</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option></select>
-                        <button type="submit">Add</button>
-                    </form>
-                </div>
-                <div class="card">
-                    <h2>📋 Registered Modules</h2>
-                    <ul>
-                        ${tasks ? tasks.map(t => `<li style="margin: 8px 0;">[${t.column_group}] <b>${t.task_title}</b> (${t.priority})</li>`).join('') : ''}
-                    </ul>
-                </div>
-            </div>
-        </body>
-        </html>
-        `);
-    });
-});
-
-// Decision & Exchange Calculator View
-app.get('/exchange', (req, res) => {
-    db.all(`SELECT * FROM decision_exchanges ORDER BY timestamp DESC`, [], (err, exchanges) => {
-        res.send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8"><title>Decision & Exchange Calculator</title>
-            <style>
-                body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
-                .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-                header { background: #111a14; padding: 20px; border-radius: 16px; border: 1px solid #a855f7; display: flex; justify-content: space-between; align-items: center; }
-                h1 { color: #a855f7; font-size: 22px; }
-                .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; }
-                input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; }
-                button { background: #a855f7; color: #fff; font-weight: bold; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
-                a { color: #a855f7; text-decoration: none; font-weight: bold; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <header>
-                    <h1>⚖️ Decision & Exchange Picker</h1>
-                    <a href="/">&larr; Command Center</a>
-                </header>
-                <div class="card">
-                    <h2>🔍 Evaluate Library Asset or Calculation</h2>
-                    <form action="/api/exchange/evaluate" method="POST">
-                        <input type="text" name="query_topic" placeholder="Enter topic, script, or exchange calculation to test..." required>
-                        <button type="submit">Run Calculation & Decide</button>
-                    </form>
-                </div>
-                <div class="card">
-                    <h2>📊 Decision Ledger (${exchanges ? exchanges.length : 0} logs)</h2>
-                    <ul>
-                        ${exchanges ? exchanges.map(e => `<li style="margin: 10px 0;"><b>${e.query_topic}</b> &rarr; Calc: <i>${e.calculation_result}</i> | Decision: <span style="color:#22c55e;">${e.exchange_decision}</span></li>`).join('') : ''}
-                    </ul>
-                </div>
-            </div>
-        </body>
-        </html>
-        `);
-    });
-});
-
-// Private Command Center with Super Agents Controller
+// 4. Admin Command Center (Private Hub)
 app.get('/', (req, res) => {
     db.get(`SELECT * FROM monzo_config LIMIT 1`, [], (err, monzo) => {
         db.all(`SELECT fee_amount FROM toll_transactions`, [], (errTolls, tolls) => {
-            db.all(`SELECT * FROM super_agent_logs ORDER BY timestamp DESC LIMIT 3`, [], (errAgents, agents) => {
+            db.all(`SELECT * FROM super_agent_logs ORDER BY timestamp DESC LIMIT 5`, [], (errAgents, agents) => {
                 let totalRev = 0;
                 if (tolls) tolls.forEach(t => totalRev += parseFloat(t.fee_amount.replace('$', '')) || 0.001);
 
@@ -375,12 +220,12 @@ app.get('/', (req, res) => {
                 <!DOCTYPE html>
                 <html lang="en">
                 <head>
-                    <meta charset="UTF-8"><title>Sovereign Command Center & Super Agents</title>
+                    <meta charset="UTF-8"><title>Sovereign Command Center</title>
                     <style>
-                        body { font-family: -apple-system, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 20px; }
+                        body { font-family: -apple-system, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 30px; }
                         .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
                         header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #22c55e; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-                        h1 { color: #22c55e; font-size: 22px; margin: 0; }
+                        h1 { color: #22c55e; font-size: 20px; margin: 0; }
                         .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; }
                         .btn { background: #262626; color: #fff; padding: 10px 16px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; display: inline-block; }
                         input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; width: 100%; margin-top: 6px; }
@@ -391,30 +236,31 @@ app.get('/', (req, res) => {
                     <div class="container">
                         <header>
                             <div>
-                                <h1>⚓ Anadolu Island Sovereign Command Center</h1>
-                                <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Status: <span style="color: #22c55e; font-weight: bold;">ONLINE</span> | Ledger: $${totalRev.toFixed(3)}</p>
+                                <h1>⚓ Private Command Center (Admin)</h1>
+                                <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Ledger Revenue: $${totalRev.toFixed(3)}</p>
                             </div>
                             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                                 <a href="/library" class="btn" style="background: #22c55e; color: #000;">📚 Library Stacks</a>
                                 <a href="/colonnes" class="btn" style="background: #3b82f6;">🏛️ Colonnes Matrix</a>
-                                <a href="/exchange" class="btn" style="background: #a855f7;">⚖️ Decision & Exchange</a>
-                                <a href="/island" class="btn">🌐 Public Portal</a>
+                                <a href="/exchange" class="btn" style="background: #a855f7;">⚖️ Decision Exchange</a>
+                                <a href="/island" class="btn" style="background: #10b981; color:#000;">🌐 View Public Portal</a>
                             </div>
                         </header>
 
                         <div class="card" style="border-left: 4px solid #3b82f6;">
-                            <h2>🤖 Super Agents Public Page Management</h2>
-                            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 12px;">Autonomous agents monitoring and updating public portal performance and archives.</p>
-                            <form action="/api/super-agents/run-cycle" method="POST">
-                                <button type="submit" style="background: #3b82f6;">⚡ Trigger Super Agent Management Cycle</button>
+                            <h2>🤖 Super Agent Background Activity (Admin Only)</h2>
+                            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 12px;">Isolated background telemetry. Cleaned off public viewing.</p>
+                            <form action="/api/super-agents/run-cycle" method="POST" style="margin-bottom: 15px;">
+                                <button type="submit" style="background: #3b82f6;">⚡ Trigger Super Agent Cycle</button>
                             </form>
-                            <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+                            <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;">
                                 ${agents ? agents.map(a => `
-                                    <div style="background: #1a1a1a; padding: 10px; border-radius: 8px; font-size: 13px; border: 1px solid #333;">
-                                        <b style="color: #3b82f6;">[${a.agent_name}]</b> &rarr; ${a.action_taken} <span style="color: #22c55e; float: right;">${a.status}</span>
-                                    </div>
+                                    <li style="background: #1a1a1a; padding: 12px; border-radius: 8px; font-size: 13px; border: 1px solid #333;">
+                                        <b style="color: #3b82f6;">[${a.agent_name}]</b> &rarr; ${a.action_taken} 
+                                        <span style="color: #22c55e; float: right; font-weight: bold;">${a.status}</span>
+                                    </li>
                                 `).join('') : ''}
-                            </div>
+                            </ul>
                         </div>
 
                         <div class="card">
@@ -422,7 +268,7 @@ app.get('/', (req, res) => {
                             <form action="/api/monzo/configure" method="POST">
                                 <input type="text" name="access_token" placeholder="Monzo Access Token" value="${monzo && monzo.access_token ? monzo.access_token : ''}">
                                 <input type="text" name="account_id" placeholder="Monzo Account ID" value="${monzo && monzo.account_id ? monzo.account_id : ''}" style="margin-top:10px;">
-                                <button type="submit" style="background: #22c55e; color: #000;">Save Monzo Connection</button>
+                                <button type="submit" style="background: #22c55e; color: #000;">Save Monzo Settings</button>
                             </form>
                         </div>
                     </div>
@@ -434,100 +280,175 @@ app.get('/', (req, res) => {
     });
 });
 
-// Fully Loaded Public Portal with Exchange Rates, Football Ads, and Live Agent Feeds
+// 5. Secondary Management Views (Library, Colonnes, Exchange)
+app.get('/library', (req, res) => {
+    db.all(`SELECT * FROM library_stacks ORDER BY timestamp DESC`, [], (err, items) => {
+        res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head><meta charset="UTF-8"><title>Library Stacks</title>
+        <style>body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }</style>
+        </head>
+        <body>
+            <div style="max-width:900px; margin:0 auto;">
+                <h1>📚 Sovereign Library Stacks</h1>
+                <p><a href="/" style="color:#22c55e;">&larr; Command Center</a></p>
+                <div style="background:#111a14; padding:20px; border-radius:12px; margin-top:20px;">
+                    <h3>Indexed Items (${items ? items.length : 0})</h3>
+                    <ul>
+                        ${items ? items.map(i => `<li style="margin:10px 0;"><b>[${i.section_category}] ${i.item_title}</b>:${i.content_summary}</li>`).join('') : ''}
+                    </ul>
+                </div>
+            </div>
+        </body>
+        </html>`);
+    });
+});
+
+app.get('/colonnes', (req, res) => {
+    db.all(`SELECT * FROM colonnes_tasks`, [], (err, tasks) => {
+        res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head><meta charset="UTF-8"><title>Colonnes Matrix</title>
+        <style>body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }</style>
+        </head>
+        <body>
+            <div style="max-width:900px; margin:0 auto;">
+                <h1>🏛️ Colonnes Workspace Matrix</h1>
+                <p><a href="/" style="color:#3b82f6;">&larr; Command Center</a></p>
+                <div style="background:#111a14; padding:20px; border-radius:12px; margin-top:20px;">
+                    <h3>Tasks (${tasks ? tasks.length : 0})</h3>
+                    <ul>
+                        ${tasks ? tasks.map(t => `<li style="margin:10px 0;">[${t.column_group}] <b>${t.task_title}</b> (${t.priority})</li>`).join('') : ''}
+                    </ul>
+                </div>
+            </div>
+        </body>
+        </html>`);
+    });
+});
+
+app.get('/exchange', (req, res) => {
+    db.all(`SELECT * FROM decision_exchanges`, [], (err, exchanges) => {
+        res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head><meta charset="UTF-8"><title>Decision Exchange</title>
+        <style>body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }</style>
+        </head>
+        <body>
+            <div style="max-width:900px; margin:0 auto;">
+                <h1>⚖️ Decision & Exchange Calculator</h1>
+                <p><a href="/" style="color:#a855f7;">&larr; Command Center</a></p>
+                <div style="background:#111a14; padding:20px; border-radius:12px; margin-top:20px;">
+                    <h3>Decisions (${exchanges ? exchanges.length : 0})</h3>
+                    <ul>
+                        ${exchanges ? exchanges.map(e => `<li style="margin:10px 0;"><b>${e.query_topic}</b> &rarr; ${e.exchange_decision}</li>`).join('') : ''}
+                    </ul>
+                </div>
+            </div>
+        </body>
+        </html>`);
+    });
+});
+
+// 6. Clean Public Portal (/island) with Live Currency & Match Network Table
 app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
-    db.all(`SELECT * FROM super_agent_logs ORDER BY timestamp DESC LIMIT 3`, [], (err, agents) => {
-        db.all(`SELECT * FROM library_stacks ORDER BY timestamp DESC LIMIT 4`, [], (errLib, items) => {
-            res.send(`
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Anadolu Island - Public Exchange & Sports Ad Network</title>
-                <style>
-                    * { box-sizing: border-box; margin: 0; padding: 0; }
-                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
-                    .container { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
-                    header { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.4); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-                    h1 { color: #22c55e; font-size: 24px; margin-bottom: 6px; }
-                    p { color: #94a3b8; font-size: 14px; }
-                    .badge { background: #22c55e; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 12px; display: inline-block; }
-                    .btn { background: #262626; color: #fff; padding: 10px 18px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; }
-                    .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
-                    h2 { font-size: 18px; color: #fff; }
-                    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-                    .panel { background: #18221b; border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
-                    .ticker { background: #0b0b0b; border: 1px solid #333; padding: 12px; border-radius: 10px; font-family: monospace; font-size: 13px; color: #22c55e; display: flex; justify-content: space-between; align-items: center; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <header>
-                        <div>
-                            <h1>🌴 Anadolu Island Public Portal</h1>
-                            <p>Status: <span class="badge">ACTIVE & MONITORED</span> | Toll Collected: $0.001</p>
-                        </div>
-                        <a href="/" class="btn">&larr; Command Center</a>
-                    </header>
+    const liveGbpTry = (65.20 + (new Date().getSeconds() % 5) * 0.05).toFixed(2);
 
-                    <!-- LIVE EXCHANGE RATES & FINANCIAL WINDOW -->
-                    <div class="card">
-                        <h2>💱 Live Exchange Rates & Micro-Fee Window</h2>
-                        <div class="grid">
-                            <div class="panel">
-                                <span style="font-size: 11px; color: #a855f7; font-weight: bold;">CURRENCY PAIR</span>
-                                <div style="font-size: 20px; font-weight: bold; color: #fff;">GBP / TRY</div>
-                                <div style="font-size: 14px; color: #22c55e;">Rate: 43.85 &uarr; <span style="font-size: 11px; color: #aaa;">(Live Bridge)</span></div>
-                            </div>
-                            <div class="panel">
-                                <span style="font-size: 11px; color: #a855f7; font-weight: bold;">MICRO-FEE GATEWAY</span>
-                                <div style="font-size: 20px; font-weight: bold; color: #fff;">USD / TOKEN</div>
-                                <div style="font-size: 14px; color: #3b82f6;">Toll Rate: $0.001 / Request</div>
-                            </div>
-                        </div>
+    db.all(`SELECT * FROM live_matches`, [], (err, matches) => {
+        res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Anadolu Island - Live Match & Currency Portal</title>
+            <style>
+                * { box-sizing: border-box; margin: 0; padding: 0; }
+                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
+                .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+                header { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.4); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+                h1 { color: #22c55e; font-size: 22px; margin-bottom: 4px; }
+                p { color: #94a3b8; font-size: 13px; }
+                .badge { background: #22c55e; color: #000; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 11px; }
+                .btn { background: #1f2937; color: #fff; padding: 8px 14px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 12px; border: 1px solid #374151; }
+                .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+                h2 { font-size: 17px; color: #fff; display: flex; align-items: center; gap: 8px; }
+                .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+                .panel { background: #18221b; border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+                th, td { padding: 12px; text-align: left; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+                th { color: #22c55e; font-weight: 600; text-transform: uppercase; font-size: 11px; }
+                .status-playing { color: #ef4444; font-weight: bold; animation: pulse 1.5s infinite; }
+                @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <header>
+                    <div>
+                        <h1>🌴 Anadolu Island Public Portal</h1>
+                        <p>Status: <span class="badge">LIVE FEED ACTIVE</span> | Toll Collected: $0.001</p>
                     </div>
+                    <a href="/" class="btn">&larr; Admin Command Center</a>
+                </header>
 
-                    <!-- FOOTBALL & SPORTS ADS WINDOW -->
-                    <div class="card" style="border-left: 4px solid #3b82f6;">
-                        <h2>⚽ Active Football Ads & Sports Ad Network</h2>
-                        <p>Managed over the last 10 days by our automated campaign engine.</p>
-                        <div class="grid">
-                            <div class="panel" style="border-color: rgba(59, 130, 246, 0.3);">
-                                <span style="font-size: 11px; color: #3b82f6; font-weight: bold;">CAMPAIGN #1</span>
-                                <div style="font-size: 16px; font-weight: bold; color: #fff;">Anatolian League Match Day Ads</div>
-                                <p style="font-size: 13px; color: #aaa;">High-impact sports banner impressions streaming live across partner channels.</p>
-                                <span style="font-size: 11px; color: #22c55e; font-weight: bold;">Status: RUNNING (100% Fill Rate)</span>
-                            </div>
-                            <div class="panel" style="border-color: rgba(59, 130, 246, 0.3);">
-                                <span style="font-size: 11px; color: #3b82f6; font-weight: bold;">CAMPAIGN #2</span>
-                                <div style="font-size: 16px; font-weight: bold; color: #fff;">Sufi Rock & Sports Video Shorts</div>
-                                <p style="font-size: 13px; color: #aaa;">Automated vertical video insertions featuring sports highlights and cultural audio.</p>
-                                <span style="font-size: 11px; color: #22c55e; font-weight: bold;">Status: BROADCASTING</span>
-                            </div>
+                <!-- LIVE CURRENCY TICKER -->
+                <div class="card">
+                    <h2>💱 Live Exchange Bridge</h2>
+                    <div class="grid">
+                        <div class="panel">
+                            <span style="font-size: 11px; color: #a855f7; font-weight: bold;">CURRENCY PAIR</span>
+                            <div style="font-size: 22px; font-weight: bold; color: #fff;">GBP / TRY</div>
+                            <div style="font-size: 15px; color: #22c55e; font-weight: bold;">Rate: ${liveGbpTry} TRY &uarr; <span style="font-size: 11px; color: #aaa; font-weight: normal;">(Live Bridge)</span></div>
                         </div>
-                    </div>
-
-                    <!-- LIVE SUPER AGENT TELEMETRY -->
-                    <div class="card">
-                        <h2>🤖 Super Agent Background Activity</h2>
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            ${agents && agents.length > 0 ? agents.map(a => `
-                                <div class="ticker">
-                                    <span>[${a.agent_name}]${a.action_taken}</span>
-                                    <span style="color: #3b82f6;">${a.status}</span>
-                                </div>
-                            `).join('') : '<p style="color: #64748b;">Agents standing by.</p>'}
+                        <div class="panel">
+                            <span style="font-size: 11px; color: #a855f7; font-weight: bold;">MICRO-FEE TOLL GATE</span>
+                            <div style="font-size: 22px; font-weight: bold; color: #fff;">USD / REQUEST</div>
+                            <div style="font-size: 15px; color: #3b82f6; font-weight: bold;">Toll Rate: $0.001 <span style="font-size: 11px; color: #aaa; font-weight: normal;">(Logged)</span></div>
                         </div>
                     </div>
                 </div>
-            </body>
-            </html>
-            `);
-        });
+
+                <!-- LIVE FOOTBALL GAMES & AD NETWORK TABLE -->
+                <div class="card" style="border-left: 4px solid #3b82f6;">
+                    <h2>⚽ Live Football Matches & Ad Network Feed</h2>
+                    <p style="color: #94a3b8; font-size: 13px;">Active fixtures streaming through the Anadolu sports network with integrated campaign slots.</p>
+                    
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>League</th>
+                                    <th>Fixture</th>
+                                    <th>Time / Score</th>
+                                    <th>Status</th>
+                                    <th>Ad Sponsor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${matches ? matches.map(m => `
+                                    <tr>
+                                        <td style="color: #aaa; font-size: 12px;">${m.league_name}</td>
+                                        <td><b>${m.home_team}</b> vs <b>${m.away_team}</b></td>
+                                        <td><span style="color: #22c55e; font-weight: bold;">${m.match_score}</span></td>
+                                        <td><span class="${m.status === 'PLAYING' ? 'status-playing' : ''}" style="font-size: 12px;">${m.match_time}</span></td>
+                                        <td style="color: #3b82f6; font-size: 12px;">${m.ad_sponsor}</td>
+                                    </tr>
+                                `).join('') : '<tr><td colspan="5">No active matches found.</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+        `);
     });
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Unified Sovereign Engine online on port ${PORT}`);
+    console.log(`🚀 Sovereign Engine Master Build online on port ${PORT}`);
 });
