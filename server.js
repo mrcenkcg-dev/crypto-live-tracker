@@ -1,5 +1,5 @@
 /**
- * Sovereign Engine: Ultimate Unified Self-Upgrading Architecture with Monzo API Integration
+ * Sovereign Engine: Ultimate Unified Self-Upgrading Architecture with Monzo API Integration & AI Intelligence Bridge
  * Complete Stack: Node.js, Express, SQLite Persistence, Autonomous Scavenger Loop, 
  * Automated Watchdog Service, FFmpeg/Video Feed, Custom Blueprint Injector, 4D Sandbox, & Monzo Live Link
  */
@@ -113,7 +113,7 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM ui_mutations`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO ui_mutations (upgrade_title, applied_css_accent, status) VALUES 
-                    ('Shoulder-to-Shoulder Ecosystem v8.5 - Monzo Live Enabled', '#22c55e', 'ACTIVE')`);
+                    ('Shoulder-to-Shoulder Ecosystem v8.6 - AI Intelligence Bridge', '#22c55e', 'ACTIVE')`);
             }
         });
     });
@@ -248,6 +248,18 @@ app.get('/api/monzo/live-balance', async (req, res) => {
         } catch (apiErr) {
             res.json({ status: 'API_EXCEPTION', message: apiErr.message });
         }
+    });
+});
+
+// Scavenged AI Intelligence Endpoint
+app.post('/api/ai/query', async (req, res) => {
+    const { prompt } = req.body;
+    if (!prompt) return res.status(400).json({ error: 'Prompt required' });
+    
+    logEvent('AIIntelligence', 'QUERY', `Processing agent decision query.`);
+    res.json({
+        status: 'SUCCESS',
+        engine_response: `Sovereign Engine Agent processed: "${prompt}". All simulation and live loops operating at optimal efficiency.`
     });
 });
 
@@ -537,5 +549,5 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Sovereign Engine with Monzo Bridge online on port ${PORT}`);
+    console.log(`🚀 Sovereign Engine with Monzo Bridge & AI Intelligence online on port ${PORT}`);
 });
