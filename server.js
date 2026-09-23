@@ -1,6 +1,6 @@
 /**
- * Sovereign Engine: Full Multi-Page MySQL Edition
- * Restores all original pages (Social Feed, Video Hub, Match Probs, and Admin Center) with MySQL persistence.
+ * Sovereign Engine: Smart Auto-Detect Share Edition
+ * Automatically parses YouTube links and photo links just like social media share feeds.
  */
 
 const express = require('express');
@@ -13,7 +13,6 @@ const PORT = process.env.PORT || 10000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// MySQL Connection Pool
 const dbConfig = process.env.DATABASE_URL || {
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
@@ -24,14 +23,9 @@ const dbConfig = process.env.DATABASE_URL || {
 
 const pool = mysql.createPool(dbConfig);
 
-// Initialize Database Tables & Seed Data
+// Initialize Tables
 pool.getConnection((err, connection) => {
-    if (err) {
-        console.error('❌ MySQL Connection Error:', err.message);
-    } else {
-        console.log('✅ Connected to MySQL Database Successfully.');
-        
-        // 1. Island Feed / Media Hub Table
+    if (!err) {
         connection.query(`
             CREATE TABLE IF NOT EXISTS island_feed (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -41,19 +35,7 @@ pool.getConnection((err, connection) => {
                 target_url TEXT,
                 content TEXT
             )
-        `, () => {
-            connection.query('SELECT COUNT(*) as count FROM island_feed', (err, rows) => {
-                if (!err && rows[0].count === 0) {
-                    const seedData = [
-                        ['image', 'Anadolu Sessions', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4', 'Vibing with the bağlama and synth drone.'],
-                        ['youtube', '🎵 Anadolu Psychedelic Sufi Rock - Yunus Emre Session', 'dQw4w9WgXcQ', 'Automated vertical video generated with bağlama instrumentation.']
-                    ];
-                    connection.query('INSERT INTO island_feed (share_type, title, target_url, content) VALUES ?', [seedData]);
-                }
-            });
-        });
-
-        // 2. Live Matches Table
+        `);
         connection.query(`
             CREATE TABLE IF NOT EXISTS live_matches (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -63,43 +45,39 @@ pool.getConnection((err, connection) => {
                 match_date VARCHAR(100),
                 venue VARCHAR(100)
             )
-        `, () => {
-            connection.query('SELECT COUNT(*) as count FROM live_matches', (err, rows) => {
-                if (!err && rows[0].count === 0) {
-                    const seedMatches = [
-                        ['Süper Lig', 'Galatasaray S.K.', 'Fenerbahçe SK', '26 Oct 2026, 18:30', 'RAMS Park, Istanbul']
-                    ];
-                    connection.query('INSERT INTO live_matches (league_name, home_team, away_team, match_date, venue) VALUES ?', [seedMatches]);
-                }
-            });
-        });
-
+        `);
         connection.release();
     }
 });
 
-// Helper to extract YouTube ID
-function extractYouTubeId(urlOrId) {
-    if (!urlOrId) return 'dQw4w9WgXcQ';
-    if (urlOrId.length === 11 && !urlOrId.includes('/') && !urlOrId.includes('.')) return urlOrId;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = urlOrId.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : 'dQw4w9WgXcQ';
+// Smart Parser: Automatically detects if a URL is YouTube or an Image
+function parseSharedLink(rawUrl) {
+    if (!rawUrl) return { type: 'text', url: '' };
+    
+    // Check for YouTube
+    if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be')) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = rawUrl.match(regExp);
+        const videoId = (match && match[2].length === 11) ? match[2] : 'dQw4w9WgXcQ';
+        return { type: 'youtube', url: videoId };
+    }
+    
+    // Otherwise treat as an image/photo link
+    return { type: 'image', url: rawUrl };
 }
 
-// API Endpoint to Share Content
+// Unified Instant Share Endpoint
 app.post('/api/island/share', (req, res) => {
-    let { share_type, title, target_url, content } = req.body;
-    if (share_type === 'youtube') {
-        target_url = extractYouTubeId(target_url);
-    }
+    let { title, target_url, content } = req.body;
+    const parsed = parseSharedLink(target_url);
+
     const query = `INSERT INTO island_feed (share_type, title, target_url, content) VALUES (?, ?, ?, ?)`;
-    pool.query(query, [share_type, title || 'Island Share', target_url || '', content || ''], () => {
+    pool.query(query, [parsed.type, title || 'Anadolu Share', parsed.url, content || ''], () => {
         res.redirect('/island');
     });
 });
 
-// 1. ADMIN COMMAND CENTER (Private Root)
+// 1. ADMIN COMMAND CENTER
 app.get('/', (req, res) => {
     res.send(`
     <!DOCTYPE html>
@@ -118,11 +96,11 @@ app.get('/', (req, res) => {
     <body>
         <div class="container">
             <header>
-                <h1>⚓ Private Command Center (MySQL)</h1>
+                <h1>⚓ Private Command Center</h1>
                 <a href="/island" class="btn">🌐 View Island Portal</a>
             </header>
             <div class="card">
-                <h2>System Control Panel</h2>
+                <h2>Quick Navigation</h2>
                 <div style="display: flex; gap: 12px; margin-top: 15px; flex-wrap: wrap;">
                     <a href="/island" class="btn btn-alt">💬 Social Feed</a>
                     <a href="/island/videos" class="btn btn-alt">📺 Videos & Media Hub</a>
@@ -135,7 +113,7 @@ app.get('/', (req, res) => {
     `);
 });
 
-// 2. PUBLIC PAGE 1: Social Feed & Sharing Hub
+// 2. PUBLIC PAGE: Social Feed with 1-Click Smart Share
 app.get('/island', (req, res) => {
     pool.query('SELECT * FROM island_feed ORDER BY id DESC', (err, feedItems) => {
         if (err) feedItems = [];
@@ -155,7 +133,7 @@ app.get('/island', (req, res) => {
                 .nav-link { color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: bold; padding: 6px 12px; border-radius: 8px; }
                 .nav-link.active { background: #22c55e; color: #000; }
                 .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-                input, select, textarea { width: 100%; padding: 10px; background: #18221b; border: 1px solid rgba(34,197,94,0.3); color: #fff; border-radius: 8px; font-size: 13px; margin-bottom: 10px; }
+                input, textarea { width: 100%; padding: 10px; background: #18221b; border: 1px solid rgba(34,197,94,0.3); color: #fff; border-radius: 8px; font-size: 13px; margin-bottom: 10px; }
                 button { background: #22c55e; color: #000; font-weight: bold; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; width: 100%; }
                 .feed-item { background: #18221b; border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
             </style>
@@ -171,19 +149,19 @@ app.get('/island', (req, res) => {
                     <a href="/island/videos" class="nav-link">📺 Videos & Media</a>
                     <a href="/island/matches" class="nav-link">⚽ Match Probs</a>
                 </div>
+
+                <!-- Facebook/YouTube Style Quick Share Box -->
                 <div class="card">
-                    <h2 style="font-size: 15px; color: #fff;">Share to Island Feed</h2>
+                    <h2 style="font-size: 15px; color: #fff;">Share to Island (Auto-Detects YouTube or Photos)</h2>
                     <form action="/api/island/share" method="POST">
-                        <select name="share_type" required>
-                            <option value="youtube">📺 YouTube Video Link</option>
-                            <option value="image">🖼️ Picture / Photo Link (e.g. from Facebook/Web)</option>
-                        </select>
-                        <input type="text" name="title" placeholder="Give it a clean title..." required>
-                        <input type="text" name="target_url" placeholder="Paste YouTube link OR Direct Image URL..." required>
-                        <textarea name="content" rows="2" placeholder="Your brief note or caption..."></textarea>
-                        <button type="submit">Publish to Feed</button>
+                        <input type="text" name="title" placeholder="Title (e.g. Favorite Sufi Rock Jam)" required>
+                        <input type="text" name="target_url" placeholder="Paste YouTube link OR Facebook photo link here..." required>
+                        <textarea name="content" rows="2" placeholder="Add a quick note..."></textarea>
+                        <button type="submit">Share to Island Feed</button>
                     </form>
                 </div>
+
+                <!-- Island Stream -->
                 <div class="card">
                     <h2 style="font-size: 15px; color: #fff;">Island Stream</h2>
                     ${feedItems.map(item => `
@@ -207,18 +185,15 @@ app.get('/island', (req, res) => {
     });
 });
 
-// 3. PUBLIC PAGE 2: Videos & Media Hub
+// 3. VIDEOS HUB
 app.get('/island/videos', (req, res) => {
     pool.query("SELECT * FROM island_feed WHERE share_type = 'youtube' ORDER BY id DESC", (err, videos) => {
         if (err) videos = [];
         res.send(`
         <!DOCTYPE html>
         <html lang="en">
-        <head>
-            <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Anadolu Island - Videos Hub</title>
+        <head><meta charset="UTF-8"><title>Videos Hub</title>
             <style>
-                * { box-sizing: border-box; margin: 0; padding: 0; }
                 body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 20px; }
                 .container { max-width: 650px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
                 header { background: #111a14; padding: 18px 24px; border-radius: 16px; border: 1px solid rgba(34, 197, 94, 0.4); display: flex; justify-content: space-between; align-items: center; }
@@ -231,10 +206,7 @@ app.get('/island/videos', (req, res) => {
         </head>
         <body>
             <div class="container">
-                <header>
-                    <h1>🌴 Anadolu Island</h1>
-                    <a href="/" style="color: #94a3b8; text-decoration: none; font-size: 12px;">Admin</a>
-                </header>
+                <header><h1>🌴 Anadolu Island</h1><a href="/" style="color: #94a3b8; font-size: 12px;">Admin</a></header>
                 <div class="nav-bar">
                     <a href="/island" class="nav-link">💬 Social Feed</a>
                     <a href="/island/videos" class="nav-link active">📺 Videos & Media</a>
@@ -259,18 +231,15 @@ app.get('/island/videos', (req, res) => {
     });
 });
 
-// 4. PUBLIC PAGE 3: Match Probabilities
+// 4. MATCH PROBABILITIES
 app.get('/island/matches', (req, res) => {
     pool.query('SELECT * FROM live_matches', (err, matches) => {
         if (err) matches = [];
         res.send(`
         <!DOCTYPE html>
         <html lang="en">
-        <head>
-            <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Anadolu Island - Match Probabilities</title>
+        <head><meta charset="UTF-8"><title>Match Probs</title>
             <style>
-                * { box-sizing: border-box; margin: 0; padding: 0; }
                 body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 20px; }
                 .container { max-width: 650px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
                 header { background: #111a14; padding: 18px 24px; border-radius: 16px; border: 1px solid rgba(34, 197, 94, 0.4); display: flex; justify-content: space-between; align-items: center; }
@@ -283,10 +252,7 @@ app.get('/island/matches', (req, res) => {
         </head>
         <body>
             <div class="container">
-                <header>
-                    <h1>🌴 Anadolu Island</h1>
-                    <a href="/" style="color: #94a3b8; text-decoration: none; font-size: 12px;">Admin</a>
-                </header>
+                <header><h1>🌴 Anadolu Island</h1><a href="/" style="color: #94a3b8; font-size: 12px;">Admin</a></header>
                 <div class="nav-bar">
                     <a href="/island" class="nav-link">💬 Social Feed</a>
                     <a href="/island/videos" class="nav-link">📺 Videos & Media</a>
@@ -309,5 +275,5 @@ app.get('/island/matches', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Sovereign MySQL Engine running live on port ${PORT}`);
+    console.log(`🚀 Sovereign Smart Share Engine running live on port ${PORT}`);
 });
