@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anadolu Island - Sovereign Platform</title>
+    <title>Anadolu Island - Sovereign Platform & Treasury Hub</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -18,7 +18,7 @@
         }
         .main-wrapper {
             width: 100%;
-            max-width: 900px;
+            max-width: 1000px;
             display: flex;
             flex-direction: column;
             gap: 24px;
@@ -59,6 +59,18 @@
         }
         @media(max-width: 768px) {
             .grid-container { grid-template-columns: 1fr; }
+        }
+        .metric-box {
+            background: #1c1c1c;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #333;
+        }
+        .metric-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #22c55e;
+            margin-top: 6px;
         }
         /* Refactored Stream Box */
         .stream-box {
@@ -154,12 +166,38 @@
             color: #aaa;
             line-height: 1.5;
         }
+        /* Tables for Odds & Hardware */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #222;
+        }
+        th {
+            color: #888;
+            font-weight: 600;
+            background: #181818;
+        }
+        .odds-pill {
+            background: #262626;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: monospace;
+            color: #38bdf8;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
     <div class="main-wrapper">
-        <!-- Command Header & Telemetry -->
+        
+        <!-- Command Header & Telemetry Logs -->
         <div class="section-card">
             <div class="header">
                 <span class="title">ANADOLU ISLAND COMMAND CENTER</span>
@@ -167,7 +205,56 @@
             </div>
             <div class="logs-box" id="system-logs">
                 [System] Autonomous Sovereign Engine active. Background harvesting loops synced.<br>
-                [Render] Live-net connection verified. All streams ready for playback.
+                [Render] Live-net connection verified. All streams and treasury vaults ready.
+            </div>
+        </div>
+
+        <!-- Automated Treasury Vault Bank -->
+        <div class="section-card">
+            <div class="header">
+                <span class="title">🏦 SOVEREIGN INTERNAL TREASURY BANK</span>
+                <span class="status-badge">AUTO-COMPOUNDING ACTIVE</span>
+            </div>
+            <div class="grid-container">
+                <div class="metric-box">
+                    <div style="color: #aaa; font-size: 13px;">Daily Inflow Rate</div>
+                    <div class="metric-value">$4.00 / day</div>
+                </div>
+                <div class="metric-box">
+                    <div style="color: #aaa; font-size: 13px;">Vault Exchange Balance</div>
+                    <div class="metric-value" id="vault-balance">$142.50 (Growing)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cleaned Hardware Stack -->
+        <div class="section-card">
+            <div class="header">
+                <span class="title">⚡ ACTIVE HARDWARE MINING NODES</span>
+                <span class="status-badge">OPTIMIZED</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="metric-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <div style="font-weight: bold; color: #fff;">Helium Node Alpha (Panther X2 Gateway)</div>
+                        <div style="font-size: 12px; color: #888; margin-top: 4px;">Hashrate: 9.2 dBi / 568 Channels | Power: 5W Low Power</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: #22c55e; font-weight: bold;">Est: $1.45 / day</div>
+                        <span style="font-size: 10px; background: #14532d; color: #4ade80; padding: 2px 6px; border-radius: 4px;">ONLINE</span>
+                    </div>
+                </div>
+
+                <div class="metric-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <div style="font-weight: bold; color: #fff;">ASIC Rig Beta (Baikal Quadruple Mini)</div>
+                        <div style="font-size: 12px; color: #888; margin-top: 4px;">Hashrate: 160 MH/s | Power: 45W Multi-Algo</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: #22c55e; font-weight: bold;">Est: $2.80 / day</div>
+                        <span style="font-size: 10px; background: #14532d; color: #4ade80; padding: 2px 6px; border-radius: 4px;">ONLINE</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -215,6 +302,47 @@
                 </div>
             </div>
         </div>
+
+        <!-- Live Match Odds Feed -->
+        <div class="section-card">
+            <div class="header">
+                <span class="title">⚽ LIVE MATCH ODDS & MARKET FEED</span>
+                <span style="color: #ff3b30; font-size: 11px; font-weight: bold;">● REAL-TIME PROJECTIONS</span>
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>League</th>
+                            <th>Fixture</th>
+                            <th>Home Win (1)</th>
+                            <th>Draw (X)</th>
+                            <th>Away Win (2)</th>
+                            <th>Ad Sponsor / Campaign</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>Anadolu Super League</b></td>
+                            <td>Galatasaray SK vs Fenerbahce SK</td>
+                            <td><span class="odds-pill">1.95</span></td>
+                            <td><span class="odds-pill">3.40</span></td>
+                            <td><span class="odds-pill">3.75</span></td>
+                            <td style="color: #a855f7; font-weight: bold;">Anadolu Sufi Rock Beats</td>
+                        </tr>
+                        <tr>
+                            <td><b>Anadolu Super League</b></td>
+                            <td>Besiktas JK vs Trabzonspor</td>
+                            <td><span class="odds-pill">2.10</span></td>
+                            <td><span class="odds-pill">3.20</span></td>
+                            <td><span class="odds-pill">3.10</span></td>
+                            <td style="color: #a855f7; font-weight: bold;">Get Big Together Platform</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <script>
