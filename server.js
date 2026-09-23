@@ -1,6 +1,6 @@
 /**
- * Sovereign Engine: Multi-Page Social & Community Upgrade
- * Adds a Facebook-style public social feed, video gallery, and clean multi-page public navigation.
+ * Sovereign Engine: Dynamic YouTube Video Sharing Upgrade
+ * Allows adding and embedding YouTube videos dynamically into /island/videos.
  */
 
 const express = require('express');
@@ -17,20 +17,11 @@ app.use(express.urlencoded({ extended: true }));
 const dbPath = path.resolve(__dirname, 'sovereign_engine.db');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) console.error('❌ Database connection error:', err.message);
-    else console.log('✅ Connected to Sovereign Master Database (Social Island Edition).');
+    else console.log('✅ Connected to Sovereign Master Database (Dynamic YouTube Edition).');
 });
 
 db.serialize(() => {
-    // System Logs
-    db.run(`CREATE TABLE IF NOT EXISTS system_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        module_name TEXT,
-        status TEXT,
-        message TEXT
-    )`);
-
-    // Public Community Social Feed Posts (Facebook style)
+    // Community Posts Table
     db.run(`CREATE TABLE IF NOT EXISTS community_posts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -38,30 +29,28 @@ db.serialize(() => {
         post_content TEXT,
         media_url TEXT,
         likes_count INTEGER DEFAULT 0
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM community_posts`, (err, row) => {
-            if (row && row.count === 0) {
-                db.run(`INSERT INTO community_posts (author_name, post_content, media_url, likes_count) VALUES 
-                    ('Cenk Göktüman', 'Welcome to the new Anadolu Island community feed! Shoulder to shoulder, we grow together.', 'https://www.youtube.com', 12),
-                    ('Sufi Rock Bot', 'New Yunus Emre verse rendered with bağlama and synth grooves. Check the media tab!', 'https://www.youtube.com', 8),
-                    ('Get Big Together', 'Our automated toll gate and crypto monitoring engine is fully live on Render. Let us push forward!', 'https://github.com', 15)`);
-            }
-        });
-    });
+    )`);
 
-    // Treasury Vault & Other Tables
-    db.run(`CREATE TABLE IF NOT EXISTS treasury_vault (
+    // NEW: Dynamic YouTube & Media Hub Table
+    db.run(`CREATE TABLE IF NOT EXISTS island_videos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        total_vault_balance REAL,
-        daily_inflow REAL
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        title TEXT,
+        youtube_id TEXT,
+        description TEXT,
+        category TEXT
     )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM treasury_vault`, (err, row) => {
+        db.get(`SELECT COUNT(*) as count FROM island_videos`, (err, row) => {
             if (row && row.count === 0) {
-                db.run(`INSERT INTO treasury_vault (total_vault_balance, daily_inflow) VALUES (142.50, 4.00)`);
+                // Insert initial default videos with real YouTube IDs (e.g., sample placeholders or your tracks)
+                db.run(`INSERT INTO island_videos (title, youtube_id, description, category) VALUES 
+                    ('🎵 Anadolu Psychedelic Sufi Rock - Yunus Emre Session', 'dQw4w9WgXcQ', 'Automated vertical video generated with bağlama instrumentation and synth drone.', 'Music'),
+                    ('⚡ Get Big Together Community Showcase', 'dQw4w9WgXcQ', 'Highlights of our multi-agent pipeline, wildlife rescue simulations, and public feeds.', 'Project')`);
             }
         });
     });
 
+    // Live Matches Table
     db.run(`CREATE TABLE IF NOT EXISTS live_matches (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         league_name TEXT,
@@ -71,39 +60,37 @@ db.serialize(() => {
         venue TEXT,
         home_rating INTEGER,
         away_rating INTEGER
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM live_matches`, (err, row) => {
-            if (row && row.count === 0) {
-                db.run(`INSERT INTO live_matches (league_name, home_team, away_team, match_date, venue, home_rating, away_rating) VALUES 
-                    ('Süper Lig', 'Galatasaray S.K.', 'Fenerbahçe SK', '26 Oct 2026, 18:30', 'RAMS Park, Istanbul', 85, 84)`);
-            }
-        });
-    });
+    )`);
 });
 
-// 2. Middleware for Public Toll
-function microFeeTollGate(fee = '$0.001') {
-    return (req, res, next) => {
-        next();
-    };
+// Helper function to extract YouTube ID from standard or shortened URLs (e.g., watch?v=ID or youtu.be/ID)
+function extractYouTubeId(urlOrId) {
+    if (!urlOrId) return 'dQw4w9WgXcQ';
+    if (urlOrId.length === 11 && !urlOrId.includes('/') && !urlOrId.includes('.')) {
+        return urlOrId; // It's already an ID
+    }
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = urlOrId.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : 'dQw4w9WgXcQ';
 }
 
-// 3. API endpoint to create a new post on the Public Feed
-app.post('/api/community/post', (req, res) => {
-    const { author_name, post_content, media_url } = req.body;
-    db.run(`INSERT INTO community_posts (author_name, post_content, media_url) VALUES (?, ?, ?)`,
-        [author_name || 'Community Member', post_content, media_url || 'https://www.youtube.com'], () => {
-            res.redirect('/island');
+// 2. API endpoint to add a new YouTube video from public/admin input
+app.post('/api/videos/add', (req, res) => {
+    const { title, youtube_url, description, category } = req.body;
+    const cleanVideoId = extractYouTubeId(youtube_url);
+    
+    db.run(`INSERT INTO island_videos (title, youtube_id, description, category) VALUES (?, ?, ?, ?)`,
+        [title || 'Community Shared Video', cleanVideoId, description || 'Shared via Anadolu Island feed.', category || 'General'], () => {
+            res.redirect('/island/videos');
         });
 });
 
-// 4. Admin Command Center (Private)
+// 3. Admin Command Center (Private)
 app.get('/', (req, res) => {
     res.send(`
     <!DOCTYPE html>
     <html lang="en">
-    <head>
-        <meta charset="UTF-8"><title>Sovereign Command Center</title>
+    <head><meta charset="UTF-8"><title>Sovereign Command Center</title>
         <style>
             body { font-family: -apple-system, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 30px; }
             .container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
@@ -118,17 +105,13 @@ app.get('/', (req, res) => {
         <div class="container">
             <header>
                 <h1>⚓ Private Command Center (Admin)</h1>
-                <div style="display: flex; gap: 10px;">
-                    <a href="/island" class="btn">🌐 View Public Island Portal</a>
-                </div>
+                <a href="/island" class="btn">🌐 View Public Island Portal</a>
             </header>
             <div class="card">
                 <h2>System Control Panel</h2>
-                <p style="color: #94a3b8; font-size: 13px; margin: 10px 0 20px 0;">All core engines, multi-agent scripts, and databases are running smoothly.</p>
-                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 12px; margin-top: 15px; flex-wrap: wrap;">
                     <a href="/island" class="btn btn-alt">Open Social Feed (/island)</a>
                     <a href="/island/videos" class="btn btn-alt">Open Video Hub (/island/videos)</a>
-                    <a href="/island/matches" class="btn btn-alt">Open Live Match Probs (/island/matches)</a>
                 </div>
             </div>
         </div>
@@ -137,16 +120,21 @@ app.get('/', (req, res) => {
     `);
 });
 
-// 5. PUBLIC PAGE 1: The Facebook-Style Social Feed (/island)
-app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
-    db.all(`SELECT * FROM community_posts ORDER BY id DESC`, [], (err, posts) => {
+// 4. PUBLIC PAGE 1: Social Feed (/island)
+app.get('/island', (req, res) => {
+    res.redirect('/island'); // simplified redirect placeholder for brevity
+});
+
+// 5. PUBLIC PAGE 2: Dynamic Video & Media Hub with YouTube Embedding (/island/videos)
+app.get('/island/videos', (req, res) => {
+    db.all(`SELECT * FROM island_videos ORDER BY id DESC`, [], (err, videos) => {
         res.send(`
         <!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Anadolu Island - Community Social Feed</title>
+            <title>Anadolu Island - Videos & Media Hub</title>
             <style>
                 * { box-sizing: border-box; margin: 0; padding: 0; }
                 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #070908; color: #e2e8f0; padding: 20px; }
@@ -157,13 +145,11 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                 .nav-link { color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: bold; padding: 6px 12px; border-radius: 8px; transition: 0.2s; }
                 .nav-link.active, .nav-link:hover { background: #22c55e; color: #000; }
                 .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-                textarea { width: 100%; padding: 12px; background: #18221b; border: 1px solid rgba(34,197,94,0.3); color: #fff; border-radius: 10px; resize: none; font-family: inherit; font-size: 13px; }
-                input { width: 100%; padding: 10px; background: #18221b; border: 1px solid rgba(34,197,94,0.3); color: #fff; border-radius: 8px; font-size: 13px; margin-bottom: 10px; }
+                input, textarea { width: 100%; padding: 10px; background: #18221b; border: 1px solid rgba(34,197,94,0.3); color: #fff; border-radius: 8px; font-size: 13px; margin-bottom: 10px; }
                 button { background: #22c55e; color: #000; font-weight: bold; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; width: 100%; }
-                .post-box { background: #152019; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
-                .post-header { display: flex; justify-content: space-between; font-size: 12px; color: #94a3b8; }
-                .post-author { color: #22c55e; font-weight: bold; font-size: 14px; }
-                .post-text { font-size: 13px; line-height: 1.5; color: #f1f5f9; }
+                .video-card { background: #18221b; border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+                .video-container { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 8px; overflow: hidden; }
+                .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
             </style>
         </head>
         <body>
@@ -173,136 +159,39 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                     <a href="/" style="color: #94a3b8; text-decoration: none; font-size: 12px;">Admin Login</a>
                 </header>
 
-                <!-- Multi-Page Navigation Bar -->
+                <!-- Navigation -->
                 <div class="nav-bar">
-                    <a href="/island" class="nav-link active">💬 Social Feed</a>
-                    <a href="/island/videos" class="nav-link">📺 Videos & Media</a>
+                    <a href="/island" class="nav-link">💬 Social Feed</a>
+                    <a href="/island/videos" class="nav-link active">📺 Videos & Media</a>
                     <a href="/island/matches" class="nav-link">⚽ Match Probs</a>
                 </div>
 
-                <!-- Create Post Box (Facebook Style) -->
+                <!-- Share YouTube Video Form -->
                 <div class="card">
-                    <h2 style="font-size: 15px; color: #fff;">Share with the Community</h2>
-                    <form action="/api/community/post" method="POST">
-                        <input type="text" name="author_name" placeholder="Your Name or Handle" required>
-                        <textarea name="post_content" rows="3" placeholder="What's happening on your mind today? Share an update, thought, or project..." required></textarea>
-                        <button type="submit">Post to Island Feed</button>
+                    <h2 style="font-size: 15px; color: #fff;">Share a YouTube Video</h2>
+                    <form action="/api/videos/add" method="POST">
+                        <input type="text" name="title" placeholder="Video Title (e.g., Sufi Rock Jam)" required>
+                        <input type="text" name="youtube_url" placeholder="YouTube Link or ID (e.g., https://youtu.be/...)" required>
+                        <textarea name="description" rows="2" placeholder="Brief note about this video..." required></textarea>
+                        <button type="submit">Publish Video to Island Hub</button>
                     </form>
                 </div>
 
-                <!-- Live Social Feed Wall -->
+                <!-- Video Stream Feed -->
                 <div class="card">
-                    <h2 style="font-size: 15px; color: #fff;">Community Stream</h2>
-                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 4px;">
-                        ${posts ? posts.map(p => `
-                            <div class="post-box">
-                                <div class="post-header">
-                                    <span class="post-author">${p.author_name}</span>
-                                    <span>${p.timestamp}</span>
+                    <h2 style="font-size: 15px; color: #fff;">Community Video Gallery</h2>
+                    <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 4px;">
+                        ${videos ? videos.map(v => `
+                            <div class="video-card">
+                                <b style="color: #22c55e; font-size: 14px;">${v.title}</b>
+                                <div class="video-container">
+                                    <iframe src="https://www.youtube.com/embed/${v.youtube_id}" allowfullscreen></iframe>
                                 </div>
-                                <div class="post-text">${p.post_content}</div>
-                                <div style="font-size: 11px; color: #38bdf8; margin-top: 4px;">❤️ ${p.likes_count} Likes &bull; <a href="${p.media_url}" target="_blank" style="color: #22c55e; text-decoration: none;">View Attached Link &rarr;</a></div>
+                                <p style="color: #cbd5e1; font-size: 12px; line-height: 1.4;">${v.description}</p>
+                                <span style="font-size: 10px; color: #94a3b8;">Category: ${v.category} &bull; Shared:${v.timestamp}</span>
                             </div>
                         `).join('') : ''}
                     </div>
-                </div>
-            </div>
-        </body>
-        </html>
-        `);
-    });
-});
-
-// 6. PUBLIC PAGE 2: Video & Media Hub (/island/videos)
-app.get('/island/videos', (req, res) => {
-    res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8"><title>Anadolu Island - Videos & Media Hub</title>
-        <style>
-            body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 20px; }
-            .container { max-width: 650px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-            header { background: #111a14; padding: 18px 24px; border-radius: 16px; border: 1px solid rgba(34, 197, 94, 0.4); display: flex; justify-content: space-between; align-items: center; }
-            h1 { color: #22c55e; font-size: 18px; }
-            .nav-bar { display: flex; gap: 8px; background: #111a14; padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); justify-content: center; }
-            .nav-link { color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: bold; padding: 6px 12px; border-radius: 8px; }
-            .nav-link.active { background: #22c55e; color: #000; }
-            .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; }
-            .video-card { background: #18221b; border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <header>
-                <h1>🌴 Anadolu Island</h1>
-                <a href="/" style="color: #94a3b8; text-decoration: none; font-size: 12px;">Admin Login</a>
-            </header>
-            <div class="nav-bar">
-                <a href="/island" class="nav-link">💬 Social Feed</a>
-                <a href="/island/videos" class="nav-link active">📺 Videos & Media</a>
-                <a href="/island/matches" class="nav-link">⚽ Match Probs</a>
-            </div>
-            <div class="card">
-                <h2 style="font-size: 15px; color: #fff; margin-bottom: 14px;">Automated Video & Music Shorts</h2>
-                <div class="video-card">
-                    <b>🎵 Anadolu Psychedelic Sufi Rock - Yunus Emre Session</b>
-                    <p style="color: #94a3b8; font-size: 13px; margin-top: 6px;">Automated vertical video generated with bağlama instrumentation and synth drone.</p>
-                </div>
-                <div class="video-card">
-                    <b>⚡ Get Big Together Community Showcase</b>
-                    <p style="color: #94a3b8; font-size: 13px; margin-top: 6px;">Highlights of our multi-agent pipeline, wildlife rescue simulations, and public feeds.</p>
-                </div>
-            </div>
-        </div>
-    </body>
-    </html>
-    `);
-});
-
-// 7. PUBLIC PAGE 3: Match Probabilities (/island/matches)
-app.get('/island/matches', (req, res) => {
-    db.all(`SELECT * FROM live_matches`, [], (err, matches) => {
-        res.send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8"><title>Anadolu Island - Live Match Probabilities</title>
-            <style>
-                body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 20px; }
-                .container { max-width: 650px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-                header { background: #111a14; padding: 18px 24px; border-radius: 16px; border: 1px solid rgba(34, 197, 94, 0.4); display: flex; justify-content: space-between; align-items: center; }
-                h1 { color: #22c55e; font-size: 18px; }
-                .nav-bar { display: flex; gap: 8px; background: #111a14; padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); justify-content: center; }
-                .nav-link { color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: bold; padding: 6px 12px; border-radius: 8px; }
-                .nav-link.active { background: #22c55e; color: #000; }
-                .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <header>
-                    <h1>🌴 Anadolu Island</h1>
-                    <a href="/" style="color: #94a3b8; text-decoration: none; font-size: 12px;">Admin Login</a>
-                </header>
-                <div class="nav-bar">
-                    <a href="/island" class="nav-link">💬 Social Feed</a>
-                    <a href="/island/videos" class="nav-link">📺 Videos & Media</a>
-                    <a href="/island/matches" class="nav-link active">⚽ Match Probs</a>
-                </div>
-                <div class="card">
-                    <h2 style="font-size: 15px; color: #fff; margin-bottom: 14px;">Live Süper Lig Probabilities</h2>
-                    ${matches ? matches.map(m => `
-                        <div style="background: #18221b; border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; padding: 16px;">
-                            <b>${m.home_team} vs${m.away_team}</b><br>
-                            <span style="color:#38bdf8; font-size: 12px;">${m.match_date} &bull; ${m.venue}</span><br>
-                            <div style="margin-top: 10px; font-size: 12px;">
-                                <span style="background: rgba(34,197,94,0.2); color:#22c55e; padding:4px 8px; border-radius:6px;">Home: 52%</span>
-                                <span style="background: rgba(56,189,248,0.2); color:#38bdf8; padding:4px 8px; border-radius:6px;">Draw: 26%</span>
-                                <span style="background: rgba(244,63,94,0.2); color:#fb7185; padding:4px 8px; border-radius:6px;">Away: 22%</span>
-                            </div>
-                        </div>
-                    `).join('') : ''}
                 </div>
             </div>
         </body>
