@@ -1,7 +1,7 @@
 /**
- * Sovereign Engine: Massive A to Z Master Build
- * Integrates Core Engine, Monzo Banking API, Hardware Mining (Panther X2 / Baikal),
- * Sufi Rock & Poetry Culture Stacks, Colonnes Matrix, Toll Gates, & Public Portal.
+ * Sovereign Engine: Massive A to Z Master Build (Includes Hybrid Social Engine)
+ * Integrates Core Engine, Monzo Banking API, Hardware Mining, 
+ * Sufi Rock & Culture, Hybrid Social, Colonnes Matrix, Toll Gates, & Public Portal.
  */
 
 const express = require('express');
@@ -53,7 +53,7 @@ db.serialize(() => {
         });
     });
 
-    // Library Stacks Catalog
+    // Library Stacks Catalog (Updated with 5 Stacks)
     db.run(`CREATE TABLE IF NOT EXISTS library_stacks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -69,7 +69,25 @@ db.serialize(() => {
                     ('Core Engine', 'Sovereign Multi-Agent Core', 'Local Vault', 'Unified background automation scripts, SQLite persistence, and REST endpoints.', 'INDEXED'),
                     ('Banking API', 'Monzo Live Balance Bridge', 'Monzo Developer API', 'Real-time account balance tracking and threshold payout routing.', 'INDEXED'),
                     ('Hardware', 'Panther X2 & Baikal Quadruple Specs', 'Node Registry', 'Decentralized mining hardware parameters and energy efficiency calculations.', 'INDEXED'),
-                    ('Culture & Art', 'Anadolu Psychedelic Sufi Rock & Poetry', 'Archives', 'Yunus Emre poetry, bağlama arrangements, and automated video generation.', 'INDEXED')`);
+                    ('Culture & Art', 'Anadolu Psychedelic Sufi Rock & Poetry', 'Archives', 'Yunus Emre poetry, bağlama arrangements, and automated video generation.', 'INDEXED'),
+                    ('Hybrid Social', 'YouTube & TikTok Engine', 'Autonomous Scraper', 'Fast-paced 30-60s content flow, behavioral agent scrapers, and live sports energy.', 'INDEXED')`);
+            }
+        });
+    });
+
+    // Hybrid Social Stack (YouTube & TikTok Engine)
+    db.run(`CREATE TABLE IF NOT EXISTS hybrid_social_queue (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        content_type TEXT,
+        blueprint_title TEXT,
+        curation_logic TEXT,
+        agent_status TEXT
+    )`, () => {
+        db.get(`SELECT COUNT(*) as count FROM hybrid_social_queue`, (err, row) => {
+            if (row && row.count === 0) {
+                db.run(`INSERT INTO hybrid_social_queue (content_type, blueprint_title, curation_logic, agent_status) VALUES 
+                    ('Short-Form Video', '30-60s Retention Loop Engine', 'Keep if new, ignore if existing (Strict lean filter)', 'ACTIVE SCOUTING'),
+                    ('Behavioral Scraper', 'Human Engagement Pattern Analyzer', 'Observe TikTok/YouTube momentum and auto-integrate blueprints', 'LEARNING')`);
             }
         });
     });
@@ -125,23 +143,6 @@ db.serialize(() => {
                     ('Backlog', 'Scavenge public GitHub script repositories', 'HIGH', 'PENDING'),
                     ('In Progress', 'Monzo OAuth & live payout verification', 'CRITICAL', 'ACTIVE'),
                     ('Execution', 'Render cloud deployment telemetry check', 'NORMAL', 'COMPLETED')`);
-            }
-        });
-    });
-
-    // Decision Exchanges
-    db.run(`CREATE TABLE IF NOT EXISTS decision_exchanges (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        query_topic TEXT,
-        calculation_result TEXT,
-        exchange_decision TEXT,
-        status TEXT
-    )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM decision_exchanges`, (err, row) => {
-            if (row && row.count === 0) {
-                db.run(`INSERT INTO decision_exchanges (query_topic, calculation_result, exchange_decision, status) VALUES 
-                    ('A to Z Blueprint Synthesis', 'Score: 99.8% Cohesion', 'YES - Integrate all stacks into master server code.', 'VERIFIED')`);
             }
         });
     });
@@ -283,6 +284,7 @@ app.get('/', (req, res) => {
                             <a href="/library/banking" class="btn" style="background: #10b981; color:#000; text-align:center;">💳 Monzo Banking API</a>
                             <a href="/library/hardware" class="btn" style="background: #f59e0b; color:#000; text-align:center;">⚡ Hardware Miners</a>
                             <a href="/library/culture" class="btn" style="background: #a855f7; text-align:center;">🎵 Sufi Rock & Art</a>
+                            <a href="/library/social" class="btn" style="background: #ec4899; color:#fff; text-align:center;">📱 Hybrid Social</a>
                         </div>
                     </div>
 
@@ -359,7 +361,7 @@ app.get('/library/banking', (req, res) => {
         <!DOCTYPE html>
         <html lang="en">
         <head><meta charset="UTF-8"><title>Monzo Banking Bridge</title>
-        <style>body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; input { background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:8px; width:100%; margin-top:6px; } button { background:#10b981; color:#000; font-weight:bold; padding:10px 16px; border:none; border-radius:8px; cursor:pointer; margin-top:10px; }</style>
+        <style>body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; } input { background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:8px; width:100%; margin-top:6px; } button { background:#10b981; color:#000; font-weight:bold; padding:10px 16px; border:none; border-radius:8px; cursor:pointer; margin-top:10px; }</style>
         </head>
         <body>
             <div style="max-width:900px; margin:0 auto;">
@@ -387,7 +389,7 @@ app.get('/library/hardware', (req, res) => {
         <!DOCTYPE html>
         <html lang="en">
         <head><meta charset="UTF-8"><title>Hardware Miners</title>
-        <style>body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; input { background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:8px; width:100%; margin-top:6px; } button { background:#f59e0b; color:#000; font-weight:bold; padding:10px 16px; border:none; border-radius:8px; cursor:pointer; margin-top:10px; }</style>
+        <style>body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; } input { background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:8px; width:100%; margin-top:6px; } button { background:#f59e0b; color:#000; font-weight:bold; padding:10px 16px; border:none; border-radius:8px; cursor:pointer; margin-top:10px; }</style>
         </head>
         <body>
             <div style="max-width:900px; margin:0 auto;">
@@ -423,7 +425,7 @@ app.get('/library/culture', (req, res) => {
         <!DOCTYPE html>
         <html lang="en">
         <head><meta charset="UTF-8"><title>Sufi Rock & Culture</title>
-        <style>body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; input, textarea { background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:8px; width:100%; margin-top:6px; } button { background:#a855f7; color:#fff; font-weight:bold; padding:10px 16px; border:none; border-radius:8px; cursor:pointer; margin-top:10px; }</style>
+        <style>body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; } input, textarea { background:#1a1a1a; border:1px solid #333; color:#fff; padding:10px; border-radius:8px; width:100%; margin-top:6px; } button { background:#a855f7; color:#fff; font-weight:bold; padding:10px 16px; border:none; border-radius:8px; cursor:pointer; margin-top:10px; }</style>
         </head>
         <body>
             <div style="max-width:900px; margin:0 auto;">
@@ -448,6 +450,35 @@ app.get('/library/culture', (req, res) => {
                         <input type="text" name="musical_arrangement" placeholder="Musical Arrangement (e.g., Bağlama & Psych Rock)" style="margin-top:8px;">
                         <button type="submit">Queue into Video Pipeline</button>
                     </form>
+                </div>
+            </div>
+        </body>
+        </html>`);
+    });
+});
+
+app.get('/library/social', (req, res) => {
+    db.all(`SELECT * FROM hybrid_social_queue`, [], (err, socialItems) => {
+        res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head><meta charset="UTF-8"><title>Hybrid Social Engine</title>
+        <style>body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }</style>
+        </head>
+        <body>
+            <div style="max-width:900px; margin:0 auto;">
+                <h1>📱 [Hybrid Social] YouTube & TikTok Engine</h1>
+                <p><a href="/" style="color:#ec4899;">&larr; Command Center</a></p>
+                
+                <div style="background:#111a14; padding:20px; border-radius:12px; margin-top:20px; border:1px solid #ec4899;">
+                    <h3>Active Behavioral Stacks & Curation Logic</h3>
+                    <ul style="list-style:none; padding:0; margin-top:10px;">
+                        ${socialItems ? socialItems.map(s => `<li style="background:#18221b; padding:12px; margin-bottom:8px; border-radius:8px; border:1px solid rgba(236,72,153,0.3);">
+                            <b style="color:#ec4899;">[${s.content_type}]${s.blueprint_title}</b><br>
+                            <span style="color:#ccc; font-size:13px;">Logic: ${s.curation_logic}</span><br>
+                            <span style="font-size:12px; color:#22c55e;">Agent Status: ${s.agent_status}</span>
+                        </li>`).join('') : ''}
+                    </ul>
                 </div>
             </div>
         </body>
