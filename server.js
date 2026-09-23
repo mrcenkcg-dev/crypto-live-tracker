@@ -1,17 +1,37 @@
 /**
- * Sovereign Engine: Live Probability & Social Integration Build
- * Features Live Mathematical Odds Calculation, Real Fixtures, Treasury, and YouTube/Facebook Feeds.
+ * Sovereign Engine: Multimedia Upload & Social Agent Integration
+ * Adds File Uploads, Media Queues, and YouTube/Facebook Sharing Pipelines.
  */
 
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const multer = require('multer'); // Handles file uploads
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Configure Storage for Uploaded Videos & Pictures
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, 'public/uploads'));
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+const upload = multer({ storage: storage });
+
+// Ensure upload directory exists
+const fs = require('fs');
+const uploadDir = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(uploadDir)){
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+app.use('/uploads', express.static(uploadDir));
 
 // 1. Initialize SQLite Database Schema
 const dbPath = path.resolve(__dirname, 'sovereign_engine.db');
@@ -24,15 +44,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
 });
 
 db.serialize(() => {
-    // System Logs
-    db.run(`CREATE TABLE IF NOT EXISTS system_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        module_name TEXT,
-        status TEXT,
-        message TEXT
-    )`);
-
     // Super Agents Activity Log
     db.run(`CREATE TABLE IF NOT EXISTS super_agent_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,41 +56,32 @@ db.serialize(() => {
         db.get(`SELECT COUNT(*) as count FROM super_agent_logs`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO super_agent_logs (agent_name, action_taken, target_page, status) VALUES 
-                    ('ProbabilityEngine', 'Calculating live match odds and statistical distributions', '/island', 'ACTIVE'),
-                    ('SocialBridge', 'Syncing YouTube and Facebook feeds', '/island', 'ONLINE'),
-                    ('WatcherAgent', 'Verified real-time internet telemetry', '/island', 'ACTIVE')`);
+                    ('MultimediaAgent', 'Listening for uploaded video and picture payloads', '/library/media', 'ACTIVE'),
+                    ('ProbabilityEngine', 'Calculating live match odds and statistical distributions', '/island', 'ACTIVE')`);
             }
         });
     });
 
-    // Treasury Vault Table
-    db.run(`CREATE TABLE IF NOT EXISTS treasury_vault (
+    // Multimedia Upload Queue Table
+    db.run(`CREATE TABLE IF NOT EXISTS media_queue (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        daily_inflow REAL,
-        reinvested_amount REAL,
-        total_vault_balance REAL,
+        media_type TEXT,
+        title TEXT,
+        file_path TEXT,
+        target_platform TEXT,
         status TEXT
     )`, () => {
-        db.get(`SELECT COUNT(*) as count FROM treasury_vault`, (err, row) => {
+        db.get(`SELECT COUNT(*) as count FROM media_queue`, (err, row) => {
             if (row && row.count === 0) {
-                db.run(`INSERT INTO treasury_vault (daily_inflow, reinvested_amount, total_vault_balance, status) VALUES 
-                    (4.00, 2.00, 142.50, 'LIVE & COMPOUNDING')`);
+                db.run(`INSERT INTO media_queue (media_type, title, file_path, target_platform, status) VALUES 
+                    ('Video', 'Anadolu Sufi Rock Teaser #1', '/uploads/sample-sufi.mp4', 'YouTube (@AnadoluSufiRock)', 'QUEUED FOR API SYNC'),
+                    ('Picture', 'Get Big Together Community Banner', '/uploads/community-banner.jpg', 'Facebook', 'READY TO PUBLISH')`);
             }
         });
     });
 
-    // Toll Transactions Log
-    db.run(`CREATE TABLE IF NOT EXISTS toll_transactions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        service_endpoint TEXT,
-        fee_amount TEXT,
-        client_origin TEXT,
-        status TEXT
-    )`);
-
-    // Live Matches Table with Team Rating Base for Probability Math
+    // Live Matches Table
     db.run(`CREATE TABLE IF NOT EXISTS live_matches (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         league_name TEXT,
@@ -102,7 +104,7 @@ db.serialize(() => {
         });
     });
 
-    // Social Links Table (YouTube & Facebook Integration)
+    // Social Channels Table
     db.run(`CREATE TABLE IF NOT EXISTS social_channels (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         platform_name TEXT,
@@ -122,15 +124,12 @@ db.serialize(() => {
 
 // 2. Dynamic Probability Calculator Function
 function calculateLiveProbabilities(homeRating, awayRating) {
-    // Algorithmic formula distributing win/draw percentages based on team ratings and home advantage
     const homeAdvantage = 5;
     const totalPower = homeRating + awayRating + homeAdvantage;
-    
     let homeWin = Math.round(((homeRating + homeAdvantage) / totalPower) * 70);
     let awayWin = Math.round((awayRating / totalPower) * 70);
     let draw = 100 - (homeWin + awayWin);
 
-    // Safeguard bounds for realistic football spread
     if (draw < 15) draw = 15;
     if (homeWin < 10) homeWin = 10;
     if (awayWin < 10) awayWin = 10;
@@ -138,116 +137,122 @@ function calculateLiveProbabilities(homeRating, awayRating) {
     return { homeWin, draw, awayWin };
 }
 
-// 3. Micro-Fee Toll Gate Middleware
-function microFeeTollGate(fee = '$0.001') {
-    return (req, res, next) => {
-        const endpoint = req.originalUrl;
-        const origin = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'Local Client';
-        const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+// 3. Media Upload Endpoint (Handles Videos & Pictures)
+app.post('/api/media/upload', upload.single('mediaFile'), (req, res) => {
+    const { title, target_platform, media_type } = req.body;
+    const filePath = req.file ? `/uploads/${req.file.filename}` : '/uploads/default.png';
 
-        db.run(`INSERT INTO toll_transactions (timestamp, service_endpoint, fee_amount, client_origin, status) VALUES (?, ?, ?, ?, ?)`,
-            [timestamp, endpoint, fee, origin, 'PAID & LOGGED']);
-        next();
-    };
-}
-
-// 4. Admin Command Center Hub
-app.get('/', (req, res) => {
-    db.all(`SELECT fee_amount FROM toll_transactions`, [], (errTolls, tolls) => {
-        db.all(`SELECT * FROM super_agent_logs ORDER BY timestamp DESC LIMIT 5`, [], (errAgents, agents) => {
-            db.get(`SELECT total_vault_balance, daily_inflow FROM treasury_vault ORDER BY id DESC LIMIT 1`, [], (errTreasury, treasury) => {
-                let totalRev = 0;
-                if (tolls) tolls.forEach(t => totalRev += parseFloat(t.fee_amount.replace('$', '')) || 0.001);
-
-                const vaultBalance = treasury ? treasury.total_vault_balance : 142.50;
-                const dailyInflow = treasury ? treasury.daily_inflow : 4.00;
-
-                res.send(`
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8"><title>Sovereign Command Center</title>
-                    <style>
-                        body { font-family: -apple-system, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 30px; }
-                        .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-                        header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #22c55e; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-                        h1 { color: #22c55e; font-size: 20px; margin: 0; }
-                        .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; }
-                        .btn { background: #262626; color: #fff; padding: 10px 16px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; display: inline-block; }
-                        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 15px; }
-                        .metric-box { background: #1c1c1c; border-radius: 10px; padding: 16px; border: 1px solid #333; }
-                        .metric-value { font-size: 20px; font-weight: bold; color: #22c55e; margin-top: 6px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <header>
-                            <div>
-                                <h1>⚓ Private Command Center (Admin)</h1>
-                                <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Ledger Revenue: $${totalRev.toFixed(3)}</p>
-                            </div>
-                            <a href="/island" class="btn" style="background: #10b981; color:#000;">🌐 View Public Portal</a>
-                        </header>
-
-                        <div class="card" style="border: 1px solid #22c55e;">
-                            <h2>🏦 Automated Internal Treasury Bank</h2>
-                            <div class="grid">
-                                <div class="metric-box">
-                                    <div style="color: #aaa; font-size: 12px;">Daily Inflow Rate</div>
-                                    <div class="metric-value">$${dailyInflow.toFixed(2)} / day</div>
-                                </div>
-                                <div class="metric-box">
-                                    <div style="color: #aaa; font-size: 12px;">Vault Exchange Balance</div>
-                                    <div class="metric-value">$${vaultBalance.toFixed(2)}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </body>
-                </html>
-                `);
-            });
+    db.run(`INSERT INTO media_queue (media_type, title, file_path, target_platform, status) VALUES (?, ?, ?, ?, ?)`,
+        [media_type || 'Video', title || 'Untitled Media', filePath, target_platform || 'YouTube', 'QUEUED & READY'], (err) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+            res.redirect('/library/media');
         });
+});
+
+// 4. Admin Command Center Hub with Media Upload Panel
+app.get('/', (req, res) => {
+    db.all(`SELECT * FROM media_queue ORDER BY timestamp DESC`, [], (errMedia, mediaItems) => {
+        res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8"><title>Sovereign Command Center</title>
+            <style>
+                body { font-family: -apple-system, sans-serif; background: #0b0b0b; color: #f8fafc; padding: 30px; }
+                .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+                header { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #22c55e; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+                h1 { color: #22c55e; font-size: 20px; margin: 0; }
+                .card { background: #141414; padding: 20px; border-radius: 16px; border: 1px solid #262626; }
+                .btn { background: #22c55e; color: #000; padding: 10px 16px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 13px; border: none; cursor: pointer; display: inline-block; }
+                input, select { background: #1c1c1c; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; width: 100%; margin-top: 6px; margin-bottom: 12px; }
+                label { font-size: 13px; color: #aaa; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <header>
+                    <div>
+                        <h1>⚓ Private Command Center (Admin)</h1>
+                        <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Multimedia & Agent Hub</p>
+                    </div>
+                    <a href="/island" class="btn" style="background: #10b981;">🌐 View Public Portal</a>
+                </header>
+
+                <!-- MULTIMEDIA UPLOAD AGENT PANEL -->
+                <div class="card" style="border: 1px solid #a855f7;">
+                    <h2>📤 Upload Video or Picture for YouTube / Facebook</h2>
+                    <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Drop your media files here to queue them for automated multi-agent publishing.</p>
+                    <form action="/api/media/upload" method="POST" enctype="multipart/form-data" style="margin-top: 15px;">
+                        <label>Media Title / Description</label>
+                        <input type="text" name="title" placeholder="e.g. Yunus Emre Sufi Rock Session #2" required>
+
+                        <label>Media Type</label>
+                        <select name="media_type">
+                            <option value="Video">Video (.mp4 / Short)</option>
+                            <option value="Picture">Picture (.jpg / .png)</option>
+                        </select>
+
+                        <label>Target Platform</label>
+                        <select name="target_platform">
+                            <option value="YouTube (@AnadoluSufiRock)">YouTube (@AnadoluSufiRock)</option>
+                            <option value="Facebook (Get Big Together)">Facebook (Get Big Together Community)</option>
+                        </select>
+
+                        <label>Select File from Device</label>
+                        <input type="file" name="mediaFile" required>
+
+                        <button type="submit" class="btn" style="background: #a855f7; color: #fff; width: 100%;">Upload & Queue to Agent Pipeline</button>
+                    </form>
+                </div>
+
+                <!-- MEDIA QUEUE LIST -->
+                <div class="card">
+                    <h2>🎬 Active Media Queue (${mediaItems ? mediaItems.length : 0})</h2>
+                    <ul style="list-style: none; padding: 0; margin-top: 10px;">
+                        ${mediaItems ? mediaItems.map(m => `
+                            <li style="background: #1c1c1c; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <div>
+                                    <b style="color: #a855f7;">[${m.media_type}]${m.title}</b><br>
+                                    <span style="color: #94a3b8; font-size: 12px;">Target: ${m.target_platform} \vert{} File:${m.file_path}</span>
+                                </div>
+                                <span style="background: rgba(34,197,94,0.2); color: #22c55e; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold;">${m.status}</span>
+                            </li>
+                        `).join('') : ''}
+                    </ul>
+                </div>
+            </div>
+        </body>
+        </html>
+        `);
     });
 });
 
-// 5. Clean Public Portal (/island) with Live Probability Calculations & Social Feeds
-app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
+// 5. Clean Public Portal (/island)
+app.get('/island', (req, res) => {
     db.all(`SELECT * FROM live_matches`, [], (err, matches) => {
         db.all(`SELECT * FROM social_channels`, [], (errSocial, socials) => {
-            db.get(`SELECT total_vault_balance, daily_inflow FROM treasury_vault ORDER BY id DESC LIMIT 1`, [], (errTreasury, treasury) => {
-                const vaultBalance = treasury ? treasury.total_vault_balance : 142.50;
-                const dailyInflow = treasury ? treasury.daily_inflow : 4.00;
-
+            db.all(`SELECT * FROM media_queue`, [], (errMedia, mediaQueue) => {
                 res.send(`
                 <!DOCTYPE html>
                 <html lang="en">
                 <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Anadolu Island - Live Probability & Social Portal</title>
+                    <meta charset="UTF-8"><title>Anadolu Island - Portal</title>
                     <style>
                         * { box-sizing: border-box; margin: 0; padding: 0; }
-                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
+                        body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
                         .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
                         header { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.4); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
                         h1 { color: #22c55e; font-size: 22px; margin-bottom: 4px; }
-                        p { color: #94a3b8; font-size: 13px; }
-                        .badge { background: #22c55e; color: #000; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 11px; }
                         .btn { background: #1f2937; color: #fff; padding: 8px 14px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 12px; border: 1px solid #374151; }
                         .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
-                        h2 { font-size: 17px; color: #fff; display: flex; align-items: center; gap: 8px; }
-                        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
-                        .panel { background: #18221b; border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+                        h2 { font-size: 17px; color: #fff; }
+                        .social-box { display: flex; gap: 12px; flex-wrap: wrap; }
+                        .social-card { background: #18221b; border: 1px solid rgba(34, 197, 94, 0.3); padding: 12px 18px; border-radius: 10px; color: #fff; text-decoration: none; font-weight: bold; font-size: 13px; }
                         table { width: 100%; border-collapse: collapse; margin-top: 8px; }
                         th, td { padding: 12px; text-align: left; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.06); }
                         th { color: #22c55e; font-weight: 600; text-transform: uppercase; font-size: 11px; background: #142017; }
-                        .prob-badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-right: 4px; font-family: monospace; }
-                        .home-prob { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4); }
-                        .draw-prob { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
-                        .away-prob { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
-                        .social-box { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
-                        .social-card { background: #18221b; border: 1px solid rgba(34, 197, 94, 0.3); padding: 12px 18px; border-radius: 10px; color: #fff; text-decoration: none; font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 8px; }
                     </style>
                 </head>
                 <body>
@@ -255,69 +260,37 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                         <header>
                             <div>
                                 <h1>🌴 Anadolu Island Public Portal</h1>
-                                <p>Status: <span class="badge">LIVE PROBABILITY ENGINE ACTIVE</span></p>
+                                <p style="color:#94a3b8; font-size:13px;">Multimedia & Live Probability Active</p>
                             </div>
                             <a href="/" class="btn">&larr; Admin Command Center</a>
                         </header>
 
-                        <!-- SOCIAL MEDIA CHANNELS (YOUTUBE & FACEBOOK) -->
+                        <!-- SOCIAL CHANNELS -->
                         <div class="card">
                             <h2>📡 Connected Creator Channels</h2>
-                            <p>Direct live links to your broadcasting platforms and community networks.</p>
                             <div class="social-box">
                                 ${socials ? socials.map(s => `
                                     <a href="${s.profile_url}" target="_blank" class="social-card">
-                                        📺 ${s.platform_name}: <span style="color:#22c55e; font-weight:normal;">${s.channel_handle}</span>
+                                        📺 ${s.platform_name}: <span style="color:#22c55e;">${s.channel_handle}</span>
                                     </a>
                                 `).join('') : ''}
                             </div>
                         </div>
 
-                        <!-- TREASURY VAULT SUMMARY -->
+                        <!-- RECENTLY UPLOADED MEDIA SHOWCASE -->
                         <div class="card">
-                            <h2>🏦 Internal Treasury Vault</h2>
-                            <div class="grid">
-                                <div class="panel">
-                                    <span style="color: #94a3b8; font-size: 12px;">Active Vault Balance</span>
-                                    <span style="font-size: 24px; font-weight: bold; color: #22c55e;">$${vaultBalance.toFixed(2)}</span>
-                                </div>
-                                <div class="panel">
-                                    <span style="color: #94a3b8; font-size: 12px;">Live Daily Inflow</span>
-                                    <span style="font-size: 24px; font-weight: bold; color: #38bdf8;">$${dailyInflow.toFixed(2)} / day</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- LIVE FIXTURES WITH DYNAMIC MATHEMATICAL PROBABILITIES -->
-                        <div class="card">
-                            <h2>⚽ Upcoming Süper Lig Fixtures & Live Probability Analysis</h2>
-                            <table>
-                               <thead>
-                                    <tr>
-                                        <th>Fixture & Venue</th>
-                                        <th>Date & Time</th>
-                                        <th>Live Calculated Probabilities (Home / Draw / Away)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${matches ? matches.map(m => {
-                                        const probs = calculateLiveProbabilities(m.home_rating, m.away_rating);
-                                        return `
-                                        <tr>
-                                            <td>
-                                                <b>${m.home_team} vs${m.away_team}</b><br>
-                                                <span style="color:#94a3b8; font-size:11px;">${m.venue}</span>
-                                            </td>
-                                            <td><span style="color: #38bdf8; font-family: monospace; font-weight:bold;">${m.match_date}</span></td>
-                                            <td>
-                                                <span class="prob-badge home-prob">${m.home_team.split(' ')[0]}:${probs.homeWin}%</span>
-                                                <span class="prob-badge draw-prob">Draw: ${probs.draw}%</span>
-                                                <span class="prob-badge away-prob">${m.away_team.split(' ')[0]}:${probs.awayWin}%</span>
-                                            </td>
-                                        </tr>`;
-                                    }).join('') : ''}
-                                </tbody>
-                            </table>
+                            <h2>🎬 Recent Multimedia & Uploaded Content</h2>
+                            <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:8px;">
+                                ${mediaQueue ? mediaQueue.map(m => `
+                                    <li style="background:#18221b; padding:12px; border-radius:10px; border:1px solid rgba(168,85,247,0.3); display:flex; justify-content:space-between; align-items:center;">
+                                        <div>
+                                            <b style="color:#a855f7;">${m.title}</b> <span style="color:#94a3b8; font-size:12px;">(${m.media_type})</span><br>
+                                            <span style="color:#38bdf8; font-size:11px;">Target: ${m.target_platform}</span>
+                                        </div>
+                                        <a href="${m.file_path}" target="_blank" style="background:#22c55e; color:#000; padding:6px 12px; border-radius:6px; font-weight:bold; font-size:11px; text-decoration:none;">View File</a>
+                                    </li>
+                                `).join('') : ''}
+                            </ul>
                         </div>
                     </div>
                 </body>
