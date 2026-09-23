@@ -1,21 +1,3 @@
-crypto-live-tracker/public
-/index.html
-Go to file
-t
-T
-mrcenkcg-dev
-mrcenkcg-dev
-Refactor stream box and update styles in index.html
-91218ad
- · 
-33 minutes ago
-crypto-live-tracker/public
-/index.html
-
-Code
-
-Blame
-225 lines (220 loc) · 7.65 KB
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,7 +60,7 @@ Blame
         @media(max-width: 768px) {
             .grid-container { grid-template-columns: 1fr; }
         }
-        /* Stream Box */
+        /* Refactored Stream Box */
         .stream-box {
             background: #181818;
             border-radius: 12px;
@@ -87,6 +69,10 @@ Blame
             display: flex;
             flex-direction: column;
             position: relative;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+        .stream-box:hover {
+            border-color: #38bdf8;
         }
         .stream-header {
             padding: 12px;
@@ -95,6 +81,7 @@ Blame
             font-weight: bold;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             border-bottom: 1px solid #333;
         }
         .player-viewport {
@@ -115,17 +102,17 @@ Blame
         .play-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: background 0.2s;
         }
-        .play-overlay:hover { background: rgba(0,0,0,0.2); }
+        .play-overlay:hover { background: rgba(0,0,0,0.25); }
         .play-btn-circle {
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             background: #38bdf8;
             border-radius: 50%;
             display: flex;
@@ -134,13 +121,18 @@ Blame
             color: #000;
             font-weight: bold;
             font-size: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+            transition: transform 0.2s;
+        }
+        .play-overlay:hover .play-btn-circle {
+            transform: scale(1.1);
         }
         .stream-info {
             padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 6px;
+            background: #141414;
         }
         .video-title {
             font-size: 14px;
@@ -171,11 +163,11 @@ Blame
         <div class="section-card">
             <div class="header">
                 <span class="title">ANADOLU ISLAND COMMAND CENTER</span>
-                <span class="status-badge">ONLINE</span>
+                <span class="status-badge" id="live-badge">ONLINE</span>
             </div>
             <div class="logs-box" id="system-logs">
                 [System] Autonomous Sovereign Engine active. Background harvesting loops synced.<br>
-                [Render] Live-net connection verified. All systems operational.
+                [Render] Live-net connection verified. All streams ready for playback.
             </div>
         </div>
 
@@ -190,10 +182,10 @@ Blame
                 <div class="stream-box">
                     <div class="stream-header">
                         <span>⚡ SHORTS STREAM</span>
-                        <span style="color: #ff3b30;">LIVE</span>
+                        <span style="color: #ff3b30; font-size: 11px; letter-spacing: 0.5px;">● LIVE</span>
                     </div>
                     <div class="player-viewport" id="player-box-0">
-                        <video id="vid-0" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" muted loop playsinline preload="auto"></video>
+                        <video id="vid-0" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" muted loop playsinline preload="auto" onplay="logStreamActivity(0)"></video>
                         <div class="play-overlay" id="overlay-0" onclick="triggerPlay(0)">
                             <div class="play-btn-circle">&#9658;</div>
                         </div>
@@ -208,10 +200,10 @@ Blame
                 <div class="stream-box">
                     <div class="stream-header">
                         <span>🏛️ SANCTUARY MAIN PLAYER</span>
-                        <span style="color: #38bdf8;">ARCHIVE</span>
+                        <span style="color: #38bdf8; font-size: 11px; letter-spacing: 0.5px;">ARCHIVE</span>
                     </div>
                     <div class="player-viewport" id="player-box-1">
-                        <video id="vid-1" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" muted loop playsinline preload="auto"></video>
+                        <video id="vid-1" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" muted loop playsinline preload="auto" onplay="logStreamActivity(1)"></video>
                         <div class="play-overlay" id="overlay-1" onclick="triggerPlay(1)">
                             <div class="play-btn-circle">&#9658;</div>
                         </div>
@@ -237,6 +229,14 @@ Blame
                     console.log("Playback restriction handled:", err);
                 });
             }
+        }
+
+        function logStreamActivity(idx) {
+            const logsBox = document.getElementById('system-logs');
+            const streamName = idx === 0 ? "SHORTS STREAM" : "SANCTUARY MAIN PLAYER";
+            const timestamp = new Date().toLocaleTimeString();
+            logsBox.innerHTML += `<br>[${timestamp}] Stream active: ${streamName} playback initialized.`;
+            logsBox.scrollTop = logsBox.scrollHeight;
         }
     </script>
 </body>
