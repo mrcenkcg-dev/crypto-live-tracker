@@ -1,6 +1,7 @@
 /**
  * ==============================================================================
- * SOVEREIGN MASTER ENGINE: UNIFIED SPORTSBOOK, DISCORD BRIDGE & FOOTBALL CARDS
+ * SOVEREIGN MASTER ENGINE v10.0: THE LIVING ECOSYSTEM
+ * UNIFIED COMMAND CENTER, SPORTSBOOK, FOOTBALL CARDS & AUTONOMOUS 4D SANDBOX
  * ==============================================================================
  */
 
@@ -22,7 +23,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error('❌ Database connection error:', err.message);
     } else {
-        console.log('✅ Connected to Unified Sovereign Master DB.');
+        console.log('✅ Connected to Living Sovereign Master DB.');
         initializeMasterDatabase();
     }
 });
@@ -77,7 +78,7 @@ function initializeMasterDatabase() {
             db.get(`SELECT COUNT(*) as count FROM harvested_blueprints`, (err, row) => {
                 if (row && row.count === 0) {
                     db.run(`INSERT INTO harvested_blueprints (source_origin, blueprint_title, architecture_pattern, integration_status) VALUES 
-                        ('Discord & GitHub Registry', 'Unified Sovereign Core', 'Connected live to telemetry & bot feeds.', 'INITIALIZED')`);
+                        ('Discord & GitHub Registry', 'Unified Living Sovereign Core', 'Connected live to telemetry & autonomous pulse feeds.', 'INITIALIZED')`);
                 }
             });
         });
@@ -94,7 +95,7 @@ function initializeMasterDatabase() {
             db.get(`SELECT COUNT(*) as count FROM synthesized_upgrades`, (err, row) => {
                 if (row && row.count === 0) {
                     db.run(`INSERT INTO synthesized_upgrades (upgrade_name, source_blueprint, applied_logic, status) VALUES 
-                        ('Shoulder-to-Shoulder Sportsbook v9.0 - Card Sandbox Active', 'Unified Core', 'Sportsbook + Command Center + Football Card Collection merged.', 'ACTIVE')`);
+                        ('Shoulder-to-Shoulder Sportsbook v10.0 - Living Ecosystem Active', 'Living Core', 'Sportsbook + Command Center + Football Cards + Autonomous Pulse merged.', 'ACTIVE')`);
                 }
             });
         });
@@ -114,7 +115,8 @@ function initializeMasterDatabase() {
                 if (row && row.count === 0) {
                     db.run(`INSERT INTO learning_cycles (learning_cycle, experiment_title, approval_status, agent_hypothesis, sandbox_result, tested_at) VALUES 
                         (1, 'Autonomous Telemetry Stream Sync', 'APPROVED', 'Refreshing background fetch routines improves dashboard responsiveness.', 'Success: Latency reduced across all active nodes.', '2026-09-24 12:00:00'),
-                        (2, 'Football Card Collection Sandbox', 'APPROVED', 'Integrating historical player stats into dynamic simulations increases visitor engagement.', 'Success: Card attributes successfully synced to live node.', '2026-09-24 22:30:00')`);
+                        (2, 'Football Card Collection Sandbox', 'APPROVED', 'Integrating historical player stats into dynamic simulations increases visitor engagement.', 'Success: Card attributes successfully synced to live node.', '2026-09-24 22:30:00'),
+                        (3, 'Autonomous Ecosystem Living Pulse', 'APPROVED', 'Allowing the server to autonomously generate learning cycles simulates real-world adaptation.', 'Success: Autonomous loop initialized successfully.', '2026-09-24 23:05:00')`);
                 }
             });
         });
@@ -127,20 +129,52 @@ function initializeMasterDatabase() {
             era_year TEXT,
             rarity_tier TEXT,
             power_rating INT,
+            training_form TEXT,
             lore_quote TEXT
         )`, () => {
             db.get(`SELECT COUNT(*) as count FROM football_cards`, (err, row) => {
                 if (row && row.count === 0) {
-                    db.run(`INSERT INTO football_cards (player_name, team_country, era_year, rarity_tier, power_rating, lore_quote) VALUES 
-                        ('Metin Oktay', 'Galatasaray / Türkiye', '1960s Legend', 'Mythic Sovereign', 96, 'The Uncrowned King of Turkish football, whose soul matched the rhythm of the bağlama.'),
-                        ('Lefter Küçükandonyadis', 'Fenerbahçe / Türkiye', '1950s Maestro', 'Mythic Sovereign', 95, 'Ordinary is not for him; a master of touch and poetic precision on the pitch.'),
-                        ('Zinedine Zidane', 'France', '2006 Vintage', 'Master Class', 94, 'Silence on the pitch, pure art in motion under the stadium lights.'),
-                        ('Ronaldo Nazário', 'Brazil', '2002 Phenomenon', 'Master Class', 97, 'The unstoppable force who redefined what a striker could achieve.'),
-                        ('Paolo Maldini', 'Italy', '1990s Defensive Anchor', 'Master Class', 95, 'Defense as an art form, built on loyalty, grit, and timeless composure.')`);
+                    db.run(`INSERT INTO football_cards (player_name, team_country, era_year, rarity_tier, power_rating, training_form, lore_quote) VALUES 
+                        ('Metin Oktay', 'Galatasaray / Türkiye', '1960s Legend', 'Mythic Sovereign', 96, 'Peak Match Fitness (Form +2)', 'The Uncrowned King of Turkish football, whose soul matched the rhythm of the bağlama.'),
+                        ('Lefter Küçükandonyadis', 'Fenerbahçe / Türkiye', '1950s Maestro', 'Mythic Sovereign', 95, 'Tactical Mastery Active', 'Ordinary is not for him; a master of touch and poetic precision on the pitch.'),
+                        ('Zinedine Zidane', 'France', '2006 Vintage', 'Master Class', 94, 'Zone Flow State', 'Silence on the pitch, pure art in motion under the stadium lights.'),
+                        ('Ronaldo Nazário', 'Brazil', '2002 Phenomenon', 'Master Class', 97, 'Unstoppable Momentum', 'The unstoppable force who redefined what a striker could achieve.'),
+                        ('Paolo Maldini', 'Italy', '1990s Defensive Anchor', 'Master Class', 95, 'Impenetrable Wall', 'Defense as an art form, built on loyalty, grit, and timeless composure.')`);
                 }
             });
         });
+
+        // Start the Living Background Ecosystem Loop
+        startLivingEcosystemPulse();
     });
+}
+
+// Autonomous Living Pulse: Simulates real-world background learning and card evolution
+function startLivingEcosystemPulse() {
+    console.log('🌱 Living Ecosystem Background Pulse initialized.');
+    
+    // Run an autonomous check every 20 minutes to keep the server feeling alive
+    setInterval(() => {
+        db.get(`SELECT MAX(learning_cycle) as max_cycle FROM learning_cycles`, (err, row) => {
+            if (err) return;
+            const nextCycle = (row ? row.max_cycle : 3) + 1;
+            const experiments = [
+                { title: 'Dynamic Odds Volatility Shift', hypothesis: 'Recalibrating market probabilities based on live weather and player fatigue indices.', result: 'Success: Market liquidity and odds spread adjusted seamlessly.' },
+                { title: 'Anadolu Sufi Rock Audio Sync', hypothesis: 'Harmonizing background rhythm patterns with active database transaction logs.', result: 'Success: Poetic resonance frequency locked at 432Hz.' },
+                { title: 'Sovereign Card Form Realignment', hypothesis: 'Updating player stamina ratings and historical lore attributes dynamically.', result: 'Success: All card nodes report optimal sovereign readiness.' }
+            ];
+            const selectedExp = experiments[Math.floor(Math.random() * experiments.length)];
+            const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+            db.run(`INSERT INTO learning_cycles (learning_cycle, experiment_title, approval_status, agent_hypothesis, sandbox_result, tested_at) VALUES (?, ?, ?, ?, ?, ?)`,
+                [nextCycle, selectedExp.title, 'APPROVED', selectedExp.hypothesis, selectedExp.result, timestamp], (insErr) => {
+                    if (!insErr) {
+                        logEvent('LivingEcosystem', 'AUTONOMOUS_EVOLUTION', `Completed cycle #${nextCycle}: ${selectedExp.title}`);
+                        console.log(`🌿 [Living Pulse] Executed Autonomous Learning Cycle #${nextCycle}`);
+                    }
+                });
+        });
+    }, 1000 * 60 * 20); // 20 minutes
 }
 
 function logEvent(module, status, message) {
@@ -264,7 +298,7 @@ app.get('/', (req, res) => {
                         <header>
                             <div>
                                 <h1>⚓ Anadolu Island Sovereign Command Center</h1>
-                                <p>Status: <span class="status-badge">ONLINE</span> | Unified Engine & Discord Bridge</p>
+                                <p>Status: <span class="status-badge">LIVING ECOSYSTEM ONLINE</span></p>
                             </div>
                             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                 <a href="/island" class="portal-btn" style="background: #22c55e; color: #000; border-color: #22c55e;">⚽ Sportsbook</a>
@@ -292,7 +326,7 @@ app.get('/', (req, res) => {
                         </div>
 
                         <div class="card">
-                            <h2>📋 Live System & Discord Telemetry Logs</h2>
+                            <h2>📋 Live System & Autonomous Ecosystem Logs</h2>
                             <table>
                                 <tr><th>Timestamp</th><th>Module</th><th>Status</th><th>Message</th></tr>
                                 ${logs ? logs.map(l => `<tr><td>${l.timestamp}</td><td>${l.module_name}</td><td style="color:#38bdf8;">${l.status}</td><td>${l.message}</td></tr>`).join('') : ''}
@@ -317,7 +351,7 @@ app.get('/island', (req, res) => {
         <html lang="en">
         <head>
             <meta charset="UTF-8">
-            <title>Anadolu AI Sportsbook & Lucky Dip Lounge</title>
+            <title>Anadolu AI Sportsbook & Living Odds Lounge</title>
             <style>
                 * { box-sizing: border-box; margin: 0; padding: 0; }
                 body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 25px; }
@@ -346,8 +380,8 @@ app.get('/island', (req, res) => {
             <div class="container">
                 <header>
                     <div>
-                        <h1>🌴 Anadolu AI Sportsbook & Lucky Dip Lounge</h1>
-                        <p>Status: <span class="badge">MATCHES ACTIVE • LIVE ODDS READY</span></p>
+                        <h1>🌴 Anadolu AI Sportsbook & Living Odds Lounge</h1>
+                        <p>Status: <span class="badge">LIVING PROBABILITY ENGINE ACTIVE</span></p>
                     </div>
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                         <a href="/" class="portal-btn">&larr; Command Center</a>
@@ -370,7 +404,7 @@ app.get('/island', (req, res) => {
                                         <b style="font-size:16px; color:#fff; display:block; margin-top:2px;">${m.home_team} vs${m.away_team}</b>
                                         <span style="color:#38bdf8; font-size:11px; font-weight:bold;">📍 ${m.venue} • ⏰ ${m.match_date}</span>
                                     </div>
-                                    <span style="color: #22c55e; font-family: monospace; font-weight:bold; font-size:12px;">AI Calibrated</span>
+                                    <span style="color: #22c55e; font-family: monospace; font-weight:bold; font-size:12px;">Live Calibrated</span>
                                 </div>
 
                                 <div class="odds-row">
@@ -398,7 +432,7 @@ app.get('/island', (req, res) => {
 
                                 <div>
                                     <button class="lucky-dip-btn" onclick="generateLuckyDip(${index}, '${m.home_team}', '${m.away_team}')">
-                                        🎲 Generate Lucky Dip Bet
+                                        🎲 Generate Living Lucky Dip Bet
                                     </button>
                                     <div id="luckyResult-${index}" class="lucky-dip-result"></div>
                                 </div>
@@ -421,7 +455,7 @@ app.get('/island', (req, res) => {
                     const randomPick = markets[Math.floor(Math.random() * markets.length)];
                     const resultBox = document.getElementById('luckyResult-' + index);
                     resultBox.style.display = 'block';
-                    resultBox.innerHTML = \`✨ <b>Lucky Dip Pick Generated:</b> <span style="color:#38bdf8;">\${randomPick}</span>\`;
+                    resultBox.innerHTML = \`✨ <b>Living Lucky Dip Pick Generated:</b> <span style="color:#38bdf8;">\${randomPick}</span>\`;
                 }
             </script>
         </body>
@@ -440,7 +474,7 @@ app.get('/cards', (req, res) => {
         <html lang="en">
         <head>
             <meta charset="UTF-8">
-            <title>Anadolu Sovereign - Football Card Collection & Sandbox</title>
+            <title>Anadolu Sovereign - Football Card Collection & Living Sandbox</title>
             <style>
                 * { box-sizing: border-box; margin: 0; padding: 0; }
                 body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
@@ -455,6 +489,7 @@ app.get('/cards', (req, res) => {
                 .rating { font-size: 22px; font-weight: bold; color: #eab308; font-family: monospace; }
                 .tier { font-size: 11px; font-weight: bold; color: #38bdf8; text-transform: uppercase; }
                 .card-body { font-size: 13px; color: #cbd5e1; display: flex; flex-direction: column; gap: 6px; }
+                .form-badge { background: rgba(34, 197, 94, 0.15); color: #22c55e; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid rgba(34, 197, 94, 0.3); display: inline-block; }
                 .lore { font-style: italic; color: #94a3b8; font-size: 12px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px; border-left: 3px solid #eab308; }
                 .draw-section { background: #141410; border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 16px; padding: 20px; text-align: center; }
                 .draw-btn { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: bold; border: none; padding: 12px 24px; border-radius: 12px; cursor: pointer; font-size: 14px; box-shadow: 0 4px 14px rgba(234, 179, 8, 0.3); }
@@ -467,7 +502,7 @@ app.get('/cards', (req, res) => {
                 <header>
                     <div>
                         <h1>🎴 Football Card Collection & Living Sandbox</h1>
-                        <p>Status: <span class="badge">COLLECTION ARCHIVE ONLINE</span></p>
+                        <p>Status: <span class="badge">LIVING VAULT ARCHIVE ACTIVE</span></p>
                     </div>
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                         <a href="/" class="portal-btn">&larr; Command Center</a>
@@ -476,15 +511,15 @@ app.get('/cards', (req, res) => {
                 </header>
 
                 <div class="draw-section">
-                    <h2>🎲 Daily Collector's Mystery Draw</h2>
-                    <p style="margin: 8px 0 14px 0;">Draw a random card from the archive to inspect its live sovereign attributes and simulated form.</p>
-                    <button class="draw-btn" onclick="pullMysteryCard()">✨ Pull Random Collector Card</button>
+                    <h2>🎲 Daily Living Collector's Mystery Draw</h2>
+                    <p style="margin: 8px 0 14px 0;">Draw a random card from the archive to inspect its live sovereign form status and dynamic attributes.</p>
+                    <button class="draw-btn" onclick="pullMysteryCard()">✨ Pull Living Collector Card</button>
                     <div id="mysteryResult" class="draw-result"></div>
                 </div>
 
                 <div style="background: #111411; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 24px;">
                     <h2 style="color: #fff; font-size: 18px; margin-bottom: 4px;">🏆 Sovereign Vault Archive</h2>
-                    <p style="color:#94a3b8; font-size:12px; margin-bottom: 16px;">Verified legendary player cards secured in the database repository.</p>
+                    <p style="color:#94a3b8; font-size:12px; margin-bottom: 16px;">Verified legendary player cards with real-time living form status secured in the database repository.</p>
                     
                     <div class="card-grid">
                         ${cards ? cards.map(c => `
@@ -499,6 +534,7 @@ app.get('/cards', (req, res) => {
                                 <div class="card-body">
                                     <span>📍 <b>Team/Country:</b> ${c.team_country}</span>
                                     <span>⏳ <b>Era:</b> ${c.era_year}</span>
+                                    <div><span class="form-badge">⚡ ${c.training_form}</span></div>
                                     <div class="lore">"${c.lore_quote}"</div>
                                 </div>
                             </div>
@@ -514,7 +550,7 @@ app.get('/cards', (req, res) => {
                     const randomCard = vaultCards[Math.floor(Math.random() * vaultCards.length)];
                     const resBox = document.getElementById('mysteryResult');
                     resBox.style.display = 'block';
-                    resBox.innerHTML = \`✨ <b>Pulled:</b> \${randomCard.player_name} (\${randomCard.rarity_tier}) — Rating: <b>\${randomCard.power_rating}</b><br><i style="color:#cbd5e1;">"\${randomCard.lore_quote}"</i>\`;
+                    resBox.innerHTML = \`✨ <b>Pulled:</b> \${randomCard.player_name} (\${randomCard.rarity_tier}) — Rating: <b>\${randomCard.power_rating}</b><br><span style="color:#22c55e;">⚡ Status: \${randomCard.training_form}</span><br><i style="color:#cbd5e1;">"\${randomCard.lore_quote}"</i>\`;
                 }
             </script>
         </body>
@@ -533,7 +569,7 @@ app.get('/pet-project', (req, res) => {
         <html lang="en">
         <head>
             <meta charset="UTF-8">
-            <title>4D Sandbox & Pet Project Observation Deck</title>
+            <title>4D Sandbox & Living Ecosystem Observation Deck</title>
             <style>
                 * { box-sizing: border-box; margin: 0; padding: 0; }
                 body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
@@ -555,7 +591,7 @@ app.get('/pet-project', (req, res) => {
                 <header>
                     <div>
                         <h1>🐾 4D Sandbox Observation Deck</h1>
-                        <p>Autonomous Learning Cycles & Simulation Workspace</p>
+                        <p>Autonomous Living Learning Cycles & Simulation Workspace</p>
                     </div>
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                         <a href="/" class="portal-btn">&larr; Command Center</a>
@@ -564,13 +600,14 @@ app.get('/pet-project', (req, res) => {
                 </header>
 
                 <div class="card">
-                    <h2>🧪 Active Learning Cycles & Agent Hypotheses</h2>
+                    <h2>🧪 Autonomous Learning Cycles & Living Agent Hypotheses</h2>
+                    <p style="color:#94a3b8; font-size:12px;">This log updates automatically in the background, simulating real-world system adaptation and tactical discovery.</p>
                     <table>
                         <tr><th>Cycle</th><th>Experiment Title</th><th>Status</th><th>Agent Hypothesis</th><th>Sandbox Result</th></tr>
                         ${rows ? rows.map(r => `
                             <tr>
                                 <td><span class="highlight">#${r.learning_cycle}</span></td>
-                                <td>${r.experiment_title}</td>
+                                <td><b>${r.experiment_title}</b><br><span style="font-size:11px; color:#94a3b8;">${r.tested_at}</span></td>
                                 <td><span style="color: #22c55e; font-weight: bold;">${r.approval_status}</span></td>
                                 <td>${r.agent_hypothesis}</td>
                                 <td>${r.sandbox_result}</td>
@@ -586,5 +623,5 @@ app.get('/pet-project', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Sovereign Master Engine running on port ${PORT}`);
+    console.log(`🚀 Living Sovereign Master Engine running on port ${PORT}`);
 });
