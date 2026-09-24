@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
- * SOVEREIGN MASTER ENGINE: AI-CALIBRATED 60% ACCURACY EDITION (POLISHED & OPTIMIZED)
- * Complete Server Code: Autonomous AI Intelligence Sweep (20-Min Cycle) + Live Betting & Stats
+ * SOVEREIGN MASTER ENGINE: AI-CALIBRATED 60% ACCURACY + FREE 21 LOUNGE EDITION
+ * Complete Server Code: Autonomous AI Intelligence Sweep (20-Min Cycle) + Live Sportsbook & 21 Game
  * ==============================================================================
  */
 
@@ -45,7 +45,7 @@ function initializeMasterDatabase() {
                 db.run(`INSERT INTO super_agent_logs (agent_name, action_taken, target_page, status) VALUES 
                     ('AIIntelligenceAgent', 'Initialized autonomous 20-min 60% calibrated predictive accuracy sweep', '/island', 'ACTIVE & CALIBRATED'),
                     ('InPlayStatsAgent', 'Real-time corners, fouls, and card simulation matrix online', '/island', 'ONLINE'),
-                    ('CommunityAgent', 'Managing live bet slips and community contribution ledger', '/island', 'ACTIVE')`);
+                    ('CommunityAgent', 'Managing live bet slips and free 21 arcade lounge', '/island', 'ACTIVE')`);
             }
         });
 
@@ -132,7 +132,7 @@ function initializeMasterDatabase() {
         db.get(`SELECT COUNT(*) as count FROM public_contributions`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO public_contributions (contributor_name, contribution_type, message_content, status) VALUES 
-                    ('AI Intelligence Unit', 'System Notice', 'Autonomous 60% accuracy calibration engine is active. Live betting markets are synchronized.', 'VERIFIED & LIVE')`);
+                    ('AI Intelligence Unit', 'System Notice', 'Autonomous 60% accuracy calibration engine is active. Free 21 Lounge is open for visitors.', 'VERIFIED & LIVE')`);
             }
         });
     });
@@ -211,7 +211,6 @@ function startAutonomousAIAgent() {
             }
             if (fixtures && fixtures.length > 0) {
                 fixtures.forEach(match => {
-                    // Intelligent market shift to maintain accurate 60% favorite alignment
                     const adjustment = (Math.random() > 0.5 ? 1 : -1) * Math.floor(Math.random() * 2);
                     const updatedHomeRating = Math.max(60, Math.min(98, match.home_rating + adjustment));
 
@@ -280,7 +279,7 @@ app.get('/', microFeeTollGate('$0.001'), (req, res) => {
                                 <h1>⚡ Sovereign Master Command Center</h1>
                                 <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Ledger Revenue: $${totalRev.toFixed(3)} | AI Intelligence Engine: 20-Min 60% Accuracy Cycle Active</p>
                             </div>
-                            <div><a href="/island" class="btn" style="background: #10b981; color:#000;">🌴 Visit AI Betting Portal</a></div>
+                            <div><a href="/island" class="btn" style="background: #10b981; color:#000;">🌴 Visit AI Sportsbook & 21 Lounge</a></div>
                         </header>
                         <div class="card" style="border: 1px solid #22c55e;">
                             <h2>🏦 Treasury Vault & Active AI Agents</h2>
@@ -305,7 +304,7 @@ app.get('/', microFeeTollGate('$0.001'), (req, res) => {
 });
 
 // ==============================================================================
-// 6. PUBLIC AI SPORTSBOOK & STATS PORTAL (/island)
+// 6. PUBLIC AI SPORTSBOOK, STATS PORTAL & FREE 21 LOUNGE (/island)
 // ==============================================================================
 app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
     db.all(`SELECT * FROM multi_league_fixtures`, (err, matches) => {
@@ -315,7 +314,7 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
-                <title>Anadolu AI Sportsbook & Stats Portal</title>
+                <title>Anadolu AI Sportsbook & Free 21 Lounge</title>
                 <style>
                     * { box-sizing: border-box; margin: 0; padding: 0; }
                     body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 25px; }
@@ -333,24 +332,27 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                     .match-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; }
                     .odds-row { display: flex; gap: 8px; flex-wrap: wrap; }
                     .bet-btn { background: #1c2b21; border: 1px solid rgba(34,197,94,0.4); border-radius: 8px; padding: 8px 12px; color: #fff; cursor: pointer; text-align: left; flex: 1; min-width: 110px; }
-                    .bet-btn:hover { background: #22c55e; color: #000; font-weight: bold; }
                     .bet-label { font-size: 10px; color: #94a3b8; display: block; text-transform: uppercase; }
                     .bet-val { font-size: 15px; font-weight: bold; color: #22c55e; font-family: monospace; display: block; }
                     .stats-tag { background: rgba(255,255,255,0.05); padding: 6px 10px; border-radius: 8px; font-size: 12px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.08); }
                     input, textarea { width: 100%; padding: 10px; margin-top: 6px; margin-bottom: 12px; background: #18221b; border: 1px solid rgba(34,197,94,0.3); color: #fff; border-radius: 8px; }
-                    button[type="submit"] { background: #22c55e; color: #000; font-weight: bold; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; }
+                    button[type="submit"], .game-btn { background: #22c55e; color: #000; font-weight: bold; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; }
+                    .game-btn:hover { background: #16a34a; }
+                    .table-felt { background: #064e3b; border: 2px solid #059669; border-radius: 14px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 12px; }
+                    .card-box { display: inline-block; background: #fff; color: #000; padding: 10px 14px; border-radius: 8px; font-weight: bold; font-family: monospace; font-size: 16px; margin: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
                 </style>
             </head>
             <body>
                 <div class="container">
                     <header>
                         <div>
-                            <h1>🌴 Anadolu AI Sportsbook & Stats Portal</h1>
-                            <p>Status: <span class="badge">AI 20-MIN UPDATE CYCLE ACTIVE (60% ACCURACY TARGET)</span></p>
+                            <h1>🌴 Anadolu AI Sportsbook & Free 21 Lounge</h1>
+                            <p>Status: <span class="badge">AI 20-MIN UPDATE CYCLE ACTIVE &bull; FREE ARCADE OPEN</span></p>
                         </div>
                         <a href="/" class="btn">&larr; Admin Command Center</a>
                     </header>
 
+                    <!-- MATCHES & STATS SECTION -->
                     <div class="card">
                         <h2>📊 AI-Calibrated Betting Markets & Advanced Statistics</h2>
                         <p style="color:#94a3b8; font-size:12px;">Autonomous AI agents recalibrate ratings and odds every 20 minutes to maintain precise 60% favorite confidence.</p>
@@ -369,7 +371,6 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                                         <span style="color: #22c55e; font-family: monospace; font-weight:bold; font-size:13px;">AI 60% Calibrated</span>
                                     </div>
 
-                                    <!-- Market 1: Match Winner Decimal Odds -->
                                     <div>
                                         <span style="font-size:11px; color:#94a3b8; text-transform:uppercase; font-weight:bold;">1X2 Match Winner Odds (AI Optimized)</span>
                                         <div class="odds-row" style="margin-top:6px;">
@@ -388,7 +389,6 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                                         </div>
                                     </div>
 
-                                    <!-- Market 2: Goals, Corners, Fouls & Cards Statistics -->
                                     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:4px;">
                                         <div class="stats-tag">⚽ <b>First Goal:</b> ${mk.firstGoalTeam}</div>
                                         <div class="stats-tag">🥅 <b>Goals Line:</b> ${mk.overUnderGoals}</div>
@@ -398,6 +398,35 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                                     </div>
                                 </div>`;
                             }).join('') : ''}
+                        </div>
+                    </div>
+
+                    <!-- FREE 21 (BLACKJACK) TIME-KILLER LOUNGE -->
+                    <div class="card" style="border: 1px solid #059669;">
+                        <h2>🃏 Free Play 21 Lounge (No Real Money — Just for Fun!)</h2>
+                        <p>Kill some time while checking stats. Play a classic hand of 21 with free virtual play chips.</p>
+                        
+                        <div class="table-felt">
+                            <div style="display: flex; justify-content: space-between; font-weight: bold; color: #a7f3d0; font-size: 14px;">
+                                <span>Virtual Play Chips: <span id="chipCount" style="color:#fff; font-family:monospace;">500</span></span>
+                                <span id="gameStatus">Click 'Deal New Hand' to Start</span>
+                            </div>
+
+                            <div>
+                                <p style="font-size:12px; color:#a7f3d0; margin-bottom:4px;">Dealer Hand (Score: <span id="dealerScore">?</span>)</p>
+                                <div id="dealerCards"><div class="card-box" style="background:#042f2e; color:#5eead4;">?</div></div>
+                            </div>
+
+                            <div>
+                                <p style="font-size:12px; color:#a7f3d0; margin-bottom:4px;">Your Hand (Score: <span id="playerScore">0</span>)</p>
+                                <div id="playerCards"><div class="card-box" style="background:#042f2e; color:#5eead4;">🎴</div></div>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px; flex-wrap: wrap;">
+                                <button class="game-btn" onclick="startBJGame()" id="dealBtn">Deal New Hand (50 Chips)</button>
+                                <button class="game-btn" onclick="hitBJ()" id="hitBtn" style="background:#38bdf8; color:#000;" disabled>Hit</button>
+                                <button class="game-btn" onclick="standBJ()" id="standBtn" style="background:#fbbf24; color:#000;" disabled>Stand</button>
+                            </div>
                         </div>
                     </div>
 
@@ -429,6 +458,130 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                         </div>
                     </div>
                 </div>
+
+                <script>
+                    let chips = 500;
+                    let deck = [];
+                    let playerHand = [];
+                    let dealerHand = [];
+                    let gameActive = false;
+
+                    function createDeck() {
+                        const suits = ['♠', '♥', '♦', '♣'];
+                        const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+                        let newDeck = [];
+                        for (let s of suits) {
+                            for (let v of values) {
+                                newDeck.push({ suit: s, val: v });
+                            }
+                        }
+                        return newDeck.sort(() => Math.random() - 0.5);
+                    }
+
+                    function getCardVal(card) {
+                        if (['J', 'Q', 'K'].includes(card.val)) return 10;
+                        if (card.val === 'A') return 11;
+                        return parseInt(card.val);
+                    }
+
+                    function calcScore(hand) {
+                        let score = 0;
+                        let aces = 0;
+                        for (let card of hand) {
+                            score += getCardVal(card);
+                            if (card.val === 'A') aces++;
+                        }
+                        while (score > 21 && aces > 0) {
+                            score -= 10;
+                            aces--;
+                        }
+                        return score;
+                    }
+
+                    function startBJGame() {
+                        if (chips < 50) {
+                            alert('You ran out of free play chips! Reloading 500 chips.');
+                            chips = 500;
+                        }
+                        chips -= 50;
+                        document.getElementById('chipCount').innerText = chips;
+                        
+                        deck = createDeck();
+                        playerHand = [deck.pop(), deck.pop()];
+                        dealerHand = [deck.pop(), deck.pop()];
+                        gameActive = true;
+
+                        document.getElementById('dealBtn').disabled = true;
+                        document.getElementById('hitBtn').disabled = false;
+                        document.getElementById('standBtn').disabled = false;
+                        document.getElementById('gameStatus').innerText = 'Game in progress... Hit or Stand?';
+
+                        renderBJ(false);
+                    }
+
+                    function renderBJ(showDealerFull) {
+                        document.getElementById('playerCards').innerHTML = playerHand.map(c => 
+                            \`<div class="card-box">\${c.val}\${c.suit}</div>\`
+                        ).join('');
+                        document.getElementById('playerScore').innerText = calcScore(playerHand);
+
+                        if (showDealerFull) {
+                            document.getElementById('dealerCards').innerHTML = dealerHand.map(c => 
+                                \`<div class="card-box">\${c.val}\${c.suit}</div>\`
+                            ).join('');
+                            document.getElementById('dealerScore').innerText = calcScore(dealerHand);
+                        } else {
+                            document.getElementById('dealerCards').innerHTML = 
+                                \`<div class="card-box">\${dealerHand[0].val}\${dealerHand[0].suit}</div><div class="card-box" style="background:#042f2e; color:#5eead4;">?</div>\`;
+                            document.getElementById('dealerScore').innerText = getCardVal(dealerHand[0]);
+                        }
+                    }
+
+                    function hitBJ() {
+                        if (!gameActive) return;
+                        playerHand.push(deck.pop());
+                        let pScore = calcScore(playerHand);
+                        renderBJ(false);
+
+                        if (pScore > 21) {
+                            gameActive = false;
+                            document.getElementById('gameStatus').innerText = 'Bust! You went over 21. Dealer wins.';
+                            endBJRound();
+                        }
+                    }
+
+                    function standBJ() {
+                        if (!gameActive) return;
+                        gameActive = false;
+                        
+                        let dScore = calcScore(dealerHand);
+                        while (dScore < 17) {
+                            dealerHand.push(deck.pop());
+                            dScore = calcScore(dealerHand);
+                        }
+
+                        renderBJ(true);
+                        let pScore = calcScore(playerHand);
+
+                        if (dScore > 21 || pScore > dScore) {
+                            document.getElementById('gameStatus').innerText = '🎉 You Won the Hand! +100 Chips';
+                            chips += 100;
+                        } else if (pScore === dScore) {
+                            document.getElementById('gameStatus').innerText = '🤝 Push (Tie). Stake returned.';
+                            chips += 50;
+                        } else {
+                            document.getElementById('gameStatus').innerText = 'Dealer Wins! Try again.';
+                        }
+                        document.getElementById('chipCount').innerText = chips;
+                        endBJRound();
+                    }
+
+                    function endBJRound() {
+                        document.getElementById('dealBtn').disabled = false;
+                        document.getElementById('hitBtn').disabled = true;
+                        document.getElementById('standBtn').disabled = true;
+                    }
+                </script>
             </body>
             </html>
             `);
@@ -437,6 +590,6 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 AI-Calibrated Sportsbook Engine running live on port ${PORT}`);
+    console.log(`🚀 AI-Calibrated Sportsbook & Free 21 Lounge running live on port ${PORT}`);
     setTimeout(startAutonomousAIAgent, 5000);
 });
