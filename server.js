@@ -84,7 +84,7 @@ function initializeMasterDatabase() {
             ad_sponsor TEXT
         )`);
 
-        // Reset or populate with immediate upcoming fixtures (Tomorrow & Near Future)
+        // Reset or populate with immediate upcoming fixtures
         db.run(`DELETE FROM multi_league_fixtures`, () => {
             db.run(`INSERT INTO multi_league_fixtures (league_category, home_team, away_team, match_date, venue, home_rating, away_rating, aggression_rating, ad_sponsor) VALUES 
                 ('UEFA Nations League', 'Türkiye', 'France', 'Tomorrow, 19:45', 'RAMS Park, Istanbul', 86, 91, 8, 'Anadolu Sufi Rock Partner'),
@@ -198,11 +198,11 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                     .bet-label { font-size: 10px; color: #94a3b8; display: block; text-transform: uppercase; }
                     .bet-val { font-size: 15px; font-weight: bold; color: #22c55e; font-family: monospace; display: block; }
                     .stats-tag { background: rgba(255,255,255,0.05); padding: 6px 10px; border-radius: 8px; font-size: 12px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.08); }
-                    input, textarea { width: 100%; padding: 10px; margin-top: 6px; margin-bottom: 12px; background: #18221b; border: 1px solid rgba(34,197,94,0.3); color: #fff; border-radius: 8px; }
-                    button[type="submit"], .game-btn { background: #22c55e; color: #000; font-weight: bold; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; }
-                    .game-btn:hover { background: #16a34a; }
                     .table-felt { background: #064e3b; border: 2px solid #059669; border-radius: 14px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 12px; }
                     .card-box { display: inline-block; background: #fff; color: #000; padding: 10px 14px; border-radius: 8px; font-weight: bold; font-family: monospace; font-size: 16px; margin: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+                    .game-btn { background: #22c55e; color: #000; font-weight: bold; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; }
+                    .game-btn:hover { background: #16a34a; }
+                    .game-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
                 </style>
             </head>
             <body>
@@ -217,7 +217,7 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                     <!-- SCROLLABLE MATCHES & STATS SECTION -->
                     <div class="card">
                         <h2>⚽ Tomorrow & Upcoming International & League Matches</h2>
-                        <p style="color:#94a3b8; font-size:12px;">Scroll down to see all games (Türkiye vs France, Germany vs England, Süper Lig, and more) complete with AI-calibrated odds.</p>
+                        <p style="color:#94a3b8; font-size:12px;">Scroll down to see all games complete with AI-calibrated odds.</p>
                         
                         <div class="fixtures-scroll-container">
                             ${matches ? matches.map(m => {
@@ -398,10 +398,10 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                             document.getElementById('gameStatus').innerText = '🎉 You Won! +100 Chips';
                             chips += 100;
                         } else if (pScore === dScore) {
-                            document.getElementById('gameStatus').innerText = '🤝 Push (Tie).';
+                            document.getElementById('gameStatus').innerText = '🤝 Push (Tie). +50 Chips';
                             chips += 50;
                         } else {
-                            document.getElementById('gameStatus': 'Dealer Wins!');
+                            document.getElementById('gameStatus').innerText = 'Dealer Wins!';
                         }
                         document.getElementById('chipCount').innerText = chips;
                         endBJRound();
