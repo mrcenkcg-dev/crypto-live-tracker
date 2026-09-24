@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
- * SOVEREIGN MASTER ENGINE: UNIFIED MULTI-SOCIAL & MULTIMEDIA ARCHITECTURE
- * Blueprint Integration: Ingestion + Unified Timeline + Cross-Syndication Router
+ * SOVEREIGN MASTER ENGINE: UNIFIED EMBEDDED SOCIAL FEED & ROUTER EDITION
+ * Complete All-in-One Server Code for Render Deployment
  * ==============================================================================
  */
 
@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ==============================================================================
-// 1. THE UNIFIED TIMELINE SCHEMA (Database & Persistence Engine)
+// 1. DATABASE SETUP & UNIFIED TIMELINE SCHEMA
 // ==============================================================================
 const dbFile = path.join(__dirname, 'sovereign_master.db');
 const db = new sqlite3.Database(dbFile, (err) => {
@@ -30,24 +30,25 @@ const db = new sqlite3.Database(dbFile, (err) => {
 
 function initializeMasterSchema() {
     db.serialize(() => {
-        // Core Unified Timeline Feed
+        // Core Unified Timeline Feed with Embedded Media Support
         db.run(`CREATE TABLE IF NOT EXISTS sovereign_timeline (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
             source_platform TEXT,
             target_platform TEXT,
             media_url TEXT,
+            embed_code TEXT,
             title TEXT,
             author TEXT,
             syndication_status TEXT
         )`);
 
-        // Seed initial blueprint data if empty
+        // Seed initial active posts with clean sample embeds
         db.get(`SELECT COUNT(*) as count FROM sovereign_timeline`, (err, row) => {
             if (row && row.count === 0) {
-                db.run(`INSERT INTO sovereign_timeline (source_platform, target_platform, media_url, title, author, syndication_status) VALUES 
-                    ('YouTube', 'TikTok & Instagram', 'https://www.youtube.com/watch?v=sample', 'Anatolian Sufi Rock Poetry Session', 'Cenk (Sovereign Admin)', 'SYNCED & ACTIVE'),
-                    ('Instagram', 'YouTube Shorts', 'https://www.instagram.com/reel/Dda_BovoYw8', 'Behind the Scenes: Building the Island Engine', 'Cenk (Sovereign Admin)', 'ROUTER LIVE')`);
+                db.run(`INSERT INTO sovereign_timeline (source_platform, target_platform, media_url, embed_code, title, author, syndication_status) VALUES 
+                    ('YouTube', 'All Networks', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'Anatolian Sufi Rock Poetry Session', 'Cenk (Sovereign Admin)', 'LIVE STREAM ACTIVE'),
+                    ('Instagram', 'YouTube Shorts', 'https://www.instagram.com/reel/Dda_BovoYw8', 'https://www.instagram.com/reel/Dda_BovoYw8/embed', 'Behind the Scenes: Building the Island Engine', 'Cenk (Sovereign Admin)', 'BRIDGE ACTIVE')`);
             }
         });
 
@@ -73,21 +74,63 @@ function initializeMasterSchema() {
 }
 
 // ==============================================================================
-// 2. THE UNIVERSAL INGESTION & NORMALIZER (API Endpoint)
+// 2. HELPER FUNCTION: CONVERT URLS TO CLEAN EMBEDS
+// ==============================================================================
+function generateEmbedHtml(url, title) {
+    if (!url) return `<div style="padding:20px; color:#94a3b8;">No media attached</div>`;
+
+    // YouTube Handling
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        let videoId = '';
+        if (url.includes('v=')) {
+            videoId = url.split('v=')[1]?.split('&')[0];
+        } else if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1]?.split('?')[0];
+        }
+        if (videoId) {
+            return `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}" title="${title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 12px; background: #000;"></iframe>`;
+        }
+    }
+
+    // Instagram Handling
+    if (url.includes('instagram.com')) {
+        let cleanCleanUrl = url.split('?')[0];
+        if (!cleanCleanUrl.endsWith('/')) cleanCleanUrl += '/';
+        return `<iframe src="${cleanCleanUrl}embed" width="100%" height="480" frameborder="0" scrolling="no" allowtransparency="true" style="border-radius: 12px; background: #000;"></iframe>`;
+    }
+
+    // TikTok Handling
+    if (url.includes('tiktok.com')) {
+        return `<div style="background:#18221b; padding:20px; border-radius:12px; text-align:center; border:1px solid rgba(34,197,94,0.3);">
+                    <p style="color:#22c55e; font-weight:bold; margin-bottom:10px;">🎵 TikTok Media Feed Linked</p>
+                    <a href="${url}" target="_blank" style="color:#38bdf8; text-decoration:underline; font-size:13px;">View Original TikTok Clip &rarr;</a>
+                </div>`;
+    }
+
+    // Fallback Generic Link Card
+    return `<div style="background:#18221b; padding:20px; border-radius:12px; text-align:center; border:1px solid rgba(34,197,94,0.3);">
+                <p style="color:#22c55e; font-weight:bold; margin-bottom:10px;">🔗 Shared Content Link</p>
+                <a href="${url}" target="_blank" style="color:#38bdf8; text-decoration:underline; font-size:13px;">Open External Media Stream &rarr;</a>
+            </div>`;
+}
+
+// ==============================================================================
+// 3. UNIVERSAL INGESTION API
 // ==============================================================================
 app.post('/api/island/ingest', (req, res) => {
     const { source_platform, target_platform, media_url, title, author } = req.body;
     
-    // Normalizing incoming data to ensure clean record insertion
     const cleanSource = source_platform || 'Universal Web';
     const cleanTarget = target_platform || 'All Island Networks';
     const cleanUrl = media_url || '#';
     const cleanTitle = title || 'Untitled Sovereign Media';
     const cleanAuthor = author || 'Island Creator';
+    
+    const embedHtml = generateEmbedHtml(cleanUrl, cleanTitle);
 
     db.run(
-        `INSERT INTO sovereign_timeline (source_platform, target_platform, media_url, title, author, syndication_status) VALUES (?, ?, ?, ?, ?, ?)`,
-        [cleanSource, cleanTarget, cleanUrl, cleanTitle, cleanAuthor, 'INGESTED & QUEUED'],
+        `INSERT INTO sovereign_timeline (source_platform, target_platform, media_url, embed_code, title, author, syndication_status) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [cleanSource, cleanTarget, cleanUrl, embedHtml, cleanTitle, cleanAuthor, 'FEED LIVE & SYNDICATED'],
         (err) => {
             if (err) {
                 console.error('Ingestion error:', err.message);
@@ -98,7 +141,7 @@ app.post('/api/island/ingest', (req, res) => {
 });
 
 // ==============================================================================
-// 3. THE CROSS-SYNDICATION ROUTER & CENTRAL INTERFACE (UI Hub)
+// 4. CENTRAL ISLAND PORTAL & FEED INTERFACE
 // ==============================================================================
 app.get('/island', (req, res) => {
     db.all(`SELECT * FROM sovereign_timeline ORDER BY timestamp DESC`, (err, timelineRows) => {
@@ -109,11 +152,11 @@ app.get('/island', (req, res) => {
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
-                <title>Sovereign Master Island - Unified Multi-Social Engine</title>
+                <title>Sovereign Master Island - Live Social Feed</title>
                 <style>
                     * { box-sizing: border-box; margin: 0; padding: 0; }
                     body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
-                    .container { max-width: 1050px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+                    .container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
                     header { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.4); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
                     h1 { color: #22c55e; font-size: 22px; margin-bottom: 4px; }
                     p { color: #94a3b8; font-size: 13px; }
@@ -130,46 +173,43 @@ app.get('/island', (req, res) => {
                     button:hover { background: #16a34a; }
 
                     /* Bridges Grid */
-                    .bridge-box { display: flex; gap: 12px; flex-wrap: wrap; }
-                    .bridge-card { background: #18221b; border: 1px solid rgba(34, 197, 94, 0.2); padding: 12px 16px; border-radius: 12px; color: #fff; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+                    .bridge-box { display: flex; gap: 10px; flex-wrap: wrap; }
+                    .bridge-card { background: #18221b; border: 1px solid rgba(34, 197, 94, 0.2); padding: 10px 14px; border-radius: 10px; color: #fff; font-size: 12px; display: flex; align-items: center; gap: 6px; }
 
-                    /* Timeline Feed */
-                    .feed-list { display: flex; flex-direction: column; gap: 12px; }
-                    .feed-item { background: #18221b; border: 1px solid rgba(255,255,255,0.06); padding: 16px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-                    .feed-title { font-size: 15px; color: #fff; text-decoration: none; font-weight: 600; }
-                    .feed-title:hover { color: #22c55e; }
-                    .meta-tag { background: rgba(34, 197, 94, 0.15); color: #22c55e; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid rgba(34, 197, 94, 0.3); }
-                    .btn-link { background: #1f2937; color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 12px; text-decoration: none; border: 1px solid #374151; font-weight: bold; }
-                    .btn-link:hover { background: #374151; }
+                    /* Feed Stream */
+                    .feed-stream { display: flex; flex-direction: column; gap: 20px; }
+                    .post-card { background: #18221b; border: 1px solid rgba(255,255,255,0.08); padding: 20px; border-radius: 16px; display: flex; flex-direction: column; gap: 14px; }
+                    .post-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+                    .meta-tag { background: rgba(34, 197, 94, 0.2); color: #22c55e; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid rgba(34, 197, 94, 0.4); }
+                    .post-title { font-size: 16px; color: #fff; font-weight: 600; }
                 </style>
             </head>
             <body>
                 <div class="container">
                     <header>
                         <div>
-                            <h1>🌴 Sovereign Master Island Engine</h1>
-                            <p>Unified Multi-Platform Ingestion, Timeline Schema & Cross-Syndication Router</p>
+                            <h1>🌴 Sovereign Island Social Feed</h1>
+                            <p>Direct In-Page Embedded Media Stream & Cross-Platform Bridge</p>
                         </div>
-                        <span class="badge">SYSTEM ONLINE</span>
+                        <span class="badge">FEED LIVE</span>
                     </header>
 
-                    <!-- Active Bridges Section -->
+                    <!-- Active Bridges -->
                     <div class="card">
-                        <h2>⚡ Active Cross-Platform Bridges</h2>
+                        <h2>⚡ Connected Island Bridges</h2>
                         <div class="bridge-box">
                             ${bridgeRows ? bridgeRows.map(b => `
                                 <div class="bridge-card">
                                     <span>🌐 <b>${b.platform_name}:</b></span>
                                     <span style="color: #38bdf8;">${b.channel_handle}</span>
-                                    <span style="color: #22c55e; font-size: 11px; margin-left:6px;">[${b.status}]</span>
                                 </div>
                             `).join('') : ''}
                         </div>
                     </div>
 
-                    <!-- Universal Ingestion Form -->
+                    <!-- Ingestion Form -->
                     <div class="card">
-                        <h2>📥 Universal Content Ingestion & Router</h2>
+                        <h2>📥 Share Media to Island Feed</h2>
                         <form action="/api/island/ingest" method="POST">
                             <div class="form-grid">
                                 <div class="form-group">
@@ -183,50 +223,51 @@ app.get('/island', (req, res) => {
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label>Target Syndication Router:</label>
+                                    <label>Target Syndication:</label>
                                     <select name="target_platform">
-                                        <option value="All Connected Networks">All Connected Networks (YT, TikTok, IG, FB)</option>
-                                        <option value="YouTube & TikTok">YouTube & TikTok Only</option>
+                                        <option value="All Networks">All Connected Networks</option>
+                                        <option value="YouTube Shorts">YouTube Shorts Only</option>
                                         <option value="Instagram Reels">Instagram Reels Only</option>
-                                        <option value="Facebook Community">Facebook Community Only</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label>Author / Creator Handle:</label>
+                                    <label>Author / Handle:</label>
                                     <input type="text" name="author" placeholder="e.g. Cenk Göktüman" required>
                                 </div>
                             </div>
                             <div class="form-grid" style="margin-top: 12px;">
                                 <div class="form-group" style="grid-column: span 2;">
-                                    <label>Media Link / Video URL:</label>
-                                    <input type="text" name="media_url" placeholder="https://www.youtube.com/watch?v=... or Instagram/TikTok link" required>
+                                    <label>Media Link / URL (YouTube, Instagram, TikTok):</label>
+                                    <input type="text" name="media_url" placeholder="Paste link here..." required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Title / Caption Description:</label>
-                                    <input type="text" name="title" placeholder="Enter title or poetic verse description..." required>
+                                    <label>Title / Description:</label>
+                                    <input type="text" name="title" placeholder="Give this post a title..." required>
                                 </div>
                             </div>
-                            <button type="submit">Ingest, Normalize & Syndicate Across All Bridges</button>
+                            <button type="submit">Publish Directly to Island Feed</button>
                         </form>
                     </div>
 
-                    <!-- Unified Timeline Feed -->
+                    <!-- Live Embedded Social Feed -->
                     <div class="card">
-                        <h2>🌊 Unified Island Timeline Feed</h2>
-                        <div class="feed-list">
-                            ${timelineRows ? timelineRows.map(row => `
-                                <div class="feed-item">
-                                    <div>
-                                        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+                        <h2>🌊 Live Island Social Wall</h2>
+                        <div class="feed-stream">
+                            ${timelineRows && timelineRows.length > 0 ? timelineRows.map(row => `
+                                <div class="post-card">
+                                    <div class="post-header">
+                                        <div>
                                             <span class="meta-tag">${row.source_platform} &rarr; ${row.target_platform}</span>
-                                            <span style="font-size: 11px; color: #94a3b8;">By: ${row.author}</span>
+                                            <span style="font-size: 12px; color: #94a3b8; margin-left: 8px;">Posted by: <b>${row.author}</b></span>
                                         </div>
-                                        <a href="${row.media_url}" target="_blank" class="feed-title">${row.title}</a>
-                                        <p style="font-size: 11px; color: #64748b; margin-top: 4px;">Timestamp: ${row.timestamp} | Status: <span style="color:#22c55e;">${row.syndication_status}</span></p>
+                                        <span style="font-size: 11px; color: #64748b;">${row.timestamp}</span>
                                     </div>
-                                    <a href="${row.media_url}" target="_blank" class="btn-link">View Media</a>
+                                    <div class="post-title">${row.title}</div>
+                                    <div style="width: 100%; margin-top: 4px;">
+                                        ${row.embed_code}
+                                    </div>
                                 </div>
-                            `).join('') : ''}
+                            `).join('') : '<p style="color:#94a3b8;">No posts in feed yet.</p>'}
                         </div>
                     </div>
                 </div>
@@ -237,12 +278,12 @@ app.get('/island', (req, res) => {
     });
 });
 
-// Root Redirect to Island Hub
+// Root Redirect
 app.get('/', (req, res) => {
     res.redirect('/island');
 });
 
-// Start Master Engine
+// Start Server
 app.listen(PORT, () => {
-    console.log(`🚀 Sovereign Master Engine running live on port ${PORT}`);
+    console.log(`🚀 Sovereign Embedded Feed Engine running live on port ${PORT}`);
 });
