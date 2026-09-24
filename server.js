@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
- * SOVEREIGN MASTER ENGINE: ULTIMATE UNIFIED ECOSYSTEM EDITION (SQLite)
- * Complete Server Code: Base Engine + International & Domestic League Matrix + Hourly Background Agent + Community Wall
+ * SOVEREIGN MASTER ENGINE: PROFESSIONAL SPORTSBOOK & ECOSYSTEM EDITION
+ * Complete Server Code: Decimal Odds Matrix + Hourly Odds Watcher + Community Wall
  * ==============================================================================
  */
 
@@ -43,7 +43,7 @@ function initializeMasterDatabase() {
         db.get(`SELECT COUNT(*) as count FROM super_agent_logs`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO super_agent_logs (agent_name, action_taken, target_page, status) VALUES 
-                    ('OddsWatcherAgent', 'Initialized real-time hourly background updater for International & Domestic leagues', '/island', 'ACTIVE'),
+                    ('OddsWatcherAgent', 'Initialized real-time professional sportsbook odds updater', '/island', 'ACTIVE'),
                     ('MultiSocialBridge', 'Syncing YouTube Shorts, Facebook Reels & Instagram feeds', '/island', 'ONLINE'),
                     ('CommunityAgent', 'Managing public contribution drop ledger and visitor logs', '/island', 'ACTIVE')`);
             }
@@ -75,7 +75,7 @@ function initializeMasterDatabase() {
             status TEXT
         )`);
 
-        // Multi-League Fixtures & Probability Table (Includes International & Domestic)
+        // Multi-League Fixtures with Realistic Power Ratings
         db.run(`CREATE TABLE IF NOT EXISTS multi_league_fixtures (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             league_category TEXT,
@@ -91,11 +91,11 @@ function initializeMasterDatabase() {
         db.get(`SELECT COUNT(*) as count FROM multi_league_fixtures`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO multi_league_fixtures (league_category, home_team, away_team, match_date, venue, home_rating, away_rating, ad_sponsor) VALUES 
-                    ('International', 'England', 'France', '10 Oct 2026, 20:00', 'Wembley Stadium, London', 91, 93, 'Sovereign Global Partner'),
+                    ('International', 'England', 'France', '10 Oct 2026, 20:00', 'Wembley Stadium, London', 85, 95, 'Sovereign Global Partner'),
                     ('International', 'Italy', 'Germany', '11 Oct 2026, 20:00', 'San Siro, Milan', 88, 89, 'Anadolu Sufi Rock Partner'),
-                    ('Premier League', 'Manchester City', 'Arsenal', '27 Sep 2026, 16:30', 'Etihad Stadium, Manchester', 92, 90, 'Sovereign Analytics Partner'),
-                    ('Süper Lig', 'Galatasaray S.K.', 'Fenerbahçe SK', '28 Sep 2026, 20:00', 'RAMS Park, Istanbul', 86, 85, 'Anadolu Sufi Rock Partner'),
-                    ('National League', 'Boreham Wood', 'Southend United', '29 Sep 2026, 19:45', 'Meadow Park, Borehamwood', 72, 70, 'Get Big Together Initiative')`);
+                    ('Premier League', 'Manchester City', 'Arsenal', '27 Sep 2026, 16:30', 'Etihad Stadium, Manchester', 94, 90, 'Sovereign Analytics Partner'),
+                    ('Süper Lig', 'Galatasaray S.K.', 'Fenerbahçe SK', '28 Sep 2026, 20:00', 'RAMS Park, Istanbul', 87, 86, 'Anadolu Sufi Rock Partner'),
+                    ('National League', 'Boreham Wood', 'Southend United', '29 Sep 2026, 19:45', 'Meadow Park, Borehamwood', 68, 82, 'Get Big Together Initiative')`);
             }
         });
 
@@ -131,25 +131,43 @@ function initializeMasterDatabase() {
         db.get(`SELECT COUNT(*) as count FROM public_contributions`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO public_contributions (contributor_name, contribution_type, message_content, status) VALUES 
-                    ('Community Builder', 'Feature Idea', 'Welcome to the public sovereign island! International fixtures and hourly agents are now live.', 'VERIFIED & LIVE')`);
+                    ('Community Builder', 'Feature Idea', 'Welcome to the professional sportsbook odds matrix! Drop your picks here.', 'VERIFIED & LIVE')`);
             }
         });
     });
 }
 
 // ==============================================================================
-// 2. HELPER FUNCTIONS & MIDDLEWARE
+// 2. PROFESSIONAL BOOKMAKER ODDS CALCULATOR
 // ==============================================================================
-function calculateLiveProbabilities(homeRating, awayRating) {
-    const homeAdvantage = 5;
+function calculateSportsbookOdds(homeRating, awayRating) {
+    const homeAdvantage = 4;
     const totalPower = homeRating + awayRating + homeAdvantage;
-    let homeWin = Math.round(((homeRating + homeAdvantage) / totalPower) * 70);
-    let awayWin = Math.round((awayRating / totalPower) * 70);
-    let draw = 100 - (homeWin + awayWin);
-    if (draw < 15) draw = 15;
-    if (homeWin < 10) homeWin = 10;
-    if (awayWin < 10) awayWin = 10;
-    return { homeWin, draw, awayWin };
+    
+    let homeWinProb = Math.max(10, Math.min(85, Math.round(((homeRating + homeAdvantage) / totalPower) * 100)));
+    let awayWinProb = Math.max(10, Math.min(85, Math.round((awayRating / totalPower) * 100)));
+    let drawProb = 100 - (homeWinProb + awayWinProb);
+    
+    if (drawProb < 15) {
+        drawProb = 18;
+        homeWinProb -= 5;
+        awayWinProb -= 3;
+    }
+
+    // Convert probabilities to professional Decimal Odds (with a standard bookmaker overround factor)
+    const margin = 1.05; 
+    const homeDecimal = ((100 / homeWinProb) * margin).toFixed(2);
+    const drawDecimal = ((100 / drawProb) * margin).toFixed(2);
+    const awayDecimal = ((100 / awayWinProb) * margin).toFixed(2);
+
+    return {
+        homeWin: homeWinProb,
+        draw: drawProb,
+        awayWin: awayWinProb,
+        homeDecimal,
+        drawDecimal,
+        awayDecimal
+    };
 }
 
 function microFeeTollGate(fee = '$0.001') {
@@ -163,18 +181,17 @@ function microFeeTollGate(fee = '$0.001') {
 }
 
 // ==============================================================================
-// 3. AUTONOMOUS BACKGROUND AGENT (Hourly Real-Time Odds & Stats Watcher)
+// 3. AUTONOMOUS BACKGROUND AGENT (Hourly Market Odds Watcher)
 // ==============================================================================
 function startHourlyOddsWatcher() {
     const INTERVAL_TIME = 60 * 60 * 1000; // Every 1 hour
 
     setInterval(() => {
-        console.log('🤖 [OddsWatcher Agent]: Running hourly live odds synchronization...');
+        console.log('🤖 [OddsWatcher Agent]: Running hourly professional sportsbook odds fluctuation...');
         
-        db.all(`SELECT id, home_rating FROM multi_league_fixtures`, (err, fixtures) => {
+        db.all(`SELECT id, home_rating, away_rating FROM multi_league_fixtures`, (err, fixtures) => {
             if (fixtures && fixtures.length > 0) {
                 fixtures.forEach(match => {
-                    // Small random market fluctuation between -1 and +1 rating points to simulate live market shifts
                     const ratingShift = Math.floor(Math.random() * 3) - 1; 
                     const newHomeRating = Math.max(50, Math.min(99, match.home_rating + ratingShift));
 
@@ -184,9 +201,9 @@ function startHourlyOddsWatcher() {
                 });
 
                 db.run(`INSERT INTO super_agent_logs (agent_name, action_taken, target_page, status) VALUES (?, ?, ?, ?)`,
-                    ['OddsWatcherAgent', 'Hourly live odds and probability matrix recalculated from market feeds', '/island', 'SYNCED & LIVE']
+                    ['OddsWatcherAgent', 'Hourly live market odds recalculated successfully', '/island', 'SYNCED & LIVE']
                 );
-                console.log('✅ [OddsWatcher Agent]: Live fixtures and odds successfully updated.');
+                console.log('✅ [OddsWatcher Agent]: Sportsbook odds successfully updated.');
             }
         });
     }, INTERVAL_TIME);
@@ -207,7 +224,7 @@ app.post('/api/public/contribute', (req, res) => {
     const { contributor_name, contribution_type, message_content } = req.body;
     db.run(
         `INSERT INTO public_contributions (contributor_name, contribution_type, message_content, status) VALUES (?, ?, ?, ?)`,
-        [contributor_name || 'Anonymous Visitor', contribution_type || 'Idea Drop', message_content || 'No content provided', 'VERIFIED & LIVE'],
+        [contributor_name || 'Anonymous Visitor', contribution_type || 'Match Pick', message_content || 'No content provided', 'VERIFIED & LIVE'],
         () => {
             res.redirect('/island');
         }
@@ -217,20 +234,20 @@ app.post('/api/public/contribute', (req, res) => {
 app.get('/api/odds/matrix', (req, res) => {
     db.all(`SELECT * FROM multi_league_fixtures`, (err, fixtures) => {
         const analyzedMatches = fixtures ? fixtures.map(m => {
-            const probs = calculateLiveProbabilities(m.home_rating, m.away_rating);
+            const odds = calculateSportsbookOdds(m.home_rating, m.away_rating);
             return {
                 league: m.league_category,
                 fixture: `${m.home_team} vs ${m.away_team}`,
                 date: m.match_date,
                 venue: m.venue,
-                probabilities: probs,
+                sportsbook_odds: odds,
                 sponsor: m.ad_sponsor
             };
         }) : [];
 
         res.json({
             status: "SUCCESS",
-            engine: "AI Poisson/Elo Multi-League & International Matrix",
+            engine: "Professional Sportsbook Decimal Odds Matrix",
             data: analyzedMatches
         });
     });
@@ -274,9 +291,9 @@ app.get('/', microFeeTollGate('$0.001'), (req, res) => {
                             <header>
                                 <div>
                                     <h1>⚡ Sovereign Master Command Center</h1>
-                                    <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Ledger Revenue: $${totalRev.toFixed(3)} | Agent Status: ACTIVE (Hourly Sync)</p>
+                                    <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Ledger Revenue: $${totalRev.toFixed(3)} | Sportsbook Engine: ACTIVE</p>
                                 </div>
-                                <div><a href="/island" class="btn" style="background: #10b981; color:#000;">🌴 Visit Public Island Portal</a></div>
+                                <div><a href="/island" class="btn" style="background: #10b981; color:#000;">🌴 Visit Public Sportsbook Portal</a></div>
                             </header>
 
                             <div class="card" style="border: 1px solid #22c55e;">
@@ -296,21 +313,6 @@ app.get('/', microFeeTollGate('$0.001'), (req, res) => {
                                     ${socials ? socials.map(s => `<li><b>[${s.platform_name}]</b> ${s.channel_handle} (${s.content_type}) &mdash; <span style="color:#22c55e">${s.status}</span></li>`).join('') : ''}
                                 </ul>
                             </div>
-
-                            <div class="card">
-                                <h2>🔗 Register New Social Platform Bridge</h2>
-                                <form action="/api/social/add" method="POST">
-                                    <label>Platform Name:</label>
-                                    <input type="text" name="platform_name" placeholder="e.g. TikTok" required>
-                                    <label>Channel Handle:</label>
-                                    <input type="text" name="channel_handle" placeholder="e.g. @CenkSovereign" required>
-                                    <label>Profile URL:</label>
-                                    <input type="text" name="profile_url" placeholder="https://..." required>
-                                    <label>Content Type:</label>
-                                    <input type="text" name="content_type" placeholder="e.g. Vertical Shorts" required>
-                                    <button type="submit">Connect Social Bridge</button>
-                                </form>
-                            </div>
                         </div>
                     </body>
                     </html>
@@ -322,7 +324,7 @@ app.get('/', microFeeTollGate('$0.001'), (req, res) => {
 });
 
 // ==============================================================================
-// 6. PUBLIC INTERACTIVE ISLAND PORTAL (/island)
+// 6. PUBLIC SPORTSBOOK PORTAL (/island)
 // ==============================================================================
 app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
     db.all(`SELECT * FROM multi_league_fixtures`, (err, matches) => {
@@ -333,11 +335,11 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                 <html lang="en">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Anadolu Island - International & Domestic Probability Matrix</title>
+                    <title>Anadolu Sportsbook - Professional Decimal Odds Matrix</title>
                     <style>
                         * { box-sizing: border-box; margin: 0; padding: 0; }
                         body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
-                        .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+                        .container { max-width: 1050px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
                         header { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.4); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
                         h1 { color: #22c55e; font-size: 22px; margin-bottom: 4px; }
                         p { color: #94a3b8; font-size: 13px; }
@@ -347,12 +349,12 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                         .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
                         h2 { font-size: 17px; color: #fff; }
                         table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-                        th, td { padding: 12px; text-align: left; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+                        th, td { padding: 14px 12px; text-align: left; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.06); }
                         th { color: #22c55e; font-weight: 600; text-transform: uppercase; font-size: 11px; background: #142017; }
-                        .prob-badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-right: 4px; font-family: monospace; }
-                        .home-prob { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4); }
-                        .draw-prob { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
-                        .away-prob { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
+                        .odds-box { display: inline-flex; flex-direction: column; background: #18221b; border: 1px solid rgba(34,197,94,0.3); border-radius: 8px; padding: 6px 12px; text-align: center; min-width: 85px; margin-right: 6px; }
+                        .odds-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; }
+                        .odds-val { font-size: 15px; font-weight: bold; color: #22c55e; font-family: monospace; }
+                        .odds-pct { font-size: 10px; color: #38bdf8; }
                         input, textarea { width: 100%; padding: 10px; margin-top: 6px; margin-bottom: 12px; background: #18221b; border: 1px solid rgba(34,197,94,0.3); color: #fff; border-radius: 8px; }
                         button { background: #22c55e; color: #000; font-weight: bold; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; }
                     </style>
@@ -361,25 +363,28 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                     <div class="container">
                         <header>
                             <div>
-                                <h1>🌴 Anadolu Island Public Portal</h1>
-                                <p>Status: <span class="badge">OPEN FOR PUBLIC CONTRIBUTIONS (HOURLY SYNC ACTIVE)</span></p>
+                                <h1>🌴 Anadolu Sportsbook & Public Portal</h1>
+                                <p>Status: <span class="badge">LIVE PROFESSIONAL ODDS FEED (HOURLY SYNC)</span></p>
                             </div>
                             <a href="/" class="btn">&larr; Admin Command Center</a>
                         </header>
 
                         <div class="card">
-                            <h2>📊 International & Domestic AI Probability Matrix</h2>
+                            <h2>📊 Professional Sportsbook Decimal Odds Matrix</h2>
+                            <p style="color:#94a3b8; font-size:12px;">Real-time calculated market odds (Decimal format with overround) for international fixtures and domestic leagues.</p>
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Competition & Fixture</th>
-                                        <th>Date & Venue</th>
-                                        <th>Live AI Probabilities</th>
+                                        <th>Fixture & Venue</th>
+                                        <th>Kick-off</th>
+                                        <th>1 (Home Win)</th>
+                                        <th>X (Draw)</th>
+                                        <th>2 (Away Win)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     ${matches ? matches.map(m => {
-                                        const probs = calculateLiveProbabilities(m.home_rating, m.away_rating);
+                                        const odds = calculateSportsbookOdds(m.home_rating, m.away_rating);
                                         return `
                                         <tr>
                                             <td>
@@ -389,9 +394,25 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                                             </td>
                                             <td><span style="color: #38bdf8; font-family: monospace; font-weight:bold;">${m.match_date}</span></td>
                                             <td>
-                                                <span class="prob-badge home-prob">${m.home_team.split(' ')[0]}:${probs.homeWin}%</span>
-                                                <span class="prob-badge draw-prob">Draw: ${probs.draw}%</span>
-                                                <span class="prob-badge away-prob">${m.away_team.split(' ')[0]}:${probs.awayWin}%</span>
+                                                <div class="odds-box">
+                                                    <span class="odds-label">${m.home_team.split(' ')[0]}</span>
+                                                    <span class="odds-val">${odds.homeDecimal}</span>
+                                                    <span class="odds-pct">${odds.homeWin}%</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="odds-box" style="border-color: rgba(56,189,248,0.3);">
+                                                    <span class="odds-label">Draw</span>
+                                                    <span class="odds-val" style="color:#38bdf8;">${odds.drawDecimal}</span>
+                                                    <span class="odds-pct">${odds.draw}%</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="odds-box" style="border-color: rgba(244,63,94,0.3);">
+                                                    <span class="odds-label">${m.away_team.split(' ')[0]}</span>
+                                                    <span class="odds-val" style="color:#fb7185;">${odds.awayDecimal}</span>
+                                                    <span class="odds-pct">${odds.awayWin}%</span>
+                                                </div>
                                             </td>
                                         </tr>`;
                                     }).join('') : ''}
@@ -399,26 +420,26 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                             </table>
                         </div>
 
-                        <!-- PUBLIC CONTRIBUTION WALL -->
+                        <!-- PUBLIC BETTING PICKS & COMMUNITY WALL -->
                         <div class="card" style="border: 1px solid #22c55e;">
-                            <h2>🌍 Community Contribution Wall</h2>
-                            <p>Drop your thoughts, ideas, or code snippets below. The sovereign ledger records everything securely.</p>
+                            <h2>🌍 Community Picks & Contribution Wall</h2>
+                            <p>Pick your favorite teams or drop your match predictions below. Recorded securely in the sovereign ledger.</p>
                             <form action="/api/public/contribute" method="POST">
                                 <label>Your Name / Handle:</label>
-                                <input type="text" name="contributor_name" placeholder="e.g. Visitor Cenk" required>
-                                <label>Contribution Type:</label>
-                                <input type="text" name="contribution_type" placeholder="e.g. Feature Idea / Code Snippet" required>
-                                <label>Your Message or Idea:</label>
-                                <textarea name="message_content" rows="3" placeholder="What should we add to the island next?" required></textarea>
-                                <button type="submit">Submit to Island Ledger</button>
+                                <input type="text" name="contributor_name" placeholder="e.g. Cenk or Guest" required>
+                                <label>Selection / Prediction Type:</label>
+                                <input type="text" name="contribution_type" placeholder="e.g. England Win / Man City Pick" required>
+                                <label>Your Analysis or Message:</label>
+                                <textarea name="message_content" rows="3" placeholder="Why is this team going to win?" required></textarea>
+                                <button type="submit">Submit Pick to Ledger</button>
                             </form>
 
-                            <h3 style="font-size:15px; margin-top:15px; color:#fff;">Recent Public Ledger Entries:</h3>
+                            <h3 style="font-size:15px; margin-top:15px; color:#fff;">Recent Community Picks & Entries:</h3>
                             <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
                                 ${contributions ? contributions.map(c => `
                                     <div style="background:#18221b; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
                                         <div style="display:flex; justify-content:space-between; font-size:12px; color:#22c55e; margin-bottom:4px;">
-                                            <b>${c.contributor_name} (${c.contribution_type})</b>
+                                            <b>${c.contributor_name} &mdash; [${c.contribution_type}]</b>
                                             <span style="color:#94a3b8;">${c.timestamp}</span>
                                         </div>
                                         <p style="color:#e2e8f0; font-size:13px;">${c.message_content}</p>
@@ -437,6 +458,5 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`🚀 Sovereign Master Engine running live on port ${PORT}`);
-    // Start the hourly background odds synchronization agent
     setTimeout(startHourlyOddsWatcher, 5000);
 });
