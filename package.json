@@ -1,7 +1,7 @@
 {
-  "name": "crypto-live-tracker",
-  "version": "1.0.0",
-  "description": "Autonomous Sovereign Engine and Live Crypto Tracker with MySQL persistence.",
+  "name": "sovereign-master-engine",
+  "version": "2.0.0",
+  "description": "Massive Multi-Social, Multi-Media Sovereign Engine with MySQL persistence.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
