@@ -1,14 +1,13 @@
 {
   "name": "sovereign-master-engine",
   "version": "2.0.0",
-  "description": "Massive Multi-Social, Multi-Media Sovereign Engine with MySQL persistence.",
+  "description": "Massive Multi-Social Sovereign Engine",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.19.2",
-    "multer": "^1.4.5-lts.1",
-    "mysql2": "^3.9.2"
+    "sqlite3": "^5.1.7"
   }
 }
