@@ -1,6 +1,6 @@
 /**
  * ==============================================================================
- * SOVEREIGN MASTER ENGINE: UNIFIED SPORTSBOOK, DISCORD BRIDGE & VIDEO STUDIO
+ * SOVEREIGN MASTER ENGINE: UNIFIED SPORTSBOOK & DISCORD BRIDGE
  * ==============================================================================
  */
 
@@ -94,7 +94,7 @@ function initializeMasterDatabase() {
             db.get(`SELECT COUNT(*) as count FROM synthesized_upgrades`, (err, row) => {
                 if (row && row.count === 0) {
                     db.run(`INSERT INTO synthesized_upgrades (upgrade_name, source_blueprint, applied_logic, status) VALUES 
-                        ('Shoulder-to-Shoulder Sportsbook v9.0 - Video Studio Active', 'Unified Core', 'Sportsbook + Video Pipeline + Command Center merged.', 'ACTIVE')`);
+                        ('Shoulder-to-Shoulder Sportsbook v10.0 - Streamlined Core', 'Unified Core', 'Sportsbook + Command Center + 4D Sandbox active.', 'ACTIVE')`);
                 }
             });
         });
@@ -131,24 +131,6 @@ function initializeMasterDatabase() {
                 if (row && row.count === 0) {
                     db.run(`INSERT INTO affiliate_tracking (associates_id, item_clicked, referral_source, status) VALUES 
                         ('mrcenk20-21', 'Anadolu Sufi Rock Gear & Books', 'Command Center Portal', 'TRACKING ACTIVE')`);
-                }
-            });
-        });
-
-        // Video Productions Pipeline Table
-        db.run(`CREATE TABLE IF NOT EXISTS video_productions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-            video_title TEXT,
-            match_pairing TEXT,
-            ai_script TEXT,
-            associates_tag TEXT,
-            render_status TEXT
-        )`, () => {
-            db.get(`SELECT COUNT(*) as count FROM video_productions`, (err, row) => {
-                if (row && row.count === 0) {
-                    db.run(`INSERT INTO video_productions (video_title, match_pairing, ai_script, associates_tag, render_status) VALUES 
-                        ('Türkiye vs France - AI Breakdown Short', 'Türkiye vs France', 'Highlighting key ratings and Sufi Rock prediction odds.', 'mrcenk20-21', 'RENDERED & READY')`);
                 }
             });
         });
@@ -262,20 +244,6 @@ app.post('/api/affiliate-track', (req, res) => {
     });
 });
 
-app.post('/api/generate-video', (req, res) => {
-    const { video_title, match_pairing, ai_script } = req.body;
-    const stmt = db.prepare(`INSERT INTO video_productions (video_title, match_pairing, ai_script, associates_tag, render_status) VALUES (?, ?, ?, ?, ?)`);
-    stmt.run(video_title || 'Automated Match Highlight', match_pairing || 'International Showcase', ai_script || 'AI Probability breakdown and music overlay.', 'mrcenk20-21', 'RENDERED & READY', (err) => {
-        stmt.finalize();
-        if (err) {
-            logEvent('VideoStudio', 'ERROR', `Video generation failed: ${err.message}`);
-            return res.status(500).json({ status: 'error', message: err.message });
-        }
-        logEvent('VideoStudio', 'SUCCESS', `Successfully generated video short: [${video_title}]`);
-        res.redirect('/video-studio');
-    });
-});
-
 // ==============================================================================
 // 4. PRIVATE COMMAND CENTER ROUTES (/)
 // ==============================================================================
@@ -317,11 +285,10 @@ app.get('/', (req, res) => {
                             <header>
                                 <div>
                                     <h1>⚓ Anadolu Island Sovereign Command Center</h1>
-                                    <p>Status: <span class="status-badge">ONLINE</span> | Unified Engine & Video Studio</p>
+                                    <p>Status: <span class="status-badge">ONLINE</span> | Streamlined Core Active</p>
                                 </div>
                                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                                     <a href="/island" class="portal-btn" style="background: #22c55e; color: #000; border-color: #22c55e;">⚽ Sportsbook & Lucky Dip</a>
-                                    <a href="/video-studio" class="portal-btn" style="background: #38bdf8; color: #000; border-color: #38bdf8;">🎬 Video Studio</a>
                                     <a href="/pet-project" class="portal-btn" style="background: #a855f7; color: #fff; border-color: #a855f7;">🐾 4D Sandbox</a>
                                 </div>
                             </header>
@@ -443,7 +410,7 @@ app.get('/island', (req, res) => {
                                     </div>
                                     <div class="bet-btn">
                                         <span class="bet-label">${m.away_team} (Away)</span>
-                                        <span class="bet-val" style="color:#fb7185;">${mk.awayDecimal} <span style="font-size:10px; color:#38bdf8;">(${mk.awayWinProb}%)</span></span>
+                                        <span class="bet-val" style="color:#fb7185;">${mk.awayDecimal} <span style="font-size:10px; color:#38bdf8;">(${mk.homeWinProb < mk.awayWinProb ? mk.awayWinProb : mk.awayWinProb}%)</span></span>
                                     </div>
                                 </div>
 
@@ -490,71 +457,7 @@ app.get('/island', (req, res) => {
 });
 
 // ==============================================================================
-// 6. AUTOMATED VIDEO STUDIO ROUTE (/video-studio)
-// ==============================================================================
-app.get('/video-studio', (req, res) => {
-    db.all(`SELECT * FROM video_productions ORDER BY timestamp DESC LIMIT 10`, [], (err, videos) => {
-        res.send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <title>Automated Video Studio - Sovereign Master</title>
-            <style>
-                * { box-sizing: border-box; margin: 0; padding: 0; }
-                body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
-                .container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
-                header { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(56, 189, 248, 0.4); display: flex; justify-content: space-between; align-items: center; }
-                h1 { color: #38bdf8; font-size: 24px; margin-bottom: 6px; }
-                p { color: #94a3b8; font-size: 14px; }
-                .portal-btn { background: #262626; color: #fff; padding: 10px 18px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 13px; border: 1px solid #3f3f46; display: inline-block; }
-                .card { background: #111a14; padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 16px; }
-                h2 { font-size: 17px; color: #fff; }
-                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                th, td { text-align: left; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13px; }
-                th { color: #94a3b8; }
-                .form-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-                input, textarea { background: #16221a; border: 1px solid rgba(56, 189, 248, 0.3); color: #fff; padding: 12px; border-radius: 10px; font-size: 13px; width: 100%; }
-                button { background: #38bdf8; color: #000; font-weight: bold; padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 13px; }
-                button:hover { opacity: 0.9; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <header>
-                    <div>
-                        <h1>🎬 Automated Video Studio Pipeline</h1>
-                        <p>Generate vertical video short scripts & automated audio overlays tagged with your Amazon ID <code>mrcenk20-21</code>.</p>
-                    </div>
-                    <a href="/" class="portal-btn">&larr; Command Center</a>
-                </header>
-
-                <div class="card">
-                    <h2>🎥 Trigger New Video Production</h2>
-                    <form action="/api/generate-video" method="POST" class="form-group">
-                        <input type="text" name="video_title" placeholder="Video Title (e.g., Türkiye vs France Tactical Breakdown)" required>
-                        <input type="text" name="match_pairing" placeholder="Match Pairing (e.g., Türkiye vs France)" required>
-                        <textarea name="ai_script" placeholder="AI Narration Script / Sound Design Notes..." rows="3" required></textarea>
-                        <button type="submit">Render Video Production Short</button>
-                    </form>
-                </div>
-
-                <div class="card">
-                    <h2>📂 Recent Video Productions</h2>
-                    <table>
-                        <tr><th>Timestamp</th><th>Video Title</th><th>Pairing</th><th>Associates Tag</th><th>Status</th></tr>
-                        ${videos ? videos.map(v => `<tr><td>${v.timestamp}</td><td><b>${v.video_title}</b></td><td>${v.match_pairing}</td><td><code>${v.associates_tag}</code></td><td style="color:#38bdf8;">${v.render_status}</td></tr>`).join('') : ''}
-                    </table>
-                </div>
-            </div>
-        </body>
-        </html>
-        `);
-    });
-});
-
-// ==============================================================================
-// 7. AUTONOMOUS 4D SANDBOX ROUTE (/pet-project)
+// 6. AUTONOMOUS 4D SANDBOX ROUTE (/pet-project)
 // ==============================================================================
 app.get('/pet-project', (req, res) => {
     db.all(`SELECT * FROM learning_cycles ORDER BY timestamp DESC LIMIT 10`, [], (err, cycles) => {
@@ -619,7 +522,7 @@ app.get('/pet-project', (req, res) => {
 });
 
 // ==============================================================================
-// 8. SERVER STARTUP LISTENER
+// 7. SERVER STARTUP LISTENER
 // ==============================================================================
 app.listen(PORT, () => {
     console.log(`🚀 Sovereign Master Engine running on port ${PORT}`);
