@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * SOVEREIGN MASTER ENGINE: ULTIMATE UNIFIED ECOSYSTEM EDITION (SQLite)
- * Combined Code: Base Engine + Multi-Social Timeline + Public Community Contribution Wall
+ * Combined Code: Base Engine + Multi-Social Timeline + Public Community Contribution Wall + Multi-League Odds
  * ==============================================================================
  */
 
@@ -43,7 +43,7 @@ function initializeMasterDatabase() {
         db.get(`SELECT COUNT(*) as count FROM super_agent_logs`, (err, row) => {
             if (row && row.count === 0) {
                 db.run(`INSERT INTO super_agent_logs (agent_name, action_taken, target_page, status) VALUES 
-                    ('ProbabilityEngine', 'Calculating live match odds and statistical distributions', '/island', 'ACTIVE'),
+                    ('ProbabilityEngine', 'Calculating live multi-league odds across Premier League, National League & Süper Lig', '/island', 'ACTIVE'),
                     ('MultiSocialBridge', 'Syncing YouTube Shorts, Facebook Reels & Instagram feeds', '/island', 'ONLINE'),
                     ('CommunityAgent', 'Managing public contribution drop ledger and visitor logs', '/island', 'ACTIVE')`);
             }
@@ -75,26 +75,25 @@ function initializeMasterDatabase() {
             status TEXT
         )`);
 
-        // Live Matches
-        db.run(`CREATE TABLE IF NOT EXISTS live_matches (
+        // Multi-League Fixtures & Probability Table
+        db.run(`CREATE TABLE IF NOT EXISTS multi_league_fixtures (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            league_name TEXT,
+            league_category TEXT,
             home_team TEXT,
             away_team TEXT,
             match_date TEXT,
-            match_score TEXT,
             venue TEXT,
             home_rating INT,
             away_rating INT,
-            status TEXT,
             ad_sponsor TEXT
         )`);
 
-        db.get(`SELECT COUNT(*) as count FROM live_matches`, (err, row) => {
+        db.get(`SELECT COUNT(*) as count FROM multi_league_fixtures`, (err, row) => {
             if (row && row.count === 0) {
-                db.run(`INSERT INTO live_matches (league_name, home_team, away_team, match_date, match_score, venue, home_rating, away_rating, status, ad_sponsor) VALUES 
-                    ('Süper Lig', 'Galatasaray S.K.', 'Kasımpaşa S.K.', '09 Oct 2026, 18:00', '2 - 1', 'RAMS Park, Istanbul', 85, 72, 'PLAYING', 'Anadolu Sufi Rock Partner'),
-                    ('Süper Lig', 'Çaykur Rizespor', 'Fenerbahçe SK', '10 Oct 2026, 17:00', '0 - 0', 'Caykur Didi Stadium, Rize', 70, 84, 'UPCOMING', 'Get Big Together Initiative')`);
+                db.run(`INSERT INTO multi_league_fixtures (league_category, home_team, away_team, match_date, venue, home_rating, away_rating, ad_sponsor) VALUES 
+                    ('Premier League', 'Manchester City', 'Arsenal', '27 Sep 2026, 16:30', 'Etihad Stadium, Manchester', 92, 90, 'Sovereign Analytics Partner'),
+                    ('Süper Lig', 'Galatasaray S.K.', 'Fenerbahçe SK', '28 Sep 2026, 20:00', 'RAMS Park, Istanbul', 86, 85, 'Anadolu Sufi Rock Partner'),
+                    ('National League', 'Boreham Wood', 'Southend United', '29 Sep 2026, 19:45', 'Meadow Park, Borehamwood', 72, 70, 'Get Big Together Initiative')`);
             }
         });
 
@@ -117,27 +116,7 @@ function initializeMasterDatabase() {
             }
         });
 
-        // Sovereign Embedded Timeline Feed
-        db.run(`CREATE TABLE IF NOT EXISTS sovereign_timeline (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-            source_platform TEXT,
-            target_platform TEXT,
-            media_url TEXT,
-            embed_code TEXT,
-            title TEXT,
-            author TEXT,
-            syndication_status TEXT
-        )`);
-
-        db.get(`SELECT COUNT(*) as count FROM sovereign_timeline`, (err, row) => {
-            if (row && row.count === 0) {
-                db.run(`INSERT INTO sovereign_timeline (source_platform, target_platform, media_url, embed_code, title, author, syndication_status) VALUES 
-                    ('YouTube', 'All Networks', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', '<iframe width="100%" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Anatolian Sufi Rock Poetry Session" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 12px; background: #000;"></iframe>', 'Anatolian Sufi Rock Poetry Session', 'Cenk (Sovereign Admin)', 'LIVE STREAM ACTIVE')`);
-            }
-        });
-
-        // NEW: Public Community Contributions Wall (Allows public users to drop updates/ideas)
+        // Public Community Contributions Wall
         db.run(`CREATE TABLE IF NOT EXISTS public_contributions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -181,22 +160,6 @@ function microFeeTollGate(fee = '$0.001') {
     };
 }
 
-function generateEmbedHtml(url, title) {
-    if (!url) return `<div style="padding:20px; color:#94a3b8;">No media attached</div>`;
-    if (url.includes('youtube.com') || url.includes('youtu.be')) {
-        let videoId = '';
-        if (url.includes('v=')) {
-            videoId = url.split('v=')[1]?.split('&')[0];
-        } else if (url.includes('youtu.be/')) {
-            videoId = url.split('youtu.be/')[1]?.split('?')[0];
-        }
-        if (videoId) {
-            return `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}" title="${title}" frameborder="0" allowfullscreen style="border-radius: 12px; background: #000;"></iframe>`;
-        }
-    }
-    return `<div style="background:#18221b; padding:20px; border-radius:12px; text-align:center; border:1px solid rgba(34,197,94,0.3);"><a href="${url}" target="_blank" style="color:#38bdf8; text-decoration:underline;">Open Media Stream &rarr;</a></div>`;
-}
-
 // ==============================================================================
 // 3. API ROUTES & PUBLIC CONTRIBUTIONS
 // ==============================================================================
@@ -217,6 +180,29 @@ app.post('/api/public/contribute', (req, res) => {
             res.redirect('/island');
         }
     );
+});
+
+// Multi-League JSON Odds API Endpoint
+app.get('/api/odds/matrix', (req, res) => {
+    db.all(`SELECT * FROM multi_league_fixtures`, (err, fixtures) => {
+        const analyzedMatches = fixtures ? fixtures.map(m => {
+            const probs = calculateLiveProbabilities(m.home_rating, m.away_rating);
+            return {
+                league: m.league_category,
+                fixture: `${m.home_team} vs ${m.away_team}`,
+                date: m.match_date,
+                venue: m.venue,
+                probabilities: probs,
+                sponsor: m.ad_sponsor
+            };
+        }) : [];
+
+        res.json({
+            status: "SUCCESS",
+            engine: "AI Poisson/Elo Multi-League Matrix",
+            data: analyzedMatches
+        });
+    });
 });
 
 // ==============================================================================
@@ -308,7 +294,7 @@ app.get('/', microFeeTollGate('$0.001'), (req, res) => {
 // 5. PUBLIC INTERACTIVE ISLAND PORTAL (/island)
 // ==============================================================================
 app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
-    db.all(`SELECT * FROM live_matches`, (err, matches) => {
+    db.all(`SELECT * FROM multi_league_fixtures`, (err, matches) => {
         db.all(`SELECT * FROM social_channels`, (err, socials) => {
             db.all(`SELECT * FROM public_contributions ORDER BY timestamp DESC LIMIT 10`, (err, contributions) => {
                 res.send(`
@@ -316,7 +302,7 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                 <html lang="en">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Anadolu Island - Public Community & Probability Engine</title>
+                    <title>Anadolu Island - Public Community & Multi-League Probability Engine</title>
                     <style>
                         * { box-sizing: border-box; margin: 0; padding: 0; }
                         body { font-family: -apple-system, sans-serif; background: #070908; color: #e2e8f0; padding: 30px; }
@@ -325,6 +311,7 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                         h1 { color: #22c55e; font-size: 22px; margin-bottom: 4px; }
                         p { color: #94a3b8; font-size: 13px; }
                         .badge { background: #22c55e; color: #000; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 11px; }
+                        .league-tag { background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid rgba(56, 189, 248, 0.3); display: inline-block; margin-bottom: 4px; }
                         .btn { background: #1f2937; color: #fff; padding: 8px 14px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 12px; border: 1px solid #374151; }
                         .card { background: #111a14; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
                         h2 { font-size: 17px; color: #fff; }
@@ -350,11 +337,11 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                         </header>
 
                         <div class="card">
-                            <h2>⚽ Süper Lig Fixtures & Live Probability Engine</h2>
+                            <h2>📊 Multi-League AI Probability Matrix (Premier League, National League & Süper Lig)</h2>
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Fixture & Venue</th>
+                                        <th>League & Fixture</th>
                                         <th>Date & Time</th>
                                         <th>Calculated Probabilities</th>
                                     </tr>
@@ -364,7 +351,11 @@ app.get('/island', microFeeTollGate('$0.001'), (req, res) => {
                                         const probs = calculateLiveProbabilities(m.home_rating, m.away_rating);
                                         return `
                                         <tr>
-                                            <td><b>${m.home_team} vs${m.away_team}</b><br><span style="color:#94a3b8; font-size:11px;">${m.venue}</span></td>
+                                            <td>
+                                                <span class="league-tag">${m.league_category}</span><br>
+                                                <b>${m.home_team} vs${m.away_team}</b><br>
+                                                <span style="color:#94a3b8; font-size:11px;">${m.venue}</span>
+                                            </td>
                                             <td><span style="color: #38bdf8; font-family: monospace; font-weight:bold;">${m.match_date}</span></td>
                                             <td>
                                                 <span class="prob-badge home-prob">${m.home_team.split(' ')[0]}:${probs.homeWin}%</span>
