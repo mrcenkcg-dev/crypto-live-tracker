@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
- * SOVEREIGN MASTER ENGINE: UNIFIED PRODUCTION SERVER v2.3
- * (Real Audio Streaming + Dynamic Live Score Engine + Full League Fixtures)
+ * SOVEREIGN MASTER ENGINE: UNIFIED PRODUCTION SERVER v2.3.1
+ * (Fixed SQLite Venue String Escaping)
  * ==============================================================================
  */
 
@@ -25,7 +25,7 @@ const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
         console.error('❌ Database connection error:', err.message);
     } else {
-        console.log('✅ Connected to Unified Sovereign Master DB v2.3.');
+        console.log('✅ Connected to Unified Sovereign Master DB v2.3.1.');
         initializeLeanDatabase();
         startAutonomousWorker();
     }
@@ -75,7 +75,7 @@ function initializeLeanDatabase() {
             db.run(`DELETE FROM music_tracks`);
             db.run(`INSERT INTO music_tracks (track_title, artist, genre, duration, audio_url) VALUES 
                 ('Anatolian Psychedelic Jam #1', 'Cenk & Lyria 3 Synth Ensemble', 'Anatolian Psychedelic Sufi Rock', '3:45', 'https://commondatastorage.googleapis.com/codesign-bucket-test/sample-music-1.mp3'),
-                ('Yunus Emre Sufi Meditation', 'Traditional Bağlama & Ambient Cloud', 'Sufi Folk Fusion', '4:12', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'),
+                ('Yunus Emre Sufi Meditation', 'Traditional Baglama & Ambient Cloud', 'Sufi Folk Fusion', '4:12', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'),
                 ('Anatolian Highway Groove', 'Three Monkeys Live Band', 'Anatolian Rock', '3:20', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3')`);
         });
 
@@ -95,23 +95,16 @@ function initializeLeanDatabase() {
         )`, () => {
             db.run(`DELETE FROM multi_league_fixtures`);
             db.run(`INSERT INTO multi_league_fixtures (league_category, home_team, away_team, match_minute, home_goals, away_goals, venue, home_rating, away_rating, ad_sponsor) VALUES 
-                -- International
-                ('UEFA Nations League', 'Türkiye', 'France', '74\'', 1, 1, 'RAMS Park, Istanbul', 86, 91, 'Anadolu Partner'),
-                ('UEFA Nations League', 'Scotland', 'Portugal', '62\'', 0, 2, 'Hampden Park, Glasgow', 82, 89, 'Sovereign Global'),
-                
-                -- Scottish Premiership
-                ('Scottish Premiership', 'Celtic', 'Rangers', 'Live (35\')', 1, 0, 'Celtic Park, Glasgow', 85, 84, 'Glasgow Partner'),
-                ('Scottish Premiership', 'Hearts', 'Aberdeen', 'Tonight, 19:45', 0, 0, 'Tynecastle Park, Edinburgh', 78, 77, 'Scottish Partner'),
-                ('Scottish Premiership', 'Hibernian', 'St. Mirren', 'Tonight, 19:45', 0, 0, 'Easter Road, Edinburgh', 76, 75, 'Edinburgh Partner'),
-
-                -- English Premier League
-                ('English Premier League', 'Manchester City', 'Arsenal', 'Live (81\')', 2, 2, 'Etihad Stadium, Manchester', 92, 91, 'EPL Global Partner'),
-                ('English Premier League', 'Liverpool', 'Manchester United', 'Tonight, 20:00', 0, 0, 'Anfield, Liverpool', 90, 88, 'Merseyside Partner'),
-                ('English Premier League', 'Chelsea', 'Tottenham Hotspur', 'Tonight, 20:00', 0, 0, 'Stamford Bridge, London', 87, 86, 'London Partner'),
-
-                -- Trendyol Süper Lig
-                ('Süper Lig', 'Galatasaray S.K.', 'Fenerbahçe SK', 'Live (55\')', 2, 1, 'RAMS Park, Istanbul', 87, 86, 'Istanbul Derbi Partner'),
-                ('Süper Lig', 'Beşiktaş J.K.', 'Trabzonspor', 'Tonight, 21:00', 0, 0, 'Tupras Stadium, Istanbul', 85, 84, 'Anatolian Partner')`);
+                ('UEFA Nations League', 'Turkiye', 'France', '74''', 1, 1, 'RAMS Park Istanbul', 86, 91, 'Anadolu Partner'),
+                ('UEFA Nations League', 'Scotland', 'Portugal', '62''', 0, 2, 'Hampden Park Glasgow', 82, 89, 'Sovereign Global'),
+                ('Scottish Premiership', 'Celtic', 'Rangers', 'Live (35'')', 1, 0, 'Celtic Park Glasgow', 85, 84, 'Glasgow Partner'),
+                ('Scottish Premiership', 'Hearts', 'Aberdeen', 'Tonight 19:45', 0, 0, 'Tynecastle Park Edinburgh', 78, 77, 'Scottish Partner'),
+                ('Scottish Premiership', 'Hibernian', 'St. Mirren', 'Tonight 19:45', 0, 0, 'Easter Road Edinburgh', 76, 75, 'Edinburgh Partner'),
+                ('English Premier League', 'Manchester City', 'Arsenal', 'Live (81'')', 2, 2, 'Etihad Stadium Manchester', 92, 91, 'EPL Global Partner'),
+                ('English Premier League', 'Liverpool', 'Manchester United', 'Tonight 20:00', 0, 0, 'Anfield Liverpool', 90, 88, 'Merseyside Partner'),
+                ('English Premier League', 'Chelsea', 'Tottenham Hotspur', 'Tonight 20:00', 0, 0, 'Stamford Bridge London', 87, 86, 'London Partner'),
+                ('Süper Lig', 'Galatasaray S.K.', 'Fenerbahce SK', 'Live (55'')', 2, 1, 'RAMS Park Istanbul', 87, 86, 'Istanbul Derbi Partner'),
+                ('Süper Lig', 'Besiktas J.K.', 'Trabzonspor', 'Tonight 21:00', 0, 0, 'Tupras Stadium Istanbul', 85, 84, 'Anatolian Partner')`);
         });
 
         // User Bets Table
@@ -162,7 +155,6 @@ function logEvent(module, status, message) {
 // 2. AUTONOMOUS LIVE SCORE & FEED WORKER
 // ==============================================================================
 function startAutonomousWorker() {
-    // Simulate live goal ticks every 45 seconds for active matches
     setInterval(() => {
         db.run(`UPDATE multi_league_fixtures SET home_goals = home_goals + 1 WHERE match_minute LIKE 'Live%' AND id % 2 = 0`);
         db.run(`UPDATE multi_league_fixtures SET away_goals = away_goals + 1 WHERE match_minute LIKE 'Live%' AND id % 2 != 0`);
@@ -255,7 +247,7 @@ app.get('/', (req, res) => {
                     <header>
                         <div>
                             <h1>🐵 Three Monkeys Sovereign Command Center</h1>
-                            <p>Status: <span class="status-badge">LIVE 24/7 CLOUD CLUSTER v2.3</span> | Associate ID: <b>mrcenk20-21</b></p>
+                            <p>Status: <span class="status-badge">LIVE 24/7 CLOUD CLUSTER v2.3.1</span> | Associate ID: <b>mrcenk20-21</b></p>
                         </div>
                     </header>
 
@@ -528,7 +520,7 @@ app.get('/island', (req, res) => {
                 <header>
                     <div>
                         <h1>⚽ Multi-League Sportsbook & Live Score Engine</h1>
-                        <p>Status: <span class="badge">LIVE CLOUD STREAM v2.3</span></p>
+                        <p>Status: <span class="badge">LIVE CLOUD STREAM v2.3.1</span></p>
                     </div>
                     <a href="/" class="portal-btn">&larr; Command Center</a>
                 </header>
@@ -624,5 +616,5 @@ app.get('/island', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Unified Sovereign Master Engine v2.3 running on port ${PORT}`);
+    console.log(`🚀 Unified Sovereign Master Engine v2.3.1 running on port ${PORT}`);
 });
