@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * SOVEREIGN MASTER ENGINE: UNIFIED PRODUCTION SERVER v2.3.1
- * (Fixed SQLite Venue String Escaping)
+ * (Fixed SQLite Venue String Escaping & Truncation Repaired)
  * ==============================================================================
  */
 
@@ -79,7 +79,7 @@ function initializeLeanDatabase() {
                 ('Anatolian Highway Groove', 'Three Monkeys Live Band', 'Anatolian Rock', '3:20', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3')`);
         });
 
-        // Full Multi-League Fixtures (Scottish, Premier League, Süper Lig & Internationals)
+        // Full Multi-League Fixtures
         db.run(`CREATE TABLE IF NOT EXISTS multi_league_fixtures (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             league_category TEXT,
@@ -284,7 +284,7 @@ app.get('/', (req, res) => {
                                     <td><b>${b.match_title}</b></td>
                                     <td style="color:#22c55e;">${b.selection}</td>
                                     <td>${b.odds}</td>
-                                    <td>$${b.stake}</td>                                     <td style="color:#38bdf8;">$${b.payout}</td>
+                                    <td>$${b.stake}</td>                                    <td style="color:#38bdf8;">$${b.payout}</td>
                                 </tr>
                             `).join('') : '<tr><td colspan="6" style="color:#94a3b8;">No bets placed yet. Visit the live sportsbook to test!</td></tr>'}
                         </table>
@@ -546,67 +546,57 @@ app.get('/island', (req, res) => {
                                     </div>
                                 </div>
                                 <div class="odds-row">
-                                    <button class="odds-btn" onclick="selectBet('${matchTitle}', '${m.home_team} Win', '${mk.homeDecimal}')">1: ${m.home_team} <br><b style="font-size:14px;">${mk.homeDecimal}</b></button>
-                                    <button class="odds-btn" onclick="selectBet('${matchTitle}', 'Draw (X)', '${mk.drawDecimal}')">X: Draw <br><b style="font-size:14px; color:#38bdf8;">${mk.drawDecimal}</b></button>
-                                    <button class="odds-btn" onclick="selectBet('${matchTitle}', '${m.away_team} Win', '${mk.awayDecimal}')">2: ${m.away_team} <br><b style="font-size:14px; color:#fb7185;">${mk.awayDecimal}</b></button>
+                                    <button class="odds-btn" onclick="placeBet('${matchTitle}', '${m.home_team} Win', '${mk.homeDecimal}')">🏠 ${m.home_team} Win<br><b>${mk.homeDecimal}</b></button>
+                                    <button class="odds-btn" onclick="placeBet('${matchTitle}', 'Draw', '${mk.drawDecimal}')">🤝 Draw<br><b>${mk.drawDecimal}</b></button>
+                                    <button class="odds-btn" onclick="placeBet('${matchTitle}', '${m.away_team} Win', '${mk.awayDecimal}')">✈️ ${m.away_team} Win<br><b>${mk.awayDecimal}</b></button>
                                 </div>
-                            </div>`;
-                        }).join('') : ''}
+                            </div>
+                            `;
+                        }).join('') : '<p>No active fixtures found.</p>'}
                     </div>
                 </div>
 
-                <div class="card slip-box">
-                    <h2>🎟️ Active Betting Slip</h2>
-                    <div id="slip-content" style="margin-top: 10px; font-size: 13px; color: #94a3b8;">
-                        Select a live odd above to populate your betting slip.
+                <div class="slip-box">
+                    <h2 style="color:#38bdf8; margin-bottom:10px;">🎟️ Quick Bet Slip</h2>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <input type="text" id="slipMatch" placeholder="Select a match..." readonly style="flex: 2; min-width: 200px;">
+                        <input type="text" id="slipSelection" placeholder="Selection" readonly style="flex: 1; min-width: 120px;">
+                        <input type="text" id="slipOdds" placeholder="Odds" readonly style="width: 80px;">
+                        <input type="number" id="slipStake" placeholder="Stake ($)" value="10" style="width: 100px;">
+                        <button onclick="submitBet()" style="background:#22c55e; color:#000; border:none; padding: 9px 18px; border-radius:8px; font-weight:bold; cursor:pointer;">Place Bet</button>
                     </div>
                 </div>
             </div>
 
             <script>
-                let currentBet = null;
-
-                function selectBet(match, selection, odds) {
-                    currentBet = { match, selection, odds };
-                    document.getElementById('slip-content').innerHTML = \`
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <div>Match: <b>\${match}</b></div>
-                            <div>Selection: <b style="color:#22c55e;">\${selection}</b> @ \${odds}</div>
-                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                                <label>Stake ($):</label>
-                                <input type="number" id="stake-input" value="10" min="1" style="width: 100px;" oninput="updatePayout(\${odds})">
-                                <span>Estimated Payout: <b id="payout-display" style="color:#38bdf8;">$\${(10 * parseFloat(odds)).toFixed(2)}</b></span>
-                            </div>
-                            <button onclick="placeBet()" style="background:#22c55e; color:#000; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:5px;">Lock In Live Bet & Save</button>
-                        </div>
-                    \`;
+                function placeBet(match, selection, odds) {
+                    document.getElementById('slipMatch').value = match;
+                    document.getElementById('slipSelection').value = selection;
+                    document.getElementById('slipOdds').value = odds;
                 }
 
-                function updatePayout(odds) {
-                    const stake = document.getElementById('stake-input').value || 0;
-                    document.getElementById('payout-display').innerText = '$' + (stake * odds).toFixed(2);
-                }
+                function submitBet() {
+                    const match_title = document.getElementById('slipMatch').value;
+                    const selection = document.getElementById('slipSelection').value;
+                    const odds = document.getElementById('slipOdds').value;
+                    const stake = document.getElementById('slipStake').value;
 
-                function placeBet() {
-                    if (!currentBet) return;
-                    const stake = document.getElementById('stake-input').value;
-                    
+                    if (!match_title || !selection) {
+                        alert('Please select a betting market first by clicking one of the odds buttons.');
+                        return;
+                    }
+
                     fetch('/api/place-bet', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            match_title: currentBet.match,
-                            selection: currentBet.selection,
-                            odds: currentBet.odds,
-                            stake: stake
-                        })
+                        body: JSON.stringify({ match_title, selection, odds, stake })
                     })
                     .then(res => res.json())
                     .then(data => {
                         alert(data.message);
-                        window.location.href = '/island';
+                        if(data.status === 'success') location.reload();
                     })
-                    .catch(err => alert('Error placing bet'));
+                    .catch(err => alert('Error placing bet: ' + err));
                 }
             </script>
         </body>
@@ -616,5 +606,5 @@ app.get('/island', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Unified Sovereign Master Engine v2.3.1 running on port ${PORT}`);
+    console.log(`🚀 Sovereign Master Engine running on port ${PORT}`);
 });
