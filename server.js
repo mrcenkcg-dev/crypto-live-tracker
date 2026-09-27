@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 10000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ==============================================================================
 // DATABASE SETUP (Users, Tracks, Mix Categories)
@@ -29,14 +30,12 @@ const db = new sqlite3.Database(dbFile, (err) => {
 
 function initializeMusicDatabase() {
     db.serialize(() => {
-        // Users Table for Free Membership
         db.run(`CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
             email TEXT UNIQUE
         )`);
 
-        // Music Tracks Table with Categories
         db.run(`CREATE TABLE IF NOT EXISTS music_tracks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -75,6 +74,11 @@ app.post('/api/join', (req, res) => {
         }
         res.redirect('/');
     });
+});
+
+// Health check endpoint for Render
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
 });
 
 // ==============================================================================
@@ -161,7 +165,7 @@ app.get('/', (req, res) => {
 
             <!-- Main Stream -->
             <main>
-                <topbar style="display: flex; justify-content: space-between; width: 100%;">
+                <div style="background: #101010; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #282828; position: sticky; top: 0; z-index: 10;">
                     <form action="/" method="GET" class="search-bar">
                         <span>🔍</span>
                         <input type="text" name="q" value="${searchQuery}" placeholder="Search artists, songs, Barış Manço, Beatles...">
@@ -171,7 +175,7 @@ app.get('/', (req, res) => {
                         <input type="email" name="email" placeholder="Enter email to join free" required>
                         <button type="submit" class="btn-green">Join Free</button>
                     </form>
-                </topbar>
+                </div>
 
                 <div class="content-body">
                     <!-- Mix List Categories -->
@@ -223,5 +227,6 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
+    console.log(`Goodbye`); // Updated print statement as requested!
     console.log(`🎧 Sovereign Free Music Hub running on port ${PORT}`);
 });
