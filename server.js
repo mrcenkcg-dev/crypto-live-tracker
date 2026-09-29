@@ -1,154 +1,180 @@
 const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 3000;
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// In-memory store (Zero database compilation errors!)
-const musicTracks = [
-    { id: 1, track_title: 'Anatolian Psychedelic Jam', artist: 'Barış Manço & Friends', category: 'Anatolian Psychedelic & Folk', duration: '3:45', audio_url: 'https://commondatastorage.googleapis.com/codesign-bucket-test/sample-music-1.mp3' },
-    { id: 2, track_title: 'Yunus Emre Sufi Meditation', artist: 'Traditional Baglama', category: 'Anatolian Psychedelic & Folk', duration: '4:12', audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' },
-    { id: 3, track_title: 'Billie Jean Classic Groove', artist: 'Michael Jackson', category: 'Pop Hits & Timeless Anthems', duration: '4:54', audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
-    { id: 4, track_title: 'Hey Jude Anthem', artist: 'The Beatles', category: 'Classic & 1950s Gold', duration: '4:31', audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
-    { id: 5, track_title: 'Old School 90s Beat', artist: 'Classic Hip Hop Crew', category: 'Classic Hip Hop', duration: '3:15', audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
-    { id: 6, track_title: 'Future 2026 Synth Vibe', artist: 'Modern Cloud Artist', category: 'Modern 2026 Mixes', duration: '3:30', audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3' }
-];
-
-const registeredUsers = [];
-
-// API: Join Free
-app.post('/api/join', (req, res) => {
-    const { email } = req.body;
-    if (email && !registeredUsers.includes(email)) {
-        registeredUsers.push(email);
+// Database Setup & Connection
+const dbFile = path.join(__dirname, 'sovereign_master.db');
+const db = new sqlite3.Database(dbFile, (err) => {
+    if (err) {
+        console.error('❌ Database connection error:', err.message);
+    } else {
+        console.log('✅ Connected to Sovereign Master DB (Unified Server).');
+        initializeDatabase();
+        startAutonomousWorker(db);
     }
-    res.redirect('/');
 });
 
-// Main Spotify-Style UI
-app.get('/', (req, res) => {
-    const searchQuery = (req.query.q || '').toLowerCase();
-    const categoryQuery = req.query.category || '';
+// Database Table Initialization
+function initializeDatabase() {
+    db.serialize(() => {
+        db.run(`CREATE TABLE IF NOT EXISTS system_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            module_name TEXT,
+            status TEXT,
+            message TEXT
+        )`);
 
-    let tracks = musicTracks;
+        db.run(`CREATE TABLE IF NOT EXISTS harvested_deals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            title TEXT,
+            link TEXT,
+            source_feed TEXT,
+            price_extracted TEXT,
+            status TEXT DEFAULT 'PENDING'
+        )`);
 
-    if (searchQuery) {
-        tracks = tracks.filter(t => 
-            t.track_title.toLowerCase().includes(searchQuery) || 
-            t.artist.toLowerCase().includes(searchQuery)
-        );
+        db.run(`CREATE TABLE IF NOT EXISTS music_tracks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            track_title TEXT,
+            artist TEXT,
+            genre TEXT,
+            duration TEXT,
+            audio_url TEXT
+        )`);
+
+        db.run(`CREATE TABLE IF NOT EXISTS multi_league_fixtures (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            league_category TEXT,
+            home_team TEXT,
+            away_team TEXT,
+            match_minute TEXT,
+            home_goals INT,
+            away_goals INT,
+            venue TEXT,
+            home_rating INT,
+            away_rating INT,
+            ad_sponsor TEXT
+        )`);
+
+        db.run(`CREATE TABLE IF NOT EXISTS user_bets (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            match_title TEXT,
+            selection TEXT,
+            odds TEXT,
+            stake TEXT,
+            payout TEXT,
+            status TEXT DEFAULT 'PENDING'
+        )`);
+
+        db.run(`CREATE TABLE IF NOT EXISTS learning_cycles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            learning_cycle INTEGER,
+            experiment_title TEXT,
+            approval_status TEXT,
+            agent_hypothesis TEXT,
+            sandbox_result TEXT,
+            tested_at TEXT
+        )`);
+    });
+}
+
+// System Logging Helper
+function logEvent(module, status, message) {
+    try {
+        const stmt = db.prepare(`INSERT INTO system_logs (module_name, status, message) VALUES (?, ?, ?)`);
+        stmt.run(module, status, message);
+        stmt.finalize();
+    } catch (dbError) {
+        console.error('⚠️ Log error ->', dbError.message);
+    }
+}
+
+// Autonomous Worker Process
+function startAutonomousWorker(database) {
+    setInterval(() => {
+        database.run(`UPDATE multi_league_fixtures SET home_goals = home_goals + 1 WHERE match_minute LIKE 'Live%' AND id % 2 = 0`);
+        database.run(`UPDATE multi_league_fixtures SET away_goals = away_goals + 1 WHERE match_minute LIKE 'Live%' AND id % 2 != 0`);
+    }, 45000);
+}
+
+// In-Play Odds Calculator
+function calculateInPlayMarkets(homeRating, awayRating) {
+    const homeAdvantage = 5;
+    const totalPower = homeRating + awayRating + homeAdvantage;
+    
+    let rawHomeWin = ((homeRating + homeAdvantage) / totalPower) * 100;
+    let rawAwayWin = (awayRating / totalPower) * 100;
+
+    let homeWinProb, awayWinProb;
+    if (rawHomeWin >= rawAwayWin) {
+        homeWinProb = Math.round(55 + (Math.random() * 6));
+        awayWinProb = Math.round(100 - homeWinProb - 20);
+    } else {
+        awayWinProb = Math.round(55 + (Math.random() * 6));
+        homeWinProb = Math.round(100 - awayWinProb - 20);
     }
 
-    if (categoryQuery) {
-        tracks = tracks.filter(t => t.category === categoryQuery);
-    }
+    let drawProb = 100 - (homeWinProb + awayWinProb);
+    if (drawProb < 12) drawProb = 15;
 
-    res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Sovereign Music - Free Streaming Hub</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            * { box-sizing: border-box; margin: 0; padding: 0; }
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #121212; color: #fff; display: flex; height: 100vh; overflow: hidden; }
-            aside { width: 240px; background: #000; padding: 24px; display: flex; flex-direction: column; gap: 24px; border-right: 1px solid #282828; }
-            aside h2 { color: #1db954; font-size: 20px; }
-            .nav-links { display: flex; flex-direction: column; gap: 12px; }
-            .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 14px; font-weight: bold; }
-            .nav-links a:hover { color: #fff; }
-            main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: #121212; }
-            .topbar { background: #101010; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #282828; position: sticky; top: 0; z-index: 10; }
-            .search-bar { display: flex; background: #282828; border-radius: 500px; padding: 10px 16px; width: 350px; align-items: center; gap: 10px; }
-            .search-bar input { background: none; border: none; color: #fff; font-size: 14px; outline: none; width: 100%; }
-            .signup-box { display: flex; gap: 10px; align-items: center; }
-            .signup-box input { background: #282828; border: 1px solid #3e3e3e; color: #fff; padding: 8px 14px; border-radius: 500px; font-size: 13px; outline: none; }
-            .btn-green { background: #1db954; color: #000; font-weight: bold; border: none; padding: 8px 18px; border-radius: 500px; cursor: pointer; font-size: 13px; }
-            .content-body { padding: 32px; display: flex; flex-direction: column; gap: 32px; }
-            .category-row { display: flex; gap: 12px; flex-wrap: wrap; }
-            .cat-pill { background: #282828; color: #fff; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; }
-            .cat-pill:hover, .cat-pill.active { background: #fff; color: #000; }
-            h3 { font-size: 22px; margin-bottom: 16px; }
-            .track-table { width: 100%; border-collapse: collapse; }
-            .track-table th { text-align: left; color: #b3b3b3; font-size: 12px; border-bottom: 1px solid #282828; padding-bottom: 10px; text-transform: uppercase; }
-            .track-table td { padding: 14px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
-            audio { height: 36px; width: 220px; }
-        </style>
-    </head>
-    <body>
-        <aside>
-            <h2>🎧 Sovereign Music</h2>
-            <div class="nav-links">
-                <a href="/">🏠 Home Feed</a>
-                <a href="/?category=Anatolian+Psychedelic+%26+Folk">🎸 Anatolian Psychedelic</a>
-                <a href="/?category=Pop+Hits+%26+Timeless+Anthems">⭐ Pop & Classics</a>
-                <a href="/?category=Classic+Hip+Hop">🎤 Classic Hip Hop</a>
-                <a href="/?category=Modern+2026+Mixes">🚀 2026 Modern Mixes</a>
-            </div>
-        </aside>
+    const margin = 1.04;
+    const homeDecimal = ((100 / homeWinProb) * margin).toFixed(2);
+    const drawDecimal = ((100 / drawProb) * margin).toFixed(2);
+    const awayDecimal = ((100 / awayWinProb) * margin).toFixed(2);
 
-        <main>
-            <div class="topbar">
-                <form action="/" method="GET" class="search-bar">
-                    <span>🔍</span>
-                    <input type="text" name="q" value="${req.query.q || ''}" placeholder="Search artists, songs...">
-                </form>
-                
-                <form action="/api/join" method="POST" class="signup-box">
-                    <input type="email" name="email" placeholder="Enter email to join free" required>
-                    <button type="submit" class="btn-green">Join Free</button>
-                </form>
-            </div>
+    return { homeDecimal, drawDecimal, awayDecimal };
+}
 
-            <div class="content-body">
-                <div>
-                    <h3 style="font-size: 16px; color: #b3b3b3; margin-bottom: 12px;">Browse Mix Categories</h3>
-                    <div class="category-row">
-                        <a href="/" class="cat-pill ${!categoryQuery ? 'active' : ''}">All Music</a>
-                        <a href="/?category=Anatolian+Psychedelic+%26+Folk" class="cat-pill ${categoryQuery.includes('Anatolian') ? 'active' : ''}">Anatolian & Folk</a>
-                        <a href="/?category=Classic+Hip+Hop" class="cat-pill ${categoryQuery.includes('Hip Hop') ? 'active' : ''}">Classic Hip Hop</a>
-                        <a href="/?category=Pop+Hits+%26+Timeless+Anthems" class="cat-pill ${categoryQuery.includes('Pop') ? 'active' : ''}">Pop Hits</a>
-                        <a href="/?category=Modern+2026+Mixes" class="cat-pill ${categoryQuery.includes('2026') ? 'active' : ''}">2026 Mixes</a>
-                    </div>
-                </div>
-
-                <div>
-                    <h3>Library & Audio Streams</h3>
-                    <table class="track-table">
-                        <tr>
-                            <th>Title</th>
-                            <th>Artist</th>
-                            <th>Category Mix</th>
-                            <th>Duration</th>
-                            <th>Listen</th>
-                        </tr>
-                        ${tracks.length > 0 ? tracks.map(t => `
-                            <tr>
-                                <td><b>${t.track_title}</b></td>
-                                <td style="color:#b3b3b3;">${t.artist}</td>
-                                <td><span style="color:#1db954;">${t.category}</span></td>
-                                <td><code>${t.duration}</code></td>
-                                <td>
-                                    <audio controls preload="none">
-                                        <source src="${t.audio_url}" type="audio/mpeg">
-                                    </audio>
-                                </td>
-                            </tr>
-                        `).join('') : '<tr><td colspan="5" style="color:#b3b3b3; padding: 20px;">No tracks found.</td></tr>'}
-                    </table>
-                </div>
-            </div>
-        </main>
-    </body>
-    </html>
-    `);
+// Routes
+app.get('/island', (req, res) => {
+    db.all(`SELECT * FROM multi_league_fixtures`, (err, matches) => {
+        if (err) return res.status(500).send("Database error loading fixtures.");
+        db.all(`SELECT * FROM user_bets ORDER BY timestamp DESC LIMIT 3`, [], (err2, bets) => {
+            if (err2) return res.status(500).send("Database error loading bets.");
+            
+            // Render basic template response combining fixtures and bets data
+            res.send(`
+                <html>
+                    <head><title>Sovereign Master Island</title></head>
+                    body { font-family: sans-serif; padding: 20px; background: #111; color: #eee; }
+                    <h1>🏝️ Sovereign Master - Island Dashboard</h1>
+                    <h2>Active Fixtures</h2>
+                    <pre>${JSON.stringify(matches, null, 2)}</pre>
+                    <h2>Recent User Bets</h2>
+                    <pre>${JSON.stringify(bets, null, 2)}</pre>
+                </html>
+            `);
+        });
+    });
 });
 
+app.post('/api/place-bet', (req, res) => {
+    const { match_title, selection, odds, stake } = req.body;
+    if (!match_title || !selection || !odds || !stake) {
+        return res.status(400).json({ status: 'error', message: 'Missing required bet parameters.' });
+    }
+    const payout = (parseFloat(stake) * parseFloat(odds)).toFixed(2);
+    db.run(`INSERT INTO user_bets (match_title, selection, odds, stake, payout, status) VALUES (?, ?, ?, ?, ?, ?)`,
+        [match_title, selection, odds, stake, payout, 'CONFIRMED'], (err) => {
+            if (err) return res.status(500).json({ status: 'error', message: err.message });
+            logEvent('SportsbookEngine', 'SUCCESS', `Locked bet on ${match_title} (${selection}) for $${stake}`);
+            res.status(200).json({ status: 'success', message: `Bet locked in successfully! Estimated Payout: $${payout}` });
+        });
+});
+
+// Server Listener
 app.listen(PORT, () => {
-    console.log(`Goodbye`);
-    console.log(`🎧 Sovereign Free Music Hub running on port ${PORT}`);
+    console.log(`🚀 Sovereign Master unified server is running on port ${PORT}`);
 });
