@@ -1,5 +1,5 @@
 // ==========================================
-// SOVEREIGN STUDIO CORE - PLATFORM FRAMEWORK
+// SOVEREIGN STUDIO CORE - RENDER OPTIMIZED
 // ==========================================
 
 const express = require('express');
@@ -25,15 +25,6 @@ const db = new sqlite3.Database(dbFile, (err) => {
 
 // Initialize Studio Infrastructure Tables
 db.serialize(() => {
-    // Tracks active studio modules and workers
-    db.run(`CREATE TABLE IF NOT EXISTS studio_modules (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        module_name TEXT UNIQUE,
-        status TEXT,
-        last_ping DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-
-    // Logs assets/videos created and managed by the studio
     db.run(`CREATE TABLE IF NOT EXISTS studio_assets (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         asset_title TEXT,
@@ -44,76 +35,26 @@ db.serialize(() => {
 });
 
 // ==========================================
-// STUDIO CONTROL PANEL UI
+// ROUTES & HEALTH CHECK ENDPOINTS
 // ==========================================
 
-app.get('/', (req, res) => {
-    db.all(`SELECT * FROM studio_assets ORDER BY id DESC LIMIT 20`, (err, assets) => {
-        let assetRows = '';
-        if (!err && assets) {
-            assets.forEach(a => {
-                assetRows += `
-                    <tr>
-                        <td><b>${a.asset_title}</b></td>
-                        <td style="color: #38bdf8;">${a.file_path}</td>
-                        <td><span class="badge">${a.category}</span></td>
-                        <td>${a.created_at}</td>
-                    </tr>
-                `;
-            });
-        }
-
-        res.send(`
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>Sovereign Studio Core // Control Center</title>
-                    <style>
-                        body { background: #0f172a; color: #f8fafc; font-family: monospace; margin: 0; padding: 30px; }
-                        .header { border-bottom: 1px solid #334155; padding-bottom: 20px; margin-bottom: 30px; }
-                        h1 { color: #38bdf8; margin: 0 0 10px 0; font-size: 24px; }
-                        .card { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 8px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-                        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #334155; font-size: 13px; }
-                        th { color: #94a3b8; text-transform: uppercase; }
-                        .badge { background: #0369a1; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>🎬 Sovereign Studio: Control Center</h1>
-                        <div>Platform Infrastructure: Online | Local SQLite Ledger Active</div>
-                    </div>
-                    <div class="card">
-                        <h3>📁 Managed Studio Assets & Outputs</h3>
-                        <table>
-                            <thead>
-                               <tr>
-                                   <th>Asset Title</th>
-                                   <th>File Path / Endpoint</th>
-                                   <th>Category</th>
-                                   <th>Timestamp</th>
-                               </tr>
-                            </thead>
-                            <tbody>
-                                ${assetRows || '<tr><td colspan="4">No studio assets registered yet. Plug in your worker scripts.</td></tr>'}
-                            </tbody>
-                        </table>
-                    </div>
-                </body>
-            </html>
-        `);
-    });
+// Render Health Check Route
+app.get('/island', (req, res) => {
+    res.status(200).send('Sovereign Studio Island Node Online');
 });
 
-// ==========================================
-// API ENDPOINTS FOR EXTERNAL WORKERS & SCRIPTS
-// ==========================================
+// Secondary Navigation Routes
+app.get('/network', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'network.html'));
+});
 
-// Register or log a newly built asset (your custom scripts can POST here)
+app.get('/sandbox', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'pet-project.html'));
+});
+
+// API: Register New Studio Asset
 app.post('/api/assets/register', (req, res) => {
     const { asset_title, file_path, category } = req.body;
-    
     db.run(
         `INSERT INTO studio_assets (asset_title, file_path, category) VALUES (?, ?, ?)`,
         [asset_title || 'Untitled Asset', file_path || '/videos/local.mp4', category || 'General'],
@@ -121,12 +62,23 @@ app.post('/api/assets/register', (req, res) => {
             if (err) {
                 res.status(500).json({ error: err.message });
             } else {
-                res.json({ success: true, asset_id: this.lastID, message: "Asset registered to studio core." });
+                res.json({ success: true, asset_id: this.lastID, message: "Asset registered." });
             }
         }
     );
 });
 
-app.listen(PORT, () => {
+// API: Fetch Assets for Dashboard
+app.get('/api/intelligence', (req, res) => {
+    db.all(`SELECT * FROM studio_assets ORDER BY id DESC LIMIT 20`, (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+        } else {
+            res.json({ system: "Sovereign Studio", data: rows });
+        }
+    });
+});
+
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Sovereign Studio Core running on port ${PORT}`);
 });
