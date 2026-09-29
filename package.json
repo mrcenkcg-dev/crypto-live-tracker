@@ -1,12 +1,13 @@
 {
-  "name": "sovereign-master-engine",
+  "name": "crypto-live-tracker",
   "version": "1.0.0",
-  "description": "Autonomous Sovereign Master Engine",
+  "description": "Sovereign Master Unified Server",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "sqlite3": "^5.1.7"
   }
 }
