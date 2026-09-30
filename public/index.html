@@ -1,68 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sovereign Studio // Master Control Center</title>
-    <style>
-        body { background: #0f172a; color: #f8fafc; font-family: monospace; margin: 0; padding: 30px; }
-        .header { border-bottom: 1px solid #334155; padding-bottom: 20px; margin-bottom: 30px; }
-        h1 { color: #38bdf8; margin: 0 0 10px 0; font-size: 24px; }
-        .status-bar { color: #94a3b8; font-size: 14px; }
-        .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        .card { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        h3 { margin-top: 0; color: #e2e8f0; border-bottom: 1px solid #334155; padding-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #334155; font-size: 13px; }
-        th { color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
-        .badge { background: #0369a1; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
-        .nav-links { display: flex; gap: 15px; margin-top: 15px; }
-        a.btn { background: #0284c7; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px; font-size: 13px; }
-        a.btn:hover { background: #0369a1; }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>🛡️ Sovereign Studio: Master Control Center</h1>
-        <div class="status-bar">Status: Operational | Environment: Cloud Render / SQLite Core | Navigation Hub Active</div>
-    </div>
-
-    <div class="grid">
-        <!-- Studio Navigation & Quick Links -->
-        <div class="card">
-            <h3>🔗 Studio Portals & Telemetry Feeds</h3>
-            <p>Access auxiliary monitoring panels and backend system data:</p>
-            <div class="nav-links">
-                <a href="/network" class="btn">View Network Telemetry</a>
-                <a href="/sandbox" class="btn">Open Pet Project Sandbox</a>
-                <a href="/api/intelligence" class="btn" target="_blank">GET /api/intelligence</a>
-                <a href="/api/teams" class="btn" target="_blank">GET /api/teams</a>
-            </div>
-        </div>
-
-        <!-- Master Asset & Activity Grid -->
-        <div class="card">
-            <h3>📁 Live Studio Asset Registry</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Asset Title / Task</th>
-                        <th>File Path / Endpoint</th>
-                        <th>Category / Module</th>
-                        <th>Timestamp</th>
-                    </tr>
-                </thead>
-                <tbody id="asset-table-body">
-                    <tr>
-                        <td colspan="4" style="color: #94a3b8; text-align: center;">Scanning studio records...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <script>
-        // Optional dynamic fetch to load registered assets if the backend API supports it
+<script>
+        // Fetch registered studio assets from the backend API
         fetch('/api/intelligence')
             .then(response => response.json())
             .then(data => {
@@ -72,16 +9,19 @@
                     data.data.forEach(item => {
                         tbody.innerHTML += `
                             <tr>
-                                <td><b>${item.focus_match || item.task_name || 'System Task'}</b></td>
-                                <td style="color: #38bdf8;">${item.projection || 'Active Stream'}</td>
-                                <td><span class="badge">${item.league || 'Core'}</span></td>
-                                <td>${item.timestamp || 'Live 24/7'}</td>
+                                <td><b>${item.asset_title || 'Untitled Asset'}</b></td>
+                                <td style="color: #38bdf8;">${item.file_path || '/path/unknown'}</td>
+                                <td><span class="badge">${item.category || 'General'}</span></td>
+                                <td>${item.created_at || 'Just now'}</td>
                             </tr>
                         `;
                     });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" style="color: #94a3b8; text-align: center;">Studio online. Ready for your first worker script or asset upload.</td></tr>';
                 }
             })
-            .catch(err => console.log('Telemetry sync waiting for active endpoint data.'));
+            .catch(err => {
+                const tbody = document.getElementById('asset-table-body');
+                tbody.innerHTML = '<tr><td colspan="4" style="color: #ef4444; text-align: center;">Waiting for telemetry sync...</td></tr>';
+            });
     </script>
-</body>
-</html>
