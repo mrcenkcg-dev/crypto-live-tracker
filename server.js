@@ -1,7 +1,3 @@
-// ==========================================
-// SOVEREIGN STUDIO CORE - RENDER OPTIMIZED
-// ==========================================
-
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
@@ -9,83 +5,57 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Serve static assets from the public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Persistent Studio Ledger
-const dbFile = path.resolve(__dirname, 'studio_core.db');
-const db = new sqlite3.Database(dbFile, (err) => {
+// Initialize SQLite Database for Hunter Agency
+const dbPath = path.resolve(__dirname, 'hunter_agency.db');
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
-        console.error('❌ Studio DB connection failed:', err.message);
+        console.error('Error opening database', err.message);
     } else {
-        console.log('✅ Connected to Sovereign Studio Core Database.');
+        console.log('Connected to the Hunter Agency database.');
+        db.run(`CREATE TABLE IF NOT EXISTS blueprints (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            status TEXT DEFAULT 'Unclaimed',
+            raw_notes TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
     }
 });
 
-// Initialize Studio Infrastructure Tables
-db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS studio_assets (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        asset_title TEXT,
-        file_path TEXT,
-        category TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
-});
-
-// ==========================================
-// ROUTES & HEALTH CHECK ENDPOINTS
-// ==========================================
-
-// Explicit Root Route: Serves index.html directly
+// Root route to serve main interface
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Render Health Check Route
-app.get('/island', (req, res) => {
-    res.status(200).send('Sovereign Studio Island Node Online');
-});
-
-// Secondary Navigation Routes
-app.get('/network', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'network.html'));
-});
-
-app.get('/sandbox', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'pet-project.html'));
-});
-
-// API: Register New Studio Asset
-app.post('/api/assets/register', (req, res) => {
-    const { asset_title, file_path, category } = req.body;
-    db.run(
-        `INSERT INTO studio_assets (asset_title, file_path, category) VALUES (?, ?, ?)`,
-        [asset_title || 'Untitled Asset', file_path || '/videos/local.mp4', category || 'General'],
-        function(err) {
-            if (err) {
-                res.status(500).json({ error: err.message });
-            } else {
-                res.json({ success: true, asset_id: this.lastID, message: "Asset registered." });
-            }
-        }
-    );
-});
-
-// API: Fetch Assets for Dashboard
-app.get('/api/intelligence', (req, res) => {
-    db.all(`SELECT * FROM studio_assets ORDER BY id DESC LIMIT 20`, (err, rows) => {
+// API: Get all agency blueprints
+app.get('/api/blueprints', (req, res) => {
+    db.all('SELECT * FROM blueprints', [], (err, rows) => {
         if (err) {
             res.status(500).json({ error: err.message });
-        } else {
-            res.json({ system: "Sovereign Studio", data: rows });
+            return;
         }
+        res.json({ blueprints: rows });
     });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Sovereign Studio Core running on port ${PORT}`);
+// API: Intake a new blueprint
+app.post('/api/blueprints', (req, res) => {
+    const { title, raw_notes, status } = req.body;
+    const query = `INSERT INTO blueprints (title, raw_notes, status) VALUES (?, ?, ?)`;
+    
+    db.run(query, [title, raw_notes, status || 'Unclaimed'], function(err) {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({ id: this.lastID, title, status: status || 'Unclaimed' });
+    });
+});
+
+app.listen(PORT, () => {
+    console.log(`Hunter Agency HQ service running on port ${PORT}`);
 });
