@@ -11,6 +11,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static assets from the public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Persistent Studio Ledger
@@ -37,6 +39,11 @@ db.serialize(() => {
 // ==========================================
 // ROUTES & HEALTH CHECK ENDPOINTS
 // ==========================================
+
+// Explicit Root Route: Serves index.html directly
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Render Health Check Route
 app.get('/island', (req, res) => {
